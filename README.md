@@ -38,5 +38,5 @@ Group project for CSE442-A5: Software Engineering
     - https://towardsdev.com/writing-a-docker-file-for-your-node-js-typescript-micro-service-c5170b957893 
     - https://meshstudio.io/blog/2017-12-13-intro-to-docker-with-typescript/ 
 
-## Heroku for node.js
+- Heroku for node.js
     - https://devcenter.heroku.com/articles/getting-started-with-nodejs?singlepage=true 
