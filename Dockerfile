@@ -2,7 +2,7 @@ FROM node:13
 
 ENV HOME /root
 
-COPY . .
+COPY logIn .
 
 RUN npm install
 
