@@ -18,9 +18,19 @@ async function main() {
     const db = client.db(dbName);
     const collection = db.collection('documents');
 
-    // the following code examples can be pasted here...
+    //This inserts the documents {a:1}...
     const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }]);
     console.log('Inserted documents =>', insertResult);
+
+    //This deletes all instances of document {a:3}..
+    const deleteResult = await collection.deleteMany({ a: 3 });
+    console.log('Deleted documents =>', deleteResult);
+    const deleteResult2 = await collection.deleteMany({ a: 2 });
+    console.log('Deleted documents =>', deleteResult2);
+
+//Using this throws an error
+//    const deleteResult = await collection.deleteMany([{ a: 2 }, { a: 3 }]);
+//    console.log('Deleted documents =>', deleteResult);
 
     return 'done.';
 }
