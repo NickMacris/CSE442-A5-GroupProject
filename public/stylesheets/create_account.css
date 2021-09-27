@@ -1,0 +1,79 @@
+button.signin {
+    position: absolute;
+    width: 168px;
+    height: 69px;
+    left: 996px;
+    top: 84px;
+    right: 80;
+    background-color: #FF0202;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 26px;
+}
+
+button.signup {
+    position: relative;
+    width: 168px;
+    height: 69px;
+    top: 230px;
+    color: black;
+    background-color: #FF0202;
+    font-size: 26px;
+
+}
+.box {
+    border:1px solid green;
+    position: absolute;
+    width: 365px;
+    height: 509px;
+    left: 433px;
+    top: 233px;
+    text-align: center;
+
+    background: #C4C4C4;
+}
+
+.ellipse {
+    position: absolute;
+    width: 256px;
+    height: 250px;
+    left: 80px;
+    top: 69px;
+    border-radius: 50%;
+
+    background: #C4C4C4;
+}
+.logoText {
+    position: relative;
+    text-align: center;
+    font-size: 36px;
+    top: 45px;
+}
+.title {
+    position: relative;
+    text-align: center;
+    font-size: 36px;
+    top: 40px;
+}
+
+.enterUsername {
+    position: relative;
+    text-align: center;
+    top: 100px
+}
+.enterPassword {
+    position: relative;
+    text-align: center;
+    top: 150px
+}
+.unameField {
+    position: relative;
+    text-align: center;
+    top: 110px;
+}
+.passField {
+    position: relative;
+    text-align: center;
+    top: 160px;
+}
