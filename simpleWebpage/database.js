@@ -39,3 +39,20 @@ main()
     .then(console.log)
     .catch(console.error)
     .finally(() => client.close());
+
+var axios = require("axios").default;
+
+var options = {
+    method: 'GET',
+    url: 'https://imdb-internet-movie-database-unofficial.p.rapidapi.com/film/tt1375666',
+    headers: {
+        'x-rapidapi-host': 'imdb-internet-movie-database-unofficial.p.rapidapi.com',
+        'x-rapidapi-key': '030615605dmsh1d6c732339663dcp17d9a2jsn553d9866ca9f'
+    }
+};
+
+axios.request(options).then(function (response) {
+    console.log(response.data);
+}).catch(function (error) {
+    console.error(error);
+});
