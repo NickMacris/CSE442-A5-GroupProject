@@ -1,4 +1,4 @@
-Authors:
+Authors that authored this project:
 
 Nicholas A Macris namacris@buffalo.edu
 Shawn Zimmermann  zimmerm3@buffalo.edu
