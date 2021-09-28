@@ -2,9 +2,10 @@ FROM node:13
 
 ENV HOME /root
 
-COPY logIn .
+COPY . .
 
 RUN npm install
+RUN npm install express
 
 
 
