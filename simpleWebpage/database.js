@@ -23,7 +23,7 @@ async function main() {
     const collection = db.collection('documents');
 
     //This inserts the documents {a:1}...
-    const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { test: 10 }]);
+    const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { test: 10 },{herokutest:9}]);
     console.log('Inserted documents =>', insertResult);
 
     //This deletes all instances of document {a:3}..
