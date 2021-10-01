@@ -4,8 +4,9 @@ const { MongoClient } = require('mongodb');
 // Connection URL
 
 //Name of MongoDB is CSE442
-//Pass is csE442
-const url = 'mongodb+srv://CSE442:csE442@cse442.k7tia.mongodb.net/test';
+//const url = 'mongodb+srv://CSE442:csE442@cse442.k7tia.mongodb.net/test';
+const dbPass = process.env.DB_PASS
+const url = 'mongodb+srv://CSE442:' + dbPass + 'CSE442CSE@cluster0.k7tia.mongodb.net/test';
 const client = new MongoClient(url);
 
 // Database Name
@@ -23,7 +24,7 @@ async function main() {
     console.log('Inserted documents =>', insertResult);
 
     //This deletes all instances of document {a:3}..
-    const deleteResult = await collection.deleteMany({ a: 3 });
+    const deleteResult = await collection.deleteMany({ a: 1 });
     console.log('Deleted documents =>', deleteResult);
     const deleteResult2 = await collection.deleteMany({ a: 2 });
     console.log('Deleted documents =>', deleteResult2);
