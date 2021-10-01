@@ -4,9 +4,12 @@ const { MongoClient } = require('mongodb');
 // Connection URL
 
 //Name of MongoDB is CSE442
-//const url = 'mongodb+srv://CSE442:csE442@cse442.k7tia.mongodb.net/test';
-const dbPass = process.env.DB_PASS
-const url = 'mongodb+srv://CSE442:' + dbPass + 'CSE442CSE@cluster0.k7tia.mongodb.net/test';
+//mongodb+srv://CSE442:<password>@cluster0.k7tia.mongodb.net/test
+const dbPass = process.env.DB_PASS_442
+/*console.log("Before")
+console.log(dbPass);
+console.log("After")*/
+const url = 'mongodb+srv://CSE442:' + dbPass + '@cluster0.k7tia.mongodb.net/test';
 const client = new MongoClient(url);
 
 // Database Name
@@ -20,7 +23,7 @@ async function main() {
     const collection = db.collection('documents');
 
     //This inserts the documents {a:1}...
-    const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { a: 3 }]);
+    const insertResult = await collection.insertMany([{ a: 1 }, { a: 2 }, { test: 10 }]);
     console.log('Inserted documents =>', insertResult);
 
     //This deletes all instances of document {a:3}..
@@ -28,6 +31,8 @@ async function main() {
     console.log('Deleted documents =>', deleteResult);
     const deleteResult2 = await collection.deleteMany({ a: 2 });
     console.log('Deleted documents =>', deleteResult2);
+    const deleteResult3 = await collection.deleteMany({ a: 3 });
+    console.log('Deleted documents =>', deleteResult3);
 
 //Using this throws an error
 //    const deleteResult = await collection.deleteMany([{ a: 2 }, { a: 3 }]);
@@ -40,7 +45,7 @@ main()
     .then(console.log)
     .catch(console.error)
     .finally(() => client.close());
-
+/*
 var axios = require("axios").default;
 
 var options = {
@@ -57,5 +62,5 @@ axios.request(options).then(function (response) {
 }).catch(function (error) {
     console.error(error);
 });
-
+*/
 console.log("Commit test");
