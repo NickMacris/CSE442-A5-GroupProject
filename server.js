@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 3000;
+require('./simpleWebpage/database');
 
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
