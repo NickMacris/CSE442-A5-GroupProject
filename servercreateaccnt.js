@@ -46,6 +46,7 @@ app.post("/register",  (req, res) => {
     });
     */
     insert(req,res);
+    client.close();
 });
 
 
@@ -74,10 +75,6 @@ async function insert(req, res) {
             if (err) throw err;
             console.log("1 User added");
         });
-    } finally {
-        /* this makes authentication not work? */
-       // await client.close();
-    }
 }
 
 
