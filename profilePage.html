@@ -15,23 +15,44 @@
 <div class="update_profile_box">
     <h1> Update Profile </h1>
     <form>
-        <label for="genre">Genre:</label><br>
-        <input type="text" id="genre" name="genre"><br>
-        <label for="time">Time:</label><br>
-        <input type="text" id="time" name="time"><br>
-        <label for="streaming_service">Streaming Service:</label><br>
-        <input type="text" id="streaming_service" name="streaming_service"><br>
+
+        <div class="dropdown_genre">
+            <button class="dropbtn">Choose Genre</button>
+            <div class="dropdown-content">
+                <a href="#">Horror</a>
+                <a href="#">Not Horror</a>
+                <a href="#">Documentary</a>
+            </div>
+        </div>
+
+        <div class="dropdown_time">
+            <button class="dropbtn">Choose Time</button>
+            <div class="dropdown-content">
+                <a href="#">5PM</a>
+                <a href="#">6PM</a>
+                <a href="#">6:15PM</a>
+            </div>
+        </div>
+
+        <div class="dropdown_streaming">
+            <button class="dropbtn">Choose Streaming Service</button>
+            <div class="dropdown-content">
+                <a href="#">Netflix</a>
+                <a href="#">Hulu</a>
+                <a href="#">Panopto</a>
+            </div>
+        </div>
         <button class="update"> Update</button>
 
     </form>
 
 </div>
 <div class="dropdown">
-    <button class="dropbtn">Dropdown</button>
+    <button class="dropbtn">Friends List</button>
     <div class="dropdown-content">
-        <a href="#">Link 1</a>
-        <a href="#">Link 2</a>
-        <a href="#">Link 3</a>
+        <a href="#">BillyJoe</a>
+        <a href="#">BillyBob</a>
+        <a href="#">BobbyJoe</a>
     </div>
 </div>
 </body>
