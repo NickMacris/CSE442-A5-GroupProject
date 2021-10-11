@@ -8,16 +8,39 @@
             <div class="sign_in_box">
                 <h1> Sign In</h1>
                 <form>
-                    <input type = "text" name="" placeholder="Username">
-                    <input type = "password" name="" placeholder="Password"><br>
+                    <input type = "text" name="" placeholder="Username" required>
+                    <input type = "password" id="psw" name="" placeholder="Password" required><br>
+                    <div id="message">
+                        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+                    </div>
+                    <script>
+                        var myInput = document.getElementById("psw");
+                        var length = document.getElementById("length");
+                        
+                        myInput.onfocus = function() {
+                          document.getElementById("message").style.display = "block";
+                        }
+                        
+                        myInput.onblur = function() {
+                          document.getElementById("message").style.display = "none";
+                        }
+                        
+                        myInput.onkeyup = function() {
+                        if(myInput.value.length >= 8) {
+                            length.classList.remove("invalid");
+                            length.classList.add("valid");
+                          } else {
+                            length.classList.remove("valid");
+                            length.classList.add("invalid");
+                          }
+                        }
+                        </script>
                     <a href="#" class="holder">Forgot my password</a><p></p>
                     <a href="https://google.com" class="button">SIGN IN</a><br>
                     <a href="#" class="socialf">Connect on Facebook </a><br>
                     <p></p>
                     <a href="#" class="socialg">Connect on Google</a>
-
                 </form>
-                
             </div>
         </body>
 </html>
