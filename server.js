@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/style.css', (req, res) => {
-    res.sendFile(path.join(__dirname, 'style.css'));
+    res.sendFile(path.join(__dirname, '/logIn/style.css'));
 })
 
 app.listen(port, () => {
