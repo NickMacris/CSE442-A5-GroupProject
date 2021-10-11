@@ -10,7 +10,7 @@ app.use('/css', express.static(__dirname + 'public/css'));
 app.set('views', './views');
 
 app.get('/', (req, res) => {
-   res.sendFile(path.join(__dirname, 'index.html')) ;
+   res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
 })
 
 app.get('/style.css', (req, res) => {
