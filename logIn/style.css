@@ -45,6 +45,22 @@ h1 {
     font-size: 16px;
 }
 
+.valid {
+    color: green;
+  }
+  
+
+.invalid {
+    color: red;
+  }
+
+  #message {
+    display:none;
+    margin-top:-50px;
+    margin-left : 125px;
+  }
+  
+
 .sign_in_box a.holder{
     margin-left: 25%;
     text-decoration: none;
