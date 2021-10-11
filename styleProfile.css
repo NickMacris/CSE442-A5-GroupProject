@@ -1,7 +1,7 @@
 
 .update_profile_box{
-    width : 500px;
-    height: 600px;
+    width : 400px;
+    height: 500px;
     background:	#D3D3D3;
     color: #fff;
     top: 50%;
@@ -9,10 +9,24 @@
     position: absolute;
     transform: translate(-50%,-50%);
     box-sizing: border-box;
+    text-align: center;
+}
+
+.your_movies{
+    width : 400px;
+    height: 500px;
+    background:	#D3D3D3;
+    color: #fff;
+    top: 50%;
+    left: 65%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    text-align: center;
 }
 
 h1 {
-    margin-left: 10%;
+    margin-left: 0%;
     /* margin: 5px; */
     padding: 0 0 10px;
     /* text-align: left; */
@@ -82,7 +96,7 @@ button[class = home] {
     left: 85%;
     top: 20%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -94,7 +108,7 @@ button[class = find_friend] {
     left: 85%;
     top: 30%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -106,7 +120,7 @@ button[class = create_room] {
     left: 85%;
     top: 40%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -117,7 +131,7 @@ button[class = join_room] {
     left: 85%;
     top: 50%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -128,7 +142,7 @@ button[class = profile] {
     left: 85%;
     top: 60%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -139,7 +153,7 @@ button[class = help] {
     left: 85%;
     top: 70%;
     font-size: 25px;
-    background: limegreen;
+    background: turquoise;
     font-weight: bold;
     width: 200px;
     height: 80px;
@@ -148,7 +162,7 @@ button[class = help] {
 
 button[class = update] {
     position:absolute;
-    left: 15%;
+    left: 35%;
     top: 60%;
     font-size: 25px;
     background: limegreen;
@@ -163,36 +177,42 @@ button[class = update] {
     padding: 16px;
     font-size: 16px;
     border: none;
+    width: 180px;
+    height: 60px;
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown {
     position: absolute;
     display: inline-block;
-    left: 40%;
-    top: 15%;
+    left: 35%;
+    top: 10%;
+
 }
 
 /* The container <div> - needed to position the dropdown content */
 .dropdown_genre {
     position: absolute;
     display: inline-block;
-    left: 15%;
+    left: 25%;
     top: 15%;
+    text-align: center;
 }
 
 .dropdown_time {
     position: absolute;
     display: inline-block;
-    left: 15%;
-    top: 25%;
+    left: 25%;
+    top: 30%;
+    text-align: center;
 }
 
 .dropdown_streaming {
     position: absolute;
     display: inline-block;
-    left: 15%;
-    top: 35%;
+    left: 25%;
+    top: 45%;
+    text-align: center;
 }
 
 /* Dropdown Content (Hidden by Default) */
