@@ -17,6 +17,18 @@ app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/logIn/style.css'));
 })
 
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/find_friends/find_friends.html')) ;
+ })
+ 
+ app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/find_friends/find_friends.css')) ;
+ })
+
+ app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '/pages/find_friends/find_friends.js')) ;
+ })
+
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
