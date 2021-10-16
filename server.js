@@ -22,7 +22,9 @@ app.set('views', './views');
  * GET Requests: Requesting a page ect.
  */
 app.get('/', (req, res) => {
-   res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
+   //res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
+    res.sendFile(path.join(__dirname, 'create-account.html'));
+    
 })
 
 app.get('/style.css', (req, res) => {
