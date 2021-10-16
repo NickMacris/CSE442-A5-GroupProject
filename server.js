@@ -47,6 +47,7 @@ const client = new MongoClient(url, {keepAlive: 1})
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
+    res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
 })
 
 
