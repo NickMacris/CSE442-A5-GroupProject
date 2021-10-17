@@ -7,8 +7,17 @@
 <form method="post">
     <input type="text" name="addGenre" placeholder="Type genre to add here">
 
-    <button formaction="/test_genre1" type="submit" name="submit">
+    <button formaction="/add_genre" type="submit" name="submit">
         Add Genre to Profile
+    </button>
+</form>
+
+<h2>Remove Genre.</h2>
+<form method="post">
+    <input type="text" name="removeGenre" placeholder="Type genre to remove here">
+
+    <button formaction="/remove_genre" type="submit" name="submit">
+        Remove Genre from Profile
     </button>
 </form>
 

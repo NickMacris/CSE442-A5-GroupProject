@@ -53,7 +53,7 @@ app.post('/add_genre', (req, res) => {
     });
 });
 
-app.post('/test_genre1',(req, res) => {
+app.post('/add_genre',(req, res) => {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
         let dbo = db.db("SimpleTest");
@@ -68,6 +68,25 @@ app.post('/test_genre1',(req, res) => {
             db.close();
         });*/
     });
-    console.log(req.body.addGenre)
+    console.log("Genre added: " + req.body.addGenre);
+
+});
+
+app.post('/remove_genre',(req, res) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        let dbo = db.db("SimpleTest");
+
+        dbo.collection("documents").updateOne(
+            { user: "User1" },
+            { $pull: { genres: req.body.removeGenre } },
+        )
+        /*dbo.collection("documents").insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+        });*/
+    });
+    console.log(req.body.removeGenre)
 
 });
