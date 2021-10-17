@@ -1,0 +1,80 @@
+
+<html>
+<body>
+
+<h2>Welcome, User1</h2>
+
+<p>The select element defines a drop-down list:</p>
+
+<form>
+    <label for="genre">Choose a Genre:</label>
+    <select id="genre" name="genre">
+        <option value="horror">Horror</option>
+        <option value="comedy">Comedy</option>
+        <option value="documentary">Documentary</option>
+        <option value="crime">Crime</option>
+    </select>
+</form>
+<button id="add_genre">Add Genre</button>
+<button onclick="remove_genre()">Remove Genre</button>
+<p id="demo"></p>
+
+<script>
+    const button = document.getElementById('add_genre');
+    button.addEventListener('click', function(e) {
+        console.log('button was clicked');
+        fetch('/add_genre', {method: 'POST'})
+            .then(function(response) {
+                if(response.ok) {
+                    console.log('click was recorded');
+                    return;
+                }
+                throw new Error('Request failed.');
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    });
+
+    function add_genre() {
+        //db_genre("add");
+        const button = document.getElementById('myButton');
+        button.addEventListener('click', function(e) {
+            console.log('button was clicked');
+
+            fetch('/clicked', {method: 'POST'})
+                .then(function(response) {
+                    if(response.ok) {
+                        console.log('click was recorded');
+                        return;
+                    }
+                    throw new Error('Request failed.');
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        });
+        //document.getElementById("demo").innerHTML = document.getElementById("genre").value + " Added";
+    }
+    function remove_genre() {
+        db_genre("remove");
+        document.getElementById("demo").innerHTML = document.getElementById("genre").value + " Removed";
+    }
+
+        /*const { MongoClient } = require('mongodb');
+        //const dbPass = process.env.DB_PASS_442
+        const dbPass = CSE442cse;
+        const url = 'mongodb+srv://CSE442:' + dbPass + '@cluster0.k7tia.mongodb.net/test';
+        const client = new MongoClient(url);
+        const dbName = 'SimpleTest';
+        client.connect();
+        const db = client.db(dbName);
+        const collection = db.collection('documents');
+        collection.deleteMany({ test: 10 });
+        collection.deleteMany({herokutest:9});
+        //if(addOrRemove === "add"){
+
+        //} */
+</script>
+</body>
+</html>

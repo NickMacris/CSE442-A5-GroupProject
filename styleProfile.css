@@ -225,3 +225,31 @@ button[class = update] {
 
 /* Change the background color of the dropdown button when the dropdown content is shown */
 .dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+/* Genre Add and Remove Buttons */
+button[class = add_genre] {
+    position:absolute;
+    left: 55%;
+    top: 15%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}
+button[class = remove_genre] {
+    position:absolute;
+    left: 70%;
+    top: 15%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}
