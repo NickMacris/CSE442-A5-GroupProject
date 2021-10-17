@@ -40,6 +40,7 @@ app.use(bodyParser.urlencoded({
 
 app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
+    res.redirect("/profile");
     // MongoClient.connect(url, function (err, db) {
     //     if (err) throw err;
     //     let dbo = db.db("SimpleTest");
@@ -60,6 +61,7 @@ app.post('/add_genre',(req, res) => {
 
 app.post('/remove_genre',(req, res) => {
     removeGenreFromDB(req,res);
+    res.redirect("/profile");
     // MongoClient.connect(url, function (err, db) {
     //     if (err) throw err;
     //     let dbo = db.db("SimpleTest");
