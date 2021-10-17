@@ -21,5 +21,12 @@
     </button>
 </form>
 
+<h2>Preferred Genres</h2>
+<ul>
+    <% questions.forEach(function(question) { %>
+    <li>Number: <%= question.number %> - Text: <%= question.text %></li>
+    <% }); %>
+</ul>
+
 </body>
 </html>

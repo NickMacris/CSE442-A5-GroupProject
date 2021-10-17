@@ -6,7 +6,7 @@ const bodyParser = require("body-parser")
 //require('./simpleWebpage/database');
 
 let MongoClient = require('mongodb').MongoClient;
-let dbPass = "CSE442cse";
+let dbPass = process.env.DB_PASS_442;
 let url = 'mongodb+srv://CSE442:' + dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 
@@ -32,61 +32,82 @@ app.get('/styleProfile.css', (req, res) => {
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
+
+const client = new MongoClient(url, {keepAlive: 1})
 app.use(bodyParser.urlencoded({
     extended:true
 }));
-app.post('/add_genre', (req, res) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        let dbo = db.db("SimpleTest");
-        let myobj = {name: "Nick Inc", address: "Highway 32"};
-
-        dbo.collection("documents").updateOne(
-            { user: "User1" },
-            { $push: { genres: "Horror" } },
-        )
-        /*dbo.collection("documents").insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });*/
-    });
-});
 
 app.post('/add_genre',(req, res) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        let dbo = db.db("SimpleTest");
-
-        dbo.collection("documents").updateOne(
-            { user: "User1" },
-            { $push: { genres: req.body.addGenre } },
-        )
-        /*dbo.collection("documents").insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });*/
-    });
-    console.log("Genre added: " + req.body.addGenre);
+    addGenreToDB(req,res);
+    // MongoClient.connect(url, function (err, db) {
+    //     if (err) throw err;
+    //     let dbo = db.db("SimpleTest");
+    //
+    //     dbo.collection("documents").updateOne(
+    //         { user: "User1" },
+    //         { $push: { genres: req.body.addGenre } },
+    //     )
+    //     /*dbo.collection("documents").updateOne(myobj, function (err, res) {
+    //         if (err) throw err;
+    //         console.log("1 document inserted");
+    //         db.close();
+    //     });*/
+    // });
+    // console.log("Genre added: " + req.body.addGenre);
 
 });
 
 app.post('/remove_genre',(req, res) => {
-    MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
-        let dbo = db.db("SimpleTest");
-
-        dbo.collection("documents").updateOne(
-            { user: "User1" },
-            { $pull: { genres: req.body.removeGenre } },
-        )
-        /*dbo.collection("documents").insertOne(myobj, function (err, res) {
-            if (err) throw err;
-            console.log("1 document inserted");
-            db.close();
-        });*/
-    });
-    console.log(req.body.removeGenre)
+    removeGenreFromDB(req,res);
+    // MongoClient.connect(url, function (err, db) {
+    //     if (err) throw err;
+    //     let dbo = db.db("SimpleTest");
+    //
+    //     dbo.collection("documents").updateOne(
+    //         { user: "User1" },
+    //         { $pull: { genres: req.body.removeGenre } },
+    //         {},
+    //         {}
+    //     )
+    //     /*dbo.collection("documents").insertOne(myobj, function (err, res) {
+    //         if (err) throw err;
+    //         console.log("1 document inserted");
+    //         db.close();
+    //     });*/
+    // });
+    // console.log("Genre Removed: " + req.body.removeGenre)
 
 });
+
+async function addGenreToDB(req, res) {
+    await client.connect();
+    console.log("MongoDB connected");
+
+    const db = client.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.updateOne(
+        { user: "User1" },
+        { $push: { genres: req.body.addGenre } },
+        (err,res) => {
+        if (err) throw err;
+        console.log("Genre added: " + req.body.addGenre);
+    });
+}
+
+async function removeGenreFromDB(req, res) {
+    await client.connect();
+    console.log("MongoDB connected");
+
+    const db = client.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.updateOne(
+        { user: "User1" },
+        { $pull: { genres: req.body.removeGenre } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Genre removed: " + req.body.removeGenre);
+        });
+}
