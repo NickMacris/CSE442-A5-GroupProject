@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 3000;
+const bodyParser = require("body-parser")
 //require('./simpleWebpage/database');
 
 let MongoClient = require('mongodb').MongoClient;
@@ -31,11 +32,15 @@ app.get('/styleProfile.css', (req, res) => {
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
+app.use(bodyParser.urlencoded({
+    extended:true
+}));
 app.post('/add_genre', (req, res) => {
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
         let dbo = db.db("SimpleTest");
         let myobj = {name: "Nick Inc", address: "Highway 32"};
+
         dbo.collection("documents").updateOne(
             { user: "User1" },
             { $push: { genres: "Horror" } },
@@ -46,4 +51,23 @@ app.post('/add_genre', (req, res) => {
             db.close();
         });*/
     });
+});
+
+app.post('/test_genre1',(req, res) => {
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        let dbo = db.db("SimpleTest");
+
+        dbo.collection("documents").updateOne(
+            { user: "User1" },
+            { $push: { genres: req.body.addGenre } },
+        )
+        /*dbo.collection("documents").insertOne(myobj, function (err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+        });*/
+    });
+    console.log(req.body.addGenre)
+
 });
