@@ -38,50 +38,24 @@ app.use(bodyParser.urlencoded({
     extended:true
 }));
 
+//Post request to handle adding genres to database
+//The redirect was required to prevent the page from hanging up after pressing button
 app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
     res.redirect("/profile");
-    // MongoClient.connect(url, function (err, db) {
-    //     if (err) throw err;
-    //     let dbo = db.db("SimpleTest");
-    //
-    //     dbo.collection("documents").updateOne(
-    //         { user: "User1" },
-    //         { $push: { genres: req.body.addGenre } },
-    //     )
-    //     /*dbo.collection("documents").updateOne(myobj, function (err, res) {
-    //         if (err) throw err;
-    //         console.log("1 document inserted");
-    //         db.close();
-    //     });*/
-    // });
-    // console.log("Genre added: " + req.body.addGenre);
+
 
 });
 
+//Post request to handle removing genres from database
+//The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
     removeGenreFromDB(req,res);
     res.redirect("/profile");
-    // MongoClient.connect(url, function (err, db) {
-    //     if (err) throw err;
-    //     let dbo = db.db("SimpleTest");
-    //
-    //     dbo.collection("documents").updateOne(
-    //         { user: "User1" },
-    //         { $pull: { genres: req.body.removeGenre } },
-    //         {},
-    //         {}
-    //     )
-    //     /*dbo.collection("documents").insertOne(myobj, function (err, res) {
-    //         if (err) throw err;
-    //         console.log("1 document inserted");
-    //         db.close();
-    //     });*/
-    // });
-    // console.log("Genre Removed: " + req.body.removeGenre)
-
 });
 
+
+//This function will add the textbox inputs to User1s document for genres
 async function addGenreToDB(req, res) {
     await client.connect();
     console.log("MongoDB connected");
@@ -98,6 +72,7 @@ async function addGenreToDB(req, res) {
     });
 }
 
+//This function will remove the textbox inputs to User1s document for genres
 async function removeGenreFromDB(req, res) {
     await client.connect();
     console.log("MongoDB connected");
@@ -112,4 +87,19 @@ async function removeGenreFromDB(req, res) {
             if (err) throw err;
             console.log("Genre removed: " + req.body.removeGenre);
         });
+}
+
+async function getGenreFromDB(req, res) {
+    await client.connect();
+    console.log("MongoDB connected");
+
+    const db = client.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.findOne({user:'User1'},{}, function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        console.log(result.genres);
+        return result;
+    });
 }
