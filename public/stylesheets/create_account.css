@@ -57,6 +57,12 @@ button.signup {
     top: 40px;
 }
 
+#suBmessage {
+    display: none;
+    visibility: hidden;
+    background: #FF0202;
+}
+
 .enterUsername {
     position: relative;
     text-align: center;
@@ -77,3 +83,6 @@ button.signup {
     text-align: center;
     top: 160px;
 }
+
+
+

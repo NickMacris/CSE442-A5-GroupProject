@@ -22,8 +22,7 @@ app.set('views', './views');
  * GET Requests: Requesting a page ect.
  */
 app.get('/', (req, res) => {
-   //res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
-    res.sendFile(path.join(__dirname, 'create-account.html'));
+   res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
     
 })
 
@@ -47,7 +46,7 @@ const client = new MongoClient(url, {keepAlive: 1})
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
-    res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
+//    res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
 })
 
 
