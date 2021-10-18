@@ -30,9 +30,8 @@
   document.getElementById("myButton").onclick = function () {
     var user = document.getElementById("username");
     var passwd = document.getElementById("psw");
-    if (username.value.localeCompare("User") == 0 && passwd.value.localeCompare("1234") == 0){
-      console.log("Test");;
-        location.href = "https://www.google.com";
+    if (username.value.localeCompare("Username") == 0 && passwd.value.localeCompare("password") == 0){
+        location.href = "../mainpage/home/index.html";
     }
     else {
       location.href = "index.html";
