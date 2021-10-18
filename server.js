@@ -102,5 +102,5 @@ async function getGenreFromDB(req, res) {
         console.log(result);
         console.log(result.genres);
         return result;
-    });
+    })};
 }
