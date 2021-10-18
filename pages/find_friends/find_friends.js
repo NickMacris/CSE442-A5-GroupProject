@@ -1,17 +1,8 @@
 window.onload = function(){
-  console.log("Page Running");
-  const { MongoClient } = require("mongodb");
-  // Connection URL : mongodb+srv://CSE442:<password>@cluster0.k7tia.mongodb.net/test
-  const dbPass = process.env.DB_PASS_442;
-  const uri = 'mongodb+srv://CSE442:' + dbPass + '@cluster0.k7tia.mongodb.net/test';
-  const client = new MongoClient(url);
-  
-  // Database Name
-  const dbName = 'UserInfo';
-  
+
   
   var found = []
-document.getElementById("friend_button").onclick = function() {find_User()};
+//document.getElementById("friend_button").onclick = function() {find_User()};
 
 function find_User() {
   
@@ -27,7 +18,6 @@ function find_User() {
         document.getElementById("Search_popup").innerHTML = "";
         // send user_search to the server
         var user_search = search.innerHTML;
-     //   db_find_user(user_search).catch(console.dir);
     }
 
     //Show users database's return
