@@ -1,6 +1,5 @@
 body{
     padding: 0;
-    background: url(Background.jpg);
     background-size: cover;
     background-position: center;
     font-family: sans-serif;
@@ -45,6 +44,22 @@ h1 {
     font-size: 16px;
 }
 
+.valid {
+    color: green;
+  }
+  
+
+.invalid {
+    color: red;
+  }
+
+  #message {
+    display:none;
+    margin-top:-50px;
+    margin-left : 125px;
+  }
+  
+
 .sign_in_box a.holder{
     margin-left: 25%;
     text-decoration: none;
@@ -76,13 +91,22 @@ h1 {
     background: #ffc107;
 }
 
-button[class = "signup"] {
+a.button1 {
     position:absolute;
+    text-decoration: none;
     left: 90%;
-    top: 5%;
+    top: 5%;    
     font-size: 25px;
+    color: black;
+    border: 1px solid black;
     background: red;
     font-weight: bold;
+}
+
+a.button1:hover
+{
+    cursor: pointer;
+    background: #ffc107;
 }
 
 .sign_in_box a.socialf
