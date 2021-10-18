@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 const { MongoClient } = require('mongodb')
 const formidable = require('express-formidable');
-cosnt bodyParser = require('body-parser')
+const bodyParser = require('body-parser')
 
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS
@@ -11,8 +11,8 @@ const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.ne
 //require('./simpleWebpage/database');
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPass = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' + dbPass + '@cluster0.k7tia.mongodb.net/test';
+let dbPassNick = process.env.DB_PASS_442;
+let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 
 app.use(express.static('public'));
