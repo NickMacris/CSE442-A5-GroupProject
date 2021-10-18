@@ -52,9 +52,23 @@ async function main() {
   const collection = db.collection('rooms');
 
   //This inserts the documents {a:1}...
+<<<<<<< Updated upstream
   const insertResult = await collection.insertMany([{ Nicki_mickey: 10012435667 }, { lil_cooljaii: 10000908678 }]);
   console.log('Inserted in rooms =>', insertResult);
 
+=======
+  const insertResult = await collection.insertMany([{ Nicki_mickey: 10012435667 }, { lil_cooljaii: 10000908678 }, {student1 : 100788864434}]);
+  console.log('Inserted in rooms =>', insertResult);
+
+   //This deletes all instances of document {a:3}..
+  /* const deleteResult = await collection.deleteMany({ Nicki_mickey: 10012435667  });
+   console.log('Deleted documents =>', deleteResult);
+   const deleteResult2 = await collection.deleteMany({ lil_cooljaii: 10000908678 });
+   console.log('Deleted documents =>', deleteResult2);
+   const deleteResult3 = await collection.deleteMany({ student1 : 100788864434});
+   console.log('Deleted documents =>', deleteResult3);*/
+
+>>>>>>> Stashed changes
   return 'done.';
 }
 
