@@ -21,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
+})
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'style.css'));
 })
@@ -103,4 +104,3 @@ async function getGenreFromDB(req, res) {
         console.log(result.genres);
         return result;
     })};
-}
