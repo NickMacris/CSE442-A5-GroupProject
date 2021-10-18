@@ -1,4 +1,10 @@
-button.signin {
+#imsg {
+    postion: relative;
+    color: #e83f3f;
+    font-weight: bold;
+    top: 230px;
+}
+.signin {
     position: absolute;
     width: 168px;
     height: 69px;
@@ -12,7 +18,21 @@ button.signin {
     font-size: 26px;
 }
 
-button.signup {
+input[type=submit].signin {
+    position: absolute;
+    width: 168px;
+    height: 69px;
+    left: 996px;
+    top: 84px;
+    right: 80;
+    background-color: #FF0202;
+    color: black;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 26px;
+}
+
+.signup {
     position: relative;
     width: 168px;
     height: 69px;
