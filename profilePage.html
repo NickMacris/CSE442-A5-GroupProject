@@ -4,13 +4,9 @@
     <link rel="stylesheet" type="text/css" href="styleProfile.css">
 </head>
 <body>
-<button class="sign_out"> SIGN OUT</button>
-<button class="home"> Home</button>
-<button class="find_friend"> Find Friend</button>
-<button class="create_room"> Create Room</button>
-<button class="join_room"> Join Room</button>
-<button class="profile"> Profile</button>
-<button class="help"> Help</button>
+
+
+
 
 <div class="your_movies">
     <h1> Your Movies </h1>
@@ -20,14 +16,15 @@
     <h1> Update Profile </h1>
     <form>
 
-        <div class="dropdown_genre">
-            <button class="dropbtn">Choose Genre</button>
-            <div class="dropdown-content">
-                <a href="#">Horror</a>
-                <a href="#">Not Horror</a>
-                <a href="#">Documentary</a>
-            </div>
-        </div>
+        <label for="genre">Genre</label>
+        <select id="genre" name="genre">
+            <option value="horror">Horror</option>
+            <option value="comedy">Comedy</option>
+            <option value="documentary">Documentary</option>
+        </select>
+
+        <button class="add_genre"> ADD</button>
+        <button class="remove_genre"> REMOVE</button>
 
         <div class="dropdown_time">
             <button class="dropbtn">Choose Time</button>
@@ -59,5 +56,15 @@
         <a href="#">BobbyJoe</a>
     </div>
 </div>
+
+<button class="sign_out"> SIGN OUT</button>
+<button class="home"> Home</button>
+<button class="find_friend"> Find Friend</button>
+<button class="create_room"> Create Room</button>
+<button class="join_room"> Join Room</button>
+<button class="profile"> Profile</button>
+<button class="help"> Help</button>
+
+
 </body>
 </html>
