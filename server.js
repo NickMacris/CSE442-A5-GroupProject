@@ -30,7 +30,7 @@ app.get("/createroom.js", (req, res) => {
 })
 
 app.get('/style.css', (req, res) => {
-    res.sendFile(path.join(__dirname, 'style.css'));
+    res.sendFile(path.join(__dirname, '/logIn/style.css'));
 })
 
 app.get('/profile', (req, res) => {
@@ -46,6 +46,10 @@ app.get('/styleProfile.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'styleProfile.css'));
 })
 
+app.get('/create_account.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/stylesheets/create_account.css'));
+})
+
 //Post request to handle adding genres to database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/add_genre',(req, res) => {
@@ -57,7 +61,7 @@ app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
 
-const client = new MongoClient(urlNick, {keepAlive: 1})
+const nickclient = new MongoClient(urlNick, {keepAlive: 1})
 app.use(bodyParser.urlencoded({
     extended:true
 }));
@@ -117,10 +121,10 @@ app.post('/remove_genre',(req, res) => {
 
 //This function will add the textbox inputs to User1s document for genres
 async function addGenreToDB(req, res) {
-    await client.connect();
+    await nickclient.connect();
     console.log("MongoDB connected");
 
-    const db = client.db('SimpleTest');
+    const db = nickclient.db('SimpleTest');
     const collection = db.collection('documents');
 
     collection.updateOne(
@@ -134,10 +138,10 @@ async function addGenreToDB(req, res) {
 
 //This function will remove the textbox inputs to User1s document for genres
 async function removeGenreFromDB(req, res) {
-    await client.connect();
+    await nickclient.connect();
     console.log("MongoDB connected");
 
-    const db = client.db('SimpleTest');
+    const db = nickclient.db('SimpleTest');
     const collection = db.collection('documents');
 
     collection.updateOne(
@@ -150,10 +154,10 @@ async function removeGenreFromDB(req, res) {
 }
 
 async function getGenreFromDB(req, res) {
-    await client.connect();
+    await nickclient.connect();
     console.log("MongoDB connected");
 
-    const db = client.db('SimpleTest');
+    const db = nickclient.db('SimpleTest');
     const collection = db.collection('documents');
 
     collection.findOne({user:'User1'},{}, function(err, result) {
