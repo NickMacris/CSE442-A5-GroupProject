@@ -5,39 +5,18 @@
     </head>
         <body>
           <a href= "../create-account.html" class="button1">SIGN UP</a><br>
-            <!-- <button class = "signup"> SIGN UP </button> -->
             <div class="sign_in_box">
                 <h1> Sign In</h1>
                 <form>
-                    <input type = "text" name="" placeholder="Username" required>
+                <!-- <form action="/login" method="POST">  -->
+                    <input type = "text" id="username" placeholder="Username" required>
                     <input type = "password" id="psw" name="" placeholder="Password" required><br>
                     <div id="message">
                         <p id="length" class="invalid">Minimum <b>8 characters</b></p>
                     </div>
-                    <script>
-                        var myInput = document.getElementById("psw");
-                        var length = document.getElementById("length");
-                        
-                        myInput.onfocus = function() {
-                          document.getElementById("message").style.display = "block";
-                        }
-                        
-                        myInput.onblur = function() {
-                          document.getElementById("message").style.display = "none";
-                        }
-                        
-                        myInput.onkeyup = function() {
-                        if(myInput.value.length >= 8) {
-                            length.classList.remove("invalid");
-                            length.classList.add("valid");
-                          } else {
-                            length.classList.remove("valid");
-                            length.classList.add("invalid");
-                          }
-                        }
-                        </script>
+                    
                     <a href="#" class="holder">Forgot my password</a><p></p>
-                    <a href="https://google.com" class="button">SIGN IN</a><br>
+                    <a href= # class="button" id = "myButton">SIGN IN</a><br>
                     <a href="#" class="socialf">Connect on Facebook </a><br>
                     <p></p>
                     <a href="#" class="socialg">Connect on Google</a>
@@ -45,3 +24,42 @@
             </div>
         </body>
 </html>
+
+
+<script>
+  document.getElementById("myButton").onclick = function () {
+    var user = document.getElementById("username");
+    var passwd = document.getElementById("psw");
+    if (username.value.localeCompare("User") == 0 && passwd.value.localeCompare("1234") == 0){
+      console.log("Test");;
+        location.href = "https://www.google.com";
+    }
+    else {
+      location.href = "index.html";
+    }
+  };
+</script>
+
+
+<script>
+  var myInput = document.getElementById("psw");
+  var length = document.getElementById("length");
+  
+  myInput.onfocus = function() {
+    document.getElementById("message").style.display = "block";
+  }
+  
+  myInput.onblur = function() {
+    document.getElementById("message").style.display = "none";
+  }
+  
+  myInput.onkeyup = function() {
+  if(myInput.value.length >= 8) {
+      length.classList.remove("invalid");
+      length.classList.add("valid");
+    } else {
+      length.classList.remove("valid");
+      length.classList.add("invalid");
+    }
+  }
+  </script>
