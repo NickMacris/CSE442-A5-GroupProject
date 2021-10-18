@@ -5,8 +5,8 @@ const path = require("path");
 const { MongoClient } = require('mongodb')
 const formidable = require('express-formidable');
 
-const port = process.env.PORT || 3000;
-const dbPass = process.env.DB_PASS_442
+const port = process.env.PORT || 7000;
+const dbPass = process.env.USER_PASS
 const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //require('./simpleWebpage/database');
@@ -23,6 +23,7 @@ app.set('views', './views');
  */
 app.get('/', (req, res) => {
    res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
+    
 })
 
 app.get('/style.css', (req, res) => {
@@ -34,6 +35,7 @@ app.get('/create_account.css', (req, res) => {
 })
 
 app.get('/register', (req, res) => {
+
     res.sendFile(path.join(__dirname, 'create-account.html'));
 })
 
@@ -45,12 +47,22 @@ const client = new MongoClient(url, {keepAlive: 1})
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
+
+
+    sleepnsend(3000, res)
 })
 
 
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
+
+async function sleepnsend(t, res) {
+
+    await new Promise(r => setTimeout(r, t));
+    res.sendFile(path.join(__dirname, 'create-account.html')) ;
+    
+}
 
 /*
  *  This function inserts a username and pass
