@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Created </title>
+</head>
+<body>
+    <link rel="stylesheet" href="cssRoom/roomlook.css">
+    <div class = "logo-container"> 
+        <a class = "logo" href="index.html"> HighFive <span>Club</span></a> <!-- link for the logo-->
+    </div>
+    <div class="uniqueID">
+        <ul class="idnumber  "> Room ID :  </ul>
+        <p id="roomID"> </p>
+        <script type="text/javascript">
+            let roomID = Math.floor(Math.random() * 1000000000);
+            document.getElementById("roomID").innerHTML = roomID;
+        </script>
+    </div> 
+</body>
+</html>
