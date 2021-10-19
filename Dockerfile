@@ -6,6 +6,8 @@ COPY . .
 
 RUN npm install
 RUN npm install express
+RUN npm install express-formidable
+RUN npm install body-parser
 
 
 

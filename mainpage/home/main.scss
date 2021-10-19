@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sansita:ital,wght@1,800&display=swap');
+
+:root{
+    --primary-color : rgba(6, 252, 6, 0.979);
+    --color-red: rgba(255, 0, 0, 0.712);
+}
+
+body{
+    background: #f2f2f2;
+    margin: 1;
+    font-family:'Playfair Display' ;
+}
+
+.navi-bar{
+   display: flex;
+   background: white;
+   padding: 1em;
+    //margin: 0;
+   // position : fixed;
+    z-index : 999;
+    width: 97%;
+   // right:0%;
+   top: 0%;
+   height: 50;
+   
+  
+//dealing with the logo
+    .logo{
+        text-decoration: none;
+        font-weight: bold;
+        color: black;
+        font-size: 1.2em;
+
+        span{
+            color: goldenrod;
+        }
+    }
+    //the words in the bar 
+    .primary-navigation {
+        color:black;
+        display: flex;
+        font-size: 1.3em;
+        margin-right: 300 px;
+        
+        &:hover{
+            font-weight:bold;
+        }
+
+    }
+}
+
+//spread across the top 
+.container{
+    font-family: 'Sansita';
+    display: flex;
+    place-content: space-around start;
+}
+
+
+//styling the links 
+a{
+    
+    text-decoration: none;
+    color: black;
+}
+
+//controls what to watch section 
+.left-col{
+    .watch-what{
+        //text-transform: uppercase;
+        font-weight: bold;
+        color :black;
+       // letter-spacing: .3em;
+    }
+
+    .watchlist{
+        width:100%;
+        padding: -.1em;
+        margin-top: 0;
+        margin-bottom: .1em;
+        border-radius: .1em;
+        border: 1px;
+    }
+}
+
+//controls what to More to Watch 
+.left-col1{
+    .watch-more-movies{
+        font-weight: bold;
+        color: black;
+    }
+    
+    .select-perfect{
+        width:100%;
+        padding: -.1em;
+        margin-top: 0;
+        margin-bottom: .1em;
+        border-radius: .1em;
+        border: 1px;
+    }
+}
+
+.left-col2{
+    .explore-stream{
+        font-weight: bold;
+        color: black;
+    }
+    .select-perfect{
+        width:100%;
+        padding: -.1em;
+        margin-top: 0;
+        margin-bottom: .1em;
+        border-radius: .1em;
+        border: 1px;
+    }
+
+    .secondary-Navigation{
+        display: flex;
+        place-content: space-between;
+
+    }
+
+    .netflix{
+        background-color: var(--color-red);
+        color :black;
+        font-weight: bold;
+        font-size: 1.3em;
+        border: none;
+        margin-bottom: 5em;
+        border-radius: 5em;
+        display: inline-block;
+        padding: .5em 2em;
+        width: unset;
+        cursor: pointer;
+    }
+
+    .hulu{
+        background-color: var(--primary-color);
+        color :black;
+        font-weight: bold;
+        font-size: 1.3em;
+        border: none;
+        margin-bottom: 5em;
+        border-radius: 5em;
+        display: inline-block;
+        padding: .5em 2em;
+        width: unset;
+        cursor: pointer;
+    }
+}
+
+
