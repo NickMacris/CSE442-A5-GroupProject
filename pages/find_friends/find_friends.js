@@ -1,10 +1,10 @@
 window.onload = function(){
-
+var search_results = document.getElementById("search_results");
   
   var found = []
 //document.getElementById("friend_button").onclick = function() {find_User()};
 
-function find_User() {
+function search_pressed() {
   
   // Send query to db
     var search = document.getElementById("user_Search");

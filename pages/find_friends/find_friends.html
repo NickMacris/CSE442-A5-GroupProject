@@ -15,19 +15,27 @@
             <!-- Left Side bar -->
             <div class="jumbotron side-bar-jumbotron" name = "User search">
                 <h1 class="display-4">User Search</h1>
+                <!--Post Request
                 <form id="find_user" action="find_user" method="post">
-                    <input type = "text" id="user_name" placeholder="Username">
+                    <input type = "text" id="user_name" name="user_name" placeholder="Username">
                     <p id="Search_popup"></p>
                     <button id="friend_button" class="btn btn-primary btn-md"> Find Friend! </button> 
                 </form>
+                -->
+                <!-- Onclick -->
+                <input type = "text" id="user_name" name="user_name" placeholder="Username">
+                <p id="Search_popup"></p>
+                <button id="friend_button" onclick = "search_pressed()" class="btn btn-primary btn-md"> Find Friend! </button> 
             </div>
 
             <!-- Search results -->
             <div class="Add_friends">
                 <h1> Search Results</h1>
+                
                 <div id = "search_results" data-bs-spy="scroll" class="scrollspy-example" tabindex="0">
                     <p> Enter your friends username and add your friend !!</p>
                 </div>
+                
             </div>
 
             <!-- Right Side bar(buttons) -->
