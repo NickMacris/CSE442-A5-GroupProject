@@ -29,6 +29,10 @@ app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
 
+app.get("/Homepage", (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+})
+
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/logIn/style.css'));
 })
@@ -48,6 +52,10 @@ app.get('/styleProfile.css', (req, res) => {
 
 app.get('/create_account.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/stylesheets/create_account.css'));
+})
+
+app.get('/css/main.css', (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
 })
 
 //Post request to handle adding genres to database
