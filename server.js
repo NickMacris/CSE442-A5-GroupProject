@@ -3,8 +3,9 @@ const app = express();
 const path = require("path");
 const { MongoClient } = require('mongodb')
 const formidable = require('express-formidable');
+const { WSATYPE_NOT_FOUND } = require('constants');
 const bodyParser = require('body-parser')
-
+const exphbs = require('express-handlebars');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS
 const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
@@ -14,11 +15,24 @@ const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.ne
 let dbPassNick = process.env.DB_PASS_442;
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
+//Imani Database init
+const imani_dbPass = dbPassNick;
+const imani_uri = 'mongodb+srv://CSE442:' + imani_dbPass + '@cluster0.k7tia.mongodb.net/test';
+const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
+//server variables
+var send_back="No Users Found";
 
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
 
 app.set('views', './views');
+
+//Handlebars initialization
+app.engine('hbs', exphbs({
+   defaultLayout: 'find_friends_page',
+   extname: '.hbs'
+   }));
+app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
    res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
@@ -43,6 +57,7 @@ app.get("/mainpage/home/index.html", (req, res) => {
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/logIn/style.css'));
 })
+
 
 app.get('/profile', (req, res) => {
     res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
@@ -80,6 +95,14 @@ app.get('/css/main.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
 })
 
+app.get('/find_friends', (req, res) => {
+   res.render('find_friends' ,{
+       Search_Results: {
+             users:"Enter a friends username!"
+         }
+     });
+});
+
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
@@ -100,7 +123,41 @@ app.post('/register', (req, res) => {
 
 
     sleepnsend(3000, res)
-})
+});
+
+//Get find_friend search request, check it in database
+app.post('/find_friends/find_user',(req, res) => {
+   var search = req.body.input_text;
+   console.log("Requesting "+search);
+   //access database
+   find_friend(search,res);
+   console.log("Should have sent back"+search);
+});
+
+//database helper for  'find_user' post
+async function find_friend(name,res) {
+   await imani_client.connect();
+   console.log("MongoDB connected");
+   console.log(name);
+   const db = imani_client.db("UserInfo");
+   const global_users = db.collection('username');//Global Users
+   // Users are stored as [{username: "Username"},{password,"pass"}]
+   global_users.findOne({username:name},{}, function(err, result) {
+       if (err) throw err;
+       console.log(result);
+       if(result != null){
+           send_back = name; 
+       }
+       else{
+           send_back = "No Users Found";
+       }
+       res.render('find_friends' ,{
+           Search_Results: {
+               users:send_back
+           }
+       });     
+   }); 
+}
 
 async function sleepnsend(t, res) {
 
