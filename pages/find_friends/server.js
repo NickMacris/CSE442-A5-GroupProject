@@ -15,11 +15,9 @@ console.log("Page Running");
 //Database init
 const { MongoClient } = require("mongodb");
 const { WSATYPE_NOT_FOUND } = require('constants');
-const dbPass = process.env.DB_PASS_442;
-const uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
-const client = new MongoClient(uri,{keepAlive: 1});
-const dbName = 'UserInfo';
-
+const imani_dbPass = process.env.DB_PASS_442;
+const imani_uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
+const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //server variables
 var send_back="No Users Found";
 
@@ -30,7 +28,7 @@ app.engine('hbs', exphbs({
     }));
 app.set('view engine', 'hbs');
 
-app.get('/', (req, res) => {
+app.get('/find_friends', (req, res) => {
     res.render('find_friends' ,{
         Search_Results: {
               users:""
@@ -43,7 +41,7 @@ app.listen(Port,()=> {
   console.log(`Server started on ${Port}`)});
   
 //post functions 
-app.post('/find_user',(req, res) => {
+app.post('/find_friends/find_user',(req, res) => {
     var search = req.fields.input_text;
     console.log("Requesting "+search);
     //access database
@@ -58,10 +56,10 @@ app.post('/find_user',(req, res) => {
  
     
 async function find_friend(name,res) {
-    await client.connect();
+    await imani_client.connect();
     console.log("MongoDB connected");
     console.log(name);
-    const db = client.db(dbName);
+    const db = imani_client.db("UserInfo");
     const global_users = db.collection('username');//Global Users
     // Users are stored as [{username: "Username"},{password,"pass"}]
     global_users.findOne({username:name},{}, function(err, result) {
