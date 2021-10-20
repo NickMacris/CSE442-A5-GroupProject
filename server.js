@@ -32,8 +32,11 @@ app.get('/index.html', (req, res) => {
 app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
-
 app.get("/Homepage", (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+})
+
+app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
 
@@ -50,14 +53,21 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'create-account.html'));
 })
 
-app.get('/createRoom.html', (req, res) => {
+app.get('/mainpage/creatingroom/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+})
+
+app.get('/mainpage/creatingroom/createRoom.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
 })
 
-app.get('/cssRoom/roomlook.css', (req, res) => {
+app.get('/mainpage/creatingroom/cssRoom/roomlook.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/cssRoom/roomlook.css'));
 })
 
+app.get('/mainpage/creatingroom/css/main.css', (req, res) => {
+    res.sendFile(path.join(__dirname, 'mainpage/home/main.css'))
+})
 app.get('/styleProfile.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'styleProfile.css'));
 })
