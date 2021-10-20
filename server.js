@@ -27,7 +27,7 @@ app.use('/css', express.static(__dirname + 'public/css'));
 
 app.set('views', './views');
 
-//Handlebars init.
+//Handlebars initialization
 app.engine('hbs', exphbs({
    defaultLayout: 'find_friends_page',
    extname: '.hbs'
