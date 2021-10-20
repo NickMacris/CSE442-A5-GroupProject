@@ -17,7 +17,7 @@ let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.ne
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
-const imani_uri = 'mongodb+srv://CSE442:' +  imani_dbPass + '@cluster0.k7tia.mongodb.net/test';
+const imani_uri = 'mongodb+srv://CSE442:' + imani_dbPass + '@cluster0.k7tia.mongodb.net/test';
 const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //server variables
 var send_back="No Users Found";
