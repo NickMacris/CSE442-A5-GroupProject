@@ -1,0 +1,139 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sansita:ital,wght@1,800&display=swap");
+:root {
+  --primary-color: rgba(6, 252, 6, 0.979);
+  --color-red: rgba(255, 0, 0, 0.712);
+}
+
+body {
+  background: #f2f2f2;
+  margin: 1;
+  font-family: 'Playfair Display';
+}
+
+.navi-bar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  background: white;
+  padding: 1em;
+  z-index: 999;
+  width: 97%;
+  top: 0%;
+  height: 50;
+}
+
+.navi-bar .logo {
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+  font-size: 1.2em;
+}
+
+.navi-bar .logo span {
+  color: goldenrod;
+}
+
+.navi-bar .primary-navigation {
+  color: black;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  font-size: 1.3em;
+  margin-right: 300 px;
+}
+
+.navi-bar .primary-navigation:hover {
+  font-weight: bold;
+}
+
+.container {
+  font-family: 'Sansita';
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  place-content: space-around start;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.left-col .watch-what {
+  font-weight: bold;
+  color: black;
+}
+
+.left-col .watchlist {
+  width: 100%;
+  padding: -.1em;
+  margin-top: 0;
+  margin-bottom: .1em;
+  border-radius: .1em;
+  border: 1px;
+}
+
+.left-col1 .watch-more-movies {
+  font-weight: bold;
+  color: black;
+}
+
+.left-col1 .select-perfect {
+  width: 100%;
+  padding: -.1em;
+  margin-top: 0;
+  margin-bottom: .1em;
+  border-radius: .1em;
+  border: 1px;
+}
+
+.left-col2 .explore-stream {
+  font-weight: bold;
+  color: black;
+}
+
+.left-col2 .select-perfect {
+  width: 100%;
+  padding: -.1em;
+  margin-top: 0;
+  margin-bottom: .1em;
+  border-radius: .1em;
+  border: 1px;
+}
+
+.left-col2 .secondary-Navigation {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  place-content: space-between;
+}
+
+.left-col2 .netflix {
+  background-color: var(--color-red);
+  color: black;
+  font-weight: bold;
+  font-size: 1.3em;
+  border: none;
+  margin-bottom: 5em;
+  border-radius: 5em;
+  display: inline-block;
+  padding: .5em 2em;
+  width: unset;
+  cursor: pointer;
+}
+
+.left-col2 .hulu {
+  background-color: var(--primary-color);
+  color: black;
+  font-weight: bold;
+  font-size: 1.3em;
+  border: none;
+  margin-bottom: 5em;
+  border-radius: 5em;
+  display: inline-block;
+  padding: .5em 2em;
+  width: unset;
+  cursor: pointer;
+}
+/*# sourceMappingURL=main.css.map */
