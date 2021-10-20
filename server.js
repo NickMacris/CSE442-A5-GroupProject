@@ -70,13 +70,6 @@ app.get('/css/main.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
 })
 
-//Post request to handle adding genres to database
-//The redirect was required to prevent the page from hanging up after pressing button
-app.post('/add_genre',(req, res) => {
-    addGenreToDB(req,res);
-    res.redirect("/profile");
-});
-
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
@@ -131,6 +124,13 @@ async function insert(req, res) {
 
 }
 
+
+//Post request to handle adding genres to database
+//The redirect was required to prevent the page from hanging up after pressing button
+app.post('/add_genre',(req, res) => {
+    addGenreToDB(req,res);
+    res.redirect("/profile");
+});
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
