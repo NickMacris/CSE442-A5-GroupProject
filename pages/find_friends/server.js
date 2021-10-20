@@ -2,12 +2,12 @@ const express = require('express');
 const formidable = require('express-formidable');
 const exphbs = require('express-handlebars');
 const fs = require('fs');
-
+const path = require('path');
 
 const app = express();
 app.use(formidable());
 
-const path = require('path');
+
 const Port  = process.env.Port || 3000
 
 console.log("Page Running");
