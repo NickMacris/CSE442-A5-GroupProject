@@ -25,6 +25,10 @@ app.get('/', (req, res) => {
     
 })
 
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/index.html'));
+})
+
 app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
@@ -44,6 +48,14 @@ app.get('/profile', (req, res) => {
 app.get('/register', (req, res) => {
 
     res.sendFile(path.join(__dirname, 'create-account.html'));
+})
+
+app.get('/createRoom.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
+})
+
+app.get('/cssRoom/roomlook.css', (req, res) => {
+    res.sendFile(path.join(__dirname, '/cssRoom/roomlook.css'));
 })
 
 app.get('/styleProfile.css', (req, res) => {
