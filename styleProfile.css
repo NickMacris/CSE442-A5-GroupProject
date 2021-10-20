@@ -1,0 +1,150 @@
+
+.update_profile_box{
+    width : 500px;
+    height: 600px;
+    background:	#D3D3D3;
+    color: #fff;
+    top: 50%;
+    left: 25%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.your_movies{
+    width : 400px;
+    height: 500px;
+    background:	#D3D3D3;
+    color: #fff;
+    top: 50%;
+    left: 65%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+h1 {
+    margin-left: 10%;
+    /* margin: 5px; */
+    padding: 0 0 10px;
+    /* text-align: left; */
+    font-size: 30px;
+    color: black;
+}
+
+button[class = sign_out] {
+    position:absolute;
+    left: 90%;
+    top: 5%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}
+
+button[class = home] {
+    position:absolute;
+    left: 85%;
+    top: 20%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+
+button[class = find_friend] {
+    position:absolute;
+    left: 85%;
+    top: 30%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+
+button[class = create_room] {
+    position:absolute;
+    left: 85%;
+    top: 40%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+button[class = join_room] {
+    position:absolute;
+    left: 85%;
+    top: 50%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+button[class = profile] {
+    position:absolute;
+    left: 85%;
+    top: 60%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+button[class = help] {
+    position:absolute;
+    left: 85%;
+    top: 70%;
+    font-size: 25px;
+    background: turquoise;
+    font-weight: bold;
+    width: 200px;
+    height: 80px;
+    text-align: center;
+}
+
+button[class = update] {
+    position:absolute;
+    left: 35%;
+    top: 60%;
+    font-size: 25px;
+    background: limegreen;
+    font-weight: bold;
+}
+
+
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+/* Genre Add and Remove Buttons */
+button[class = add_genre] {
+    position:absolute;
+    left: 55%;
+    top: 15%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}
+button[class = remove_genre] {
+    position:absolute;
+    left: 70%;
+    top: 15%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}

@@ -1,0 +1,110 @@
+body{
+    padding: 0;
+    background: url(Background.jpg);
+    background-size: cover;
+    background-position: center;
+    font-family: sans-serif;
+    padding: 70px 30px;
+}
+
+.sign_in_box{
+    width : 500px;
+    height: 600px;
+    background:	#D3D3D3;
+    color: #fff;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+}
+
+h1 {
+    margin-left: 10%;
+    /* margin: 5px; */
+    padding: 0 0 10px;
+    /* text-align: left; */
+    font-size: 30px;
+    color: black;
+}
+
+.sign_in_box input {
+    text-align: center; 
+    margin-left: 25%;
+    width: 50%;
+    margin-bottom: 40px;
+}
+
+.sign_in_box input[type = "text"], input[type="password"]
+{
+    border:none;
+    border-bottom: 1px solid #fff;
+    outline:none;
+    height: 40px;
+    color: black;
+    font-size: 16px;
+}
+
+.sign_in_box a.holder{
+    margin-left: 25%;
+    text-decoration: none;
+    font-size: 15px;
+    line-height: 0px;
+    color: blue;
+}
+
+.sign_in_box a.holder:hover 
+{
+    text-decoration: underline;
+}
+
+.sign_in_box a.button
+{
+    margin-left: 40%;
+    text-decoration: none;
+    border: 1px solid black;
+    line-height: 150px;
+    background: red;
+    color: black;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.sign_in_box a.button:hover
+{
+    cursor: pointer;
+    background: #ffc107;
+}
+
+button[class = "signup"] {
+    position:absolute;
+    left: 90%;
+    top: 5%;
+    font-size: 25px;
+    background: red;
+    font-weight: bold;
+}
+
+.sign_in_box a.socialf
+{
+    margin-left: 25%;
+    text-decoration: none;
+    border: 1px solid black;
+    line-height: 15px;
+    background: #3b5998;
+    color: white;
+    font-size: 23px;
+    font-family: Klavika;
+}
+
+.sign_in_box a.socialg
+{
+    margin-left: 25%;
+    text-decoration: none;
+    border: 1px solid black;
+    line-height: 15px;
+    background: #0F9D58;
+    color: black;
+    font-size: 23px;
+    font-family: Product Sans;
+}
