@@ -9,31 +9,25 @@
     <link rel="stylesheet" type ="text/css" href="find_friends.css">
     <title>Find Friends</title>
 </head>
-    <body>
-        <div class = "page_structure">
+<body>
+    <div class="page_structure">
 
-            <!-- Left Side bar -->
-            <div class="jumbotron side-bar-jumbotron" name = "User_search">
+                <!-- Left Side bar -->
+            <div class="jumbotron side-bar-jumbotron" id= "searchbar" name = "User_Search">
                 <h1 class="display-4">User Search</h1>
-                <!--Post Request
-                <form id="find_user" action="find_user" method="post">
-                    <input type = "text" id="user_name" name="user_name" placeholder="Username">
+                <!--Post Request -->
+                <form action="find_user" method="post">
+                    <input type = "text" name="input_text" placeholder="Username">
                     <p id="Search_popup"></p>
                     <button id="friend_button" class="btn btn-primary btn-md"> Find Friend! </button> 
-                </form>
-                -->
-                <!-- Onclick -->
-                <input type = "text" id="user_name" name="user_name" placeholder="Username">
-                <p id="Search_popup"></p>
-                <button id="friend_button" onclick = "search_pressed()" class="btn btn-primary btn-md"> Find Friend! </button> 
             </div>
 
             <!-- Search results -->
-            <div class="Add_friends">
+            <div class="Search_Results" name="Add_Friends">
                 <h1> Search Results</h1>
                 
                 <div id = "search_results" data-bs-spy="scroll" class="scrollspy-example" tabindex="0">
-                    <p> Enter your friends username and add your friend !!</p>
+                    <p> {{Search_Results.users}}</p>
                 </div>
                 
             </div>
@@ -52,10 +46,5 @@
                 <div class = "Help_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Help</a></div>
             </div>
         </div>
-        
-        <script src="find_friends.js"></script>
-    </body>
+</body>
 </html>
-
-
-       

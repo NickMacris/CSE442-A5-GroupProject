@@ -1,61 +1,63 @@
 const express = require('express');
+const formidable = require('express-formidable');
+const exphbs = require('express-handlebars');
 const fs = require('fs');
+
+
 const app = express();
+app.use(formidable());
+
 const path = require('path');
 const Port  = process.env.Port || 3000
 
 console.log("Page Running");
 
-const formidable = require('express-formidable');
-app.use(formidable());
-
-var found;
-
-  //database stuff
+//Database init
 const { MongoClient } = require("mongodb");
-// Connection URL : mongodb+srv://CSE442:<password>@cluster0.k7tia.mongodb.net/test
+const { WSATYPE_NOT_FOUND } = require('constants');
 const dbPass = process.env.DB_PASS_442;
 const uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
 const client = new MongoClient(uri,{keepAlive: 1});
-// Database Name
 const dbName = 'UserInfo';
 
-app.get("/find_friends.js", (req, res) => {
-    res.sendFile(path.join(__dirname, '/find_friends.js'))
-});
-app.get("/find_friends.css", (req, res) => {
-    res.sendFile(path.join(__dirname, '/find_friends.css'))
-});
-app.get("/find_friends.html", (req, res) => {
-    res.sendFile(path.join(__dirname, '/find_friends.html'))
-});
-app.listen(Port,()=> {
-    console.log(`Server started on ${Port}`)});
+//server variables
+var send_back="No Users Found";
 
+//Handlebars init.
+app.engine('hbs', exphbs({
+    defaultLayout: 'find_friends_page',
+    extname: '.hbs'
+    }));
+app.set('view engine', 'hbs');
+
+app.get('/', (req, res) => {
+    res.render('find_friends' ,{
+        Search_Results: {
+              users:""
+          }
+      });
+});
+
+//run server on port
+app.listen(Port,()=> {
+  console.log(`Server started on ${Port}`)});
+  
+//post functions 
 app.post('/find_user',(req, res) => {
-    var search = req.fields.user_name;
-    if (search == {}){
-        console.log("Empty");
-        //document.getElementById("Search_popup").innerHTML = "Enter a username";
-        found = [];
-    }
-    else{
-        //document.getElementById("Search_popup").innerHTML = "";
-        // send user_search to the server
-        console.log("Sending");
-        if (find_friend(search, res)){
-            console.log("Got it!");
-            
-            //res.sendFile()
+    var search = req.fields.input_text;
+    console.log("Requesting "+search);
+    //access database
+    find_friend(search,res);
+    /*res.render('find_friends' ,{
+        Search_Results: {
+            users:send_back
         }
-        else {
-            console.log("Don't Got it");
-        }
-    }
+    });*/
+    console.log("Should have sent back"+search);
 });
  
     
-async function find_friend(name, res) {
+async function find_friend(name,res) {
     await client.connect();
     console.log("MongoDB connected");
     console.log(name);
@@ -65,10 +67,16 @@ async function find_friend(name, res) {
     global_users.findOne({username:name},{}, function(err, result) {
         if (err) throw err;
         console.log(result);
-        if (result != null){
-            return true;
+        if(result != null){
+            send_back = name; 
         }
-        return false;
+        else{
+            send_back = "No Users Found";
+        }
+        res.render('find_friends' ,{
+            Search_Results: {
+                users:send_back
+            }
+        });     
     }); 
-    
 }
