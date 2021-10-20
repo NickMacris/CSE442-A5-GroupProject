@@ -98,7 +98,7 @@ app.get('/css/main.css', (req, res) => {
 app.get('/find_friends', (req, res) => {
    res.render('find_friends' ,{
        Search_Results: {
-             users:""
+             users:"Enter a friends username!"
          }
      });
 });
