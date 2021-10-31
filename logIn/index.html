@@ -5,7 +5,7 @@
     </head>
         <body>
           <div class="ellipse">
-           <a class = "logo" href="#">HighFive <span>Club</span></a>
+           <a class = "logo" href="/">HighFive <span>Club</span></a>
           </div>
              <a href= "/register" class="button1">SIGN UP</a><br> 
             <div class="sign_in_box">
@@ -23,6 +23,7 @@
                     <a href="#" class="socialf">Connect on Facebook </a><br>
                     <p></p>
                     <a href="#" class="socialg">Connect on Google</a>
+                    
                 </form>
             </div>
         </body>
@@ -34,13 +35,23 @@
     var user = document.getElementById("username");
     var passwd = document.getElementById("psw");
     if (username.value.localeCompare("Username") == 0 && passwd.value.localeCompare("Password1") == 0){
-    //  location.href = "../mainpage/home/index.html";
             location.href = "/Homepage"
     }
     else {
       location.href = '/';
     }
   };
+</script>
+
+<script>
+var input = document.getElementById("psw");
+input.addEventListener("keyup", function(event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("myButton").click();
+  }
+});
 </script>
 
 <script>
