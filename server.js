@@ -131,7 +131,9 @@ app.use(bodyParser.urlencoded({
  * POST Requests: submitting a form usually is
  *      sent as a post request
  */
-const client = new MongoClient(url, {keepAlive: 1})  
+const client = new MongoClient(url, {keepAlive: 1})
+getGenreFromDB();
+getFavoriteFromDB();
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
