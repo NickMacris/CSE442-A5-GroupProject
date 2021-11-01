@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+<body>
+    <link rel="stylesheet" href="css/main.css">
+
+    <div class="navi-bar">
+        <div class="container">
+            <a class = "logo" href="#">HighFive <span>Club</span></a> <!-- link for the logo-->
+            <nav>
+                <div class="primary-navigation">
+                    <ul class="Username"><a href="#"> Hello Username!</a></ul>
+                    <ul class="current">Home</ul>
+                    <ul class="friends-list"><a href="https://cse442.herokuapp.com/find_friends">Friends List</a></ul> <!-- link to the Friends Page-->
+                    <ul class="create-room"><a href="../mainpage/creatingroom/createRoom.html">Create A Room</a></ul> <!-- link to the create room -->
+                    <ul class="profile"><a href="#">Profile</a></ul>
+                    <ul class="sign out"><a href="../logIn/index.html">SIGN OUT</a></ul>
+                </div>
+            </nav>
+        </div>
+        </div>
+        <!-- Section 1 right under Navigation-->
+        <section class="hero">
+            <div class="container">
+                <div class="left-col">
+                    <h1 class="watch-what">What to Watch</h1>
+                    <p class="watchlist">from your watchlist><p>
+                    <ul id="myList"></ul>
+                    <!-- how to add images that continously change from an API-->
+                </div>
+            </div>
+        </section>
+        <!--Section 2 More to watch-->
+        <section class="watch-more">
+            <div class="container">
+                <div class="left-col1">
+                    <h1 class="watch-more-movies">More to Watch</h1>
+                    <p class="select-perfect">Let's help you select the perfect movie to watch</p>
+                <!--how to add images that continously change the API-->
+                </div>
+
+            </div>
+        </section>
+        <!--Section 3 Exploring-->
+        <section class="streaming">
+            <div class="container">
+                <div class="left-col2">
+                    <h1 class="explore-stream">Explore What's Streaming</h1>
+                    <p class="view-stream">View movies on your streaming platforms></p>
+                    <nav>
+                        <ul class="secondary-Navigation">
+                            <ul class="netflix">Netflix</ul>
+                            <ul class="hulu">Hulu</ul>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </section>
+        </div>
+    </div>
+</body>
+
+<form method="post">
+    <input type="text" name="addFavorite" placeholder="Type Favorite movie to add here">
+
+    <button formaction="/add_favorite" type="submit" name="submit">
+        Add Favorite movie to page
+    </button>
+</form>
+
+<h2>Remove Genre.</h2>
+<form method="post">
+    <input type="text" name="removeFavorite" placeholder="Type Favorite movie to remove here">
+
+    <button formaction="/remove_favorite" type="submit" name="submit">
+        Remove favorite movie from page
+    </button>
+</form>
+
+<script>
+    //let data = ['Ram', 'Shyam', 'Sita', 'Gita' ];
+    let data = JSON.parse(`{{{responseObject}}}`);
+
+    let list = document.getElementById("myList");
+
+    data.forEach((item)=>{
+        let li = document.createElement("li");
+        li.innerText = item;
+        list.appendChild(li);
+    })
+</script>
+</html>
+
