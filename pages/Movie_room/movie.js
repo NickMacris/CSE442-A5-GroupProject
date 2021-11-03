@@ -14,16 +14,15 @@ $(function () {
     }
     var connection = new WebSocket('ws://127.0.0.1:1337');
     
-    connection.onopen = function () {
-      // Greet User
-      booth.html($('<p>',
-          {text: 'Welcome !! Voting will begin when all users enter room.'}
-          ));
-          //loop through chat history, and 
-          chat_history.html($('<p>',
-          {text: 'Chatting.'}
-          ));
-
+    connection.onopen = 
+    function () {
+        // Greet User
+        booth.html(
+            $('<p>',{text: 'Welcome !! Voting will begin when all users enter room.'}));
+            //loop through chat history, and 
+        chat_history.html(
+            $('<p>', {text: 'Chatting.'}));
+    };
   
     connection.onerror = function (error) {
       // an error occurred when sending/receiving data
@@ -34,11 +33,17 @@ $(function () {
       // from server is json)
       try {
         var json = JSON.parse(message.data);
-      } catch (e) {
+      } 
+      catch (e) {
         console.log('This doesn\'t look like a valid JSON: ',
             message.data);
         return;
       }
       // handle incoming message
+      if (json.type === 'movie'){
+          var movie_name = json.data[0];
+        booth.html(
+            $('<p>',{text: movie_name}));
+      }
     };
-  });
+});
