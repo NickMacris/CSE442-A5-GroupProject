@@ -49,7 +49,7 @@ app.get("/createroom.js", (req, res) => {
 app.get("/Homepage", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
-app.post('/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
+app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
 
 
@@ -98,11 +98,13 @@ app.get('/create_account.css', (req, res) => {
 })
 
 app.get('/css/main.css.map', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/main.css.map'))
+    res.sendFile(path.join(__dirname, '/css/main.css.map'))
 })
+app.get('/css/main.scss', (req, res) => {
+    res.sendFile(path.join(__dirname, '/css/main.scss'))})
 
 app.get('/css/main.css', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
+    res.sendFile(path.join(__dirname, '/css/main.css'))
 })
 
 app.get('/find_friends', (req, res) => {
