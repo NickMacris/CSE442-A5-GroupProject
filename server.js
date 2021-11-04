@@ -6,7 +6,7 @@ const formidable = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
-const port = process.env.PORT || 7000;
+const port = process.env.PORT || 3000;
 const dbPass = process.env.USER_PASS
 const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 //require('./simpleWebpage/database');
@@ -49,6 +49,12 @@ app.get("/createroom.js", (req, res) => {
 app.get("/Homepage", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
+app.post('/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
+    res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
+
+
+app.get('/movieViews.js',(req,res)=>{
+    res.sendFile(path.join(__dirname, '/movieViews.js'));})
 
 app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
@@ -89,6 +95,10 @@ app.get('/styleProfile.css', (req, res) => {
 
 app.get('/create_account.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/stylesheets/create_account.css'));
+})
+
+app.get('/css/main.css.map', (req, res) => {
+    res.sendFile(path.join(__dirname, '/mainpage/home/main.css.map'))
 })
 
 app.get('/css/main.css', (req, res) => {

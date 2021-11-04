@@ -13,19 +13,19 @@ body{
 }
 
 .navi-bar{
-   display: flex;
-   background: white;
-   padding: 1em;
+    display: flex;
+    background: white;
+    padding: 1em;
     //margin: 0;
-   // position : fixed;
+    // position : fixed;
     z-index : 999;
     width: 97%;
-   // right:0%;
-   top: 0%;
-   height: 50;
-   
-  
-//dealing with the logo
+    // right:0%;
+    top: 0%;
+    height: 50;
+
+
+    //dealing with the logo
     .logo{
         text-decoration: none;
         font-weight: bold;
@@ -36,21 +36,22 @@ body{
             color: goldenrod;
         }
     }
-    //the words in the bar 
+    //the words in the bar
     .primary-navigation {
         color:black;
         display: flex;
         font-size: 1.3em;
         margin-right: 300 px;
-        
+
         &:hover{
             font-weight:bold;
         }
 
+
     }
 }
 
-//spread across the top 
+//spread across the top
 .container{
     font-family: 'Sansita';
     display: flex;
@@ -58,20 +59,22 @@ body{
 }
 
 
-//styling the links 
+//styling the links
+
+
 a{
-    
+
     text-decoration: none;
     color: black;
 }
 
-//controls what to watch section 
+//controls what to watch section
 .left-col{
     .watch-what{
         //text-transform: uppercase;
         font-weight: bold;
         color :black;
-       // letter-spacing: .3em;
+        // letter-spacing: .3em;
     }
 
     .watchlist{
@@ -84,13 +87,13 @@ a{
     }
 }
 
-//controls what to More to Watch 
+//controls what to More to Watch
 .left-col1{
     .watch-more-movies{
         font-weight: bold;
         color: black;
     }
-    
+
     .select-perfect{
         width:100%;
         padding: -.1em;
@@ -100,7 +103,7 @@ a{
         border: 1px;
     }
 }
-
+/*
 .left-col2{
     .explore-stream{
         font-weight: bold;
@@ -148,6 +151,93 @@ a{
         width: unset;
         cursor: pointer;
     }
+
+}*/
+// CSS Design for the Streaming movies
+
+main{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
+.movie{
+    width:300px;
+    margin : 1rem;
+    border-radius: 3px;
+    box-shadow: 0.2px 4px 5px rgba(0,0,0,0.1);
+    background-color: var (blueviolet);
+    position: relative;
+    overflow: hidden;
+}
 
+.movie img{
+    width: 100%;
+}
+
+.movie-info{
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 1rem;
+    letter-spacing: 0.5px;
+}
+
+.overview{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(207, 252, 102);
+    padding: 1rem;
+    max-height: 100%;
+    transform: translateY(101%);
+    transition: transform 0.3s ease-in;
+}
+
+.movie:hover .overview{
+    transform : translateY(0)
+}
+
+//CSS for Upcoming Movies
+.main2
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.movie_up{
+    width:300px;
+    margin : 1rem;
+    border-radius: 3px;
+    box-shadow: 0.2px 4px 5px rgba(0,0,0,0.1);
+    background-color: var (blueviolet);
+    position: relative;
+    overflow: hidden;
+}
+.movie_up img{
+    width: 100%;
+}
+.movie-info_up{
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 1rem;
+    letter-spacing: 0.5px;
+}
+.overview_up{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(102, 252, 219);
+    padding: 1rem;
+    max-height: 100%;
+    transform: translateY(101%);
+    transition: transform 0.3s ease-in;
+}
+.movie_up:hover .overview_up{
+    transform : translateY(0)
+}
