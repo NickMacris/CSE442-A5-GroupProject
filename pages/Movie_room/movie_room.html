@@ -8,8 +8,9 @@
     <body>
         
 <!-- Voting Action-->
-        <div class="voting_booth" id = "voting_booth">
-            <p>Vote here</p>
+        <div class="voting_booth" >
+            <p >Vote here</p>
+            <pid id = "voting_booth"></pid>
             <img id = "id_from_database" src="#" alt="Movie Description">
             <button onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
             <button onclick = "vote_no()"class="voting_buttons vote_no">No</button>
@@ -17,7 +18,8 @@
 
 <!-- Chatting Action-->
         <div class=chat>
-            <div class="chat_booth" id = "chat_history">
+            <div class="chat_booth" >
+                <pid id = "chat_history"> </pid>
                 <p>Chat here</p>
                 
             </div>
@@ -52,7 +54,7 @@
             </a>    
         </div>
         <script src="https://www.w3schools.com/lib/w3.js"></script>
-        <script> src = "movie.js"</script>
+        <script src = "movie.js"></script>
     </body>
 
 </html>
