@@ -1,19 +1,10 @@
     var chat = document.getElementById('input_chat');
     var chat_history = document.getElementById('chat_history');
     var booth = document.getElementById('voting_booth');
-
-    function vote_yes(){
-
-    }
-
-    function vote_no(){
-      console.log('Vote Recieved')
-    }
-
-    function send_chat(){
-      console.log('Sending Message');
-    }
-
+    var current_movie = "";
+    var movie_img_url = "";
+    var movie_year = "";
+    var movie_genre = "";
 
 
 //Web socket stuff
@@ -51,8 +42,13 @@
       }
       // handle incoming message
       if (json.type === 'movie'){
-          var movie_name = json.data[0];
-        booth.innerHTML = movie_name;
+          var movie_name = json.data['movie_name'];
+          console.log("Voting on movie "+ json.data);
+          current_movie = movie_name;
+          var genre = json.data['genre'];
+          var year = json.data['genre'];
+          var img_url = json.data['genre'];
+          booth.innerHTML = movie_name +'<br>'+genre+'<br>'+year+'<br>'+img_url+'<br>';
       }
       if (json.type === 'chat_history'){
         for(chat in json.data){
@@ -61,4 +57,22 @@
         }
         
       }
+    }
+
+    function vote_yes(){
+      console.log('Vote Recieved');
+      connection.sendUTF(
+        JSON.stringify({type:'vote',data:[current_movie,0]})
+      );
+    }
+
+    function vote_no(){
+      console.log('Vote Recieved');
+      connection.sendUTF(
+        JSON.stringify({type:'vote',data:[current_movie,1]})
+      );
+    }
+
+    function send_chat(){
+      console.log('Sending Message');
     }
