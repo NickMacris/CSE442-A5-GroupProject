@@ -10,21 +10,18 @@
              <a href= "/register" class="button1">SIGN UP</a><br> 
             <div class="sign_in_box">
                 <h1> Sign In</h1>
-                <form>
-                <!-- <form action="/login" method="POST">  -->
+                <form action="/login" method="POST"> 
                     <input type = "text" id="username" placeholder="Username" required>
                     <input type = "password" id="psw" name="" placeholder="Password" required><br>
                     <div id="message">
                         <p id="length" class="invalid">Minimum <b>8 characters</b></p>
                     </div>
-                    
+                </form>
                     <a href="#" class="holder">Forgot my password</a><p></p>
-                    <a href= # class="button" id = "myButton">SIGN IN</a><br>
+                    <a href= "#" class="button" id = "myButton">SIGN IN</a><br>
                     <a href="#" class="socialf">Connect on Facebook </a><br>
                     <p></p>
                     <a href="#" class="socialg">Connect on Google</a>
-                    
-                </form>
             </div>
         </body>
 </html>
@@ -41,17 +38,6 @@
       location.href = '/';
     }
   };
-</script>
-
-<script>
-var input = document.getElementById("psw");
-input.addEventListener("keyup", function(event) {
-  // Number 13 is the "Enter" key on the keyboard
-  if (event.keyCode === 13) {
-    event.preventDefault();
-    document.getElementById("myButton").click();
-  }
-});
 </script>
 
 <script>
