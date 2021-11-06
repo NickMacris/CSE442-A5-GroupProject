@@ -58,12 +58,15 @@ app.get("/Homepage", (req, res) => {
     getFavoriteFromDB();
     console.log("User favorites is: ");
     console.log(userFavorite);
-    res.render('mainpageHome',{responseObject:JSON.stringify(userFavorite)});
+    //res.render('mainpageHome',{responseObject:JSON.stringify(userFavorite)});
+    res.render('index',{userFavorites:JSON.stringify(userFavorite)});
 })
 
 app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
+app.get('/movieViews.js',(req,res)=>{
+    res.sendFile(path.join(__dirname, '/movieViews.js'));})
 
 app.get('/style.css', (req, res) => {
     res.sendFile(path.join(__dirname, '/logIn/style.css'));
@@ -73,9 +76,10 @@ app.get('/style.css', (req, res) => {
 app.get('/profile', (req, res) => {
     //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
     getGenreFromDB();
+    getFavoriteFromDB();
     console.log("User generes is: ");
     console.log(userGenres);
-    res.render('profilePage2',{responseObject:JSON.stringify(userGenres)});
+    res.render('profilePage2',{responseObject:JSON.stringify(userGenres),userFavorites:JSON.stringify(userFavorite)});
 })
 
 app.get('/register', (req, res) => {
@@ -106,8 +110,14 @@ app.get('/create_account.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/stylesheets/create_account.css'));
 })
 
+app.get('/css/main.css.map', (req, res) => {
+    res.sendFile(path.join(__dirname, '/css/main.css.map'))
+})
+app.get('/css/main.scss', (req, res) => {
+    res.sendFile(path.join(__dirname, '/css/main.scss'))})
+
 app.get('/css/main.css', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
+    res.sendFile(path.join(__dirname, '/css/main.css'))
 })
 
 app.get('/find_friends', (req, res) => {
@@ -224,13 +234,13 @@ app.post('/remove_genre',(req, res) => {
 
 app.post('/add_favorite',(req, res) => {
     addFavoriteToDB(req,res);
-    res.redirect("/HomePage");
+    res.redirect("/profile");
 });
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_favorite',(req, res) => {
     removeFavoriteFromDB(req,res);
-    res.redirect("/HomePage");
+    res.redirect("/profile");
 });
 
 //This function will add the textbox inputs to User1s document for genres
@@ -333,6 +343,5 @@ async function getFavoriteFromDB(req, res) {
         for(let i of result.favorite){
             userFavorite.push(i);
         }
-        return result;
     })
-};
+}

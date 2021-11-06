@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Profile Page</title>
-    <link rel="stylesheet" type="text/css" href="styleProfile.css">
+{{!--     <link rel="stylesheet" type="text/css" href="styleProfile.css"> --}}
 </head>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 <body>
@@ -26,6 +26,23 @@
         Remove Genre from Profile
     </button>
 </form>
+<form method="post">
+    <input type="text" name="addFavorite" placeholder="Type Favorite movie to add here">
+
+    <button formaction="/add_favorite" type="submit" name="submit">
+        Add Favorite movie to page
+    </button>
+</form>
+
+
+<form method="post">
+    <input type="text" name="removeFavorite" placeholder="Type Favorite movie to remove here">
+
+    <button formaction="/remove_favorite" type="submit" name="submit">
+        Remove favorite movie from page
+    </button>
+</form>
+
 
 </div>
 
@@ -38,21 +55,33 @@
 <button class="profile"> Profile</button>
 <button class="help"> Help</button>
 <h2>Preferred Genres</h2>
-<ul id="myList"></ul>
+<ul id="genreList"></ul>
+<h2>Favorite Movies</h2>
+<ul id="favoritesList"></ul>
 
 
 
 </body>
 <script>
     //let data = ['Ram', 'Shyam', 'Sita', 'Gita' ];
-    let data = JSON.parse(`{{{responseObject}}}`);
+    let genres1 = JSON.parse(`{{{responseObject}}}`);
 
-    let list = document.getElementById("myList");
+    let genrelist = document.getElementById("genreList");
 
-    data.forEach((item)=>{
+    genres1.forEach((item)=>{
         let li = document.createElement("li");
         li.innerText = item;
-        list.appendChild(li);
+        genrelist.appendChild(li);
+    })
+
+    let favorites1 = JSON.parse(`{{{userFavorites}}}`);
+
+    let favoritelist2 = document.getElementById("favoritesList");
+
+    favorites1.forEach((item)=>{
+       let li = document.createElement("li");
+       li.innerText = item;
+       favoritelist2.appendChild(li);
     })
 </script>
 </html>
