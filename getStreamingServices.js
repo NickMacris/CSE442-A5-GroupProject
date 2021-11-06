@@ -1,3 +1,5 @@
+import {MongoClient} from "mongodb";
+
 const API_KEY = 'api_key=3376f235922a4493f5e9e4e990beead6';
 const BASE_URL= 'https://api.themoviedb.org/3';
 let API_URL = BASE_URL+'/discover/movie?sort_by=popularity.desc&'+API_KEY;
@@ -7,26 +9,32 @@ const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
 import fetch from "node-fetch";
 
-let favorite = ["Bee Movie","Shrek","Shrek 2"]
-favoriteMovies(favorite);
+let favorite = [];
+let favoriteMovieData = [];
+getFavoriteFromDBhtml()
 //getmovies(API_URL)
 //Getting the movies
 
-function favoriteMovies(favorite){
+//favoriteMovies(favorite);
 
-    for(let movieTitle of favorite){
-        let favUrl = "https://api.themoviedb.org/3/search/movie?api_key=3376f235922a4493f5e9e4e990beead6&query="
-        favUrl += movieTitle;
-        fetch(favUrl).then(res=> res.json()).then(data => {
-            if(data.results.length === 0){
-                console.log("nothing found");
-            }else{
-                console.log(data.results[0]);
-            }
+async function favoriteMovies(favorite){
+    if(favorite.length !== 0) {
+        for (let movieTitle of favorite) {
+            let favUrl = "https://api.themoviedb.org/3/search/movie?api_key=3376f235922a4493f5e9e4e990beead6&query="
+            favUrl += movieTitle;
+            await fetch(favUrl).then(res => res.json()).then(data => {
+                if (data.results.length === 0) {
+                    console.log("nothing found");
+                } else {
+                    //console.log(data.results[0]);
+                    favoriteMovieData.push(data.results[0]);
+                }
 
-        })
+            })
 
+        }
     }
+    return favoriteMovieData;
 }
 
 
@@ -67,5 +75,29 @@ function getStreamer(title,movieID){
         }else{
             //console.log(["NOT STREAMING"]);
         }
+    })
+}
+
+async function getFavoriteFromDBhtml(req, res) {
+    let dbPassNick = process.env.DB_PASS_442;
+    let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
+    const nickclient = new MongoClient(urlNick)
+    await nickclient.connect()
+    console.log("MongoDB connected");
+
+    const db = nickclient.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    await collection.findOne({user:'User1'},{}, function(err, result) {
+        if (err) throw err;
+        //console.log(result);
+        //console.log(result.genres);
+        favorite = [];
+
+        for(let i of result.favorite){
+            favorite.push(i);
+        }
+        favoriteMovies(favorite).then(data1 => console.log(data1));
+        nickclient.close()
     })
 }
