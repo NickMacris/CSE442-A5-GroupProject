@@ -5,10 +5,32 @@ API_URL += "&append_to_response=watch/providers"
 const IMG_URL = 'https://image.tmdb.org/t/p/w500';
 
 
-//import fetch from "node-fetch";
+import fetch from "node-fetch";
+
+let favorite = ["Bee Movie","Shrek","Shrek 2"]
+favoriteMovies(favorite);
+//getmovies(API_URL)
+//Getting the movies
+
+function favoriteMovies(favorite){
+
+    for(let movieTitle of favorite){
+        let favUrl = "https://api.themoviedb.org/3/search/movie?api_key=3376f235922a4493f5e9e4e990beead6&query="
+        favUrl += movieTitle;
+        fetch(favUrl).then(res=> res.json()).then(data => {
+            if(data.results.length === 0){
+                console.log("nothing found");
+            }else{
+                console.log(data.results[0]);
+            }
+
+        })
+
+    }
+}
 
 
-getmovies(API_URL)
+//getmovies(API_URL)
 //Getting the movies
 function getmovies(url){
 
