@@ -36,7 +36,7 @@ app.engine('hbs', exphbs({
     //find friends_friends.hbs page probably needs to be updated
    //defaultLayout: 'find_friends_page',
     defaultLayout: false,
-    layoutsDir: "views/layouts/",
+    //layoutsDir: "views/layouts/",
    extname: '.hbs'
    }));
 app.set('view engine', 'hbs');

@@ -2,33 +2,32 @@
 <html>
 <head>
     <title>Profile Page</title>
-{{!--     <link rel="stylesheet" type="text/css" href="styleProfile.css"> --}}
+    <link rel="stylesheet" type="text/css" href="styleProfile.css">
 </head>
 <script src="https://www.w3schools.com/lib/w3.js"></script>
 <body>
 
+<h1>Profile Page</h1>
+
 <div class="update_profile_box">
 <h1>Welcome, User1</h1>
-<h2>Add Genre.</h2>
+<h2>Add/Remove Genre.</h2>
 <form method="post">
     <input type="text" name="addGenre" placeholder="Type genre to add here">
-
     <button formaction="/add_genre" type="submit" name="submit">
         Add Genre to Profile
     </button>
 </form>
-
-<h2>Remove Genre.</h2>
 <form method="post">
     <input type="text" name="removeGenre" placeholder="Type genre to remove here">
-
     <button formaction="/remove_genre" type="submit" name="submit">
         Remove Genre from Profile
     </button>
 </form>
+
+<h2>Add/Remove Favorite Movies.</h2>
 <form method="post">
     <input type="text" name="addFavorite" placeholder="Type Favorite movie to add here">
-
     <button formaction="/add_favorite" type="submit" name="submit">
         Add Favorite movie to page
     </button>
@@ -37,7 +36,6 @@
 
 <form method="post">
     <input type="text" name="removeFavorite" placeholder="Type Favorite movie to remove here">
-
     <button formaction="/remove_favorite" type="submit" name="submit">
         Remove favorite movie from page
     </button>
@@ -54,10 +52,13 @@
 <button class="join_room"> Join Room</button>
 <button class="profile"> Profile</button>
 <button class="help"> Help</button>
+
+<div class="your_lists">
 <h2>Preferred Genres</h2>
 <ul id="genreList"></ul>
 <h2>Favorite Movies</h2>
 <ul id="favoritesList"></ul>
+</div>
 
 
 
