@@ -204,7 +204,8 @@ async function insert(req, res) {
 
     var user = {
         username: Uusername,
-        password: Upassword
+        password: Upassword,
+        favorite: []
     }
     console.log("MongoDB connected");
 
