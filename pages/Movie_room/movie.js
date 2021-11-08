@@ -5,8 +5,7 @@
     var movie_name = document.getElementById("movie_name");
     var movie_year = document.getElementById("movie_year");
     var movie_genre = document.getElementById("movie_genre");
-
-
+    var vote_message = document.getElementById("Vote_Message");
 //Web socket stuff
     // if user is running mozilla then use it's built-in WebSocket
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -19,10 +18,12 @@
     
     connection.onopen = 
     function () {
+
         // Greet User
         booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
             //loop through chat history, and 
         chat_history.innerHTML += '<p> Chatting </p>';
+        vote_message.innerHTML = 'Vote here';
     };
   
     connection.onerror = function (error) {
@@ -58,16 +59,18 @@
     }
 
     function vote_yes(){
-      connection.send(
+      /*connection.send(
         JSON.stringify({type:'vote',data:1},replacer)
-      );
+      );*/
+      vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
       console.log('Vote Sent');
     }
 
     function vote_no(){
-      connection.send(
+      /*connection.send(
         JSON.stringify({type:'vote',data:0},replacer)
-      );
+      );*/
+      vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
       console.log('Vote Sent');
     }
 

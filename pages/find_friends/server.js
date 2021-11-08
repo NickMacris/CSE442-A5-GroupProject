@@ -36,6 +36,10 @@ app.get('/find_friends', (req, res) => {
       });
 });
 
+app.get('/movie_room.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../movie.html'));
+});
+
 //run server on port
 app.listen(Port,()=> {
   console.log(`Server started on ${Port}`)});

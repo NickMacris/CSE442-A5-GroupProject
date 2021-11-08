@@ -1,3 +1,15 @@
+// web server init
+const express = require('express');
+const formidable = require('express-formidable');
+const exphbs = require('express-handlebars');
+const fs = require('fs');
+const path = require('path');
+
+const app = express();
+app.use(formidable());
+const Port  = process.env.Port || 3000;
+console.log("Regular server running on Port "+ Port);
+
 //database init
     const { MongoClient } = require("mongodb");
     const { WSATYPE_NOT_FOUND } = require('constants');
@@ -29,11 +41,26 @@
     // server we don't have to implement anything.
     });
     server.listen(skt_port, function() { 
-        console.log((new Date()) + ", Server is now listening on port: " + skt_port);
+        console.log((new Date()) + ", WebSocket Server is now listening on port: " + skt_port);
     });
     wsServer = new WebSocketServer({
     httpServer: server
     });
+
+// Express 
+    app.use('/movie.js', express.static(path.join(__dirname, 'movie.js')));
+    app.use('/movie_room.css', express.static(path.join(__dirname, 'movie_room.css')));
+    app.get('/find_friends', (req, res) => {
+        res.sendFile(path.join(__dirname, 'find_friends.html'));
+    });
+
+    app.get('/movie_room', (req, res) => {
+        res.sendFile(path.join(__dirname, 'movie_room.html'));
+    });
+    
+    //run server on port
+    app.listen(Port,()=> {
+      console.log(`Server started on ${Port}`)});
 
 // Server functionality
     wsServer.on('request', function(request) {
