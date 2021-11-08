@@ -1,49 +1,61 @@
-<html>
-    <head>
-        <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">        
-        <link rel="stylesheet" type ="text/css" href="find_friends.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">        
+    <link rel="stylesheet" type ="text/css" href="find_friends.css">
+    <title>Find Friends</title>
+</head>
+    <body>
+        <div class = "page_structure">
 
-        <title>Find Friends</title>
-    </head>
-        <body>
-            <div class = "page_structure">
-                <!-- Left Side bar -->
-                <div class="jumbotron side-bar-jumbotron" name = "User search">
-                    <h1 class="display-4">User Search</h1>
-                    <hr class="my-4">
-                    <form>
-                        <input type = "text" name="" placeholder="Username">
-                        <p class="lead">
-                            <a class="btn btn-primary btn-lg" href="https://cse442.com/" role="button">GO</a>
-                        </p>
-                    </form>
-                    
-                </div>
-
-                <!-- Search results -->
-                <div class="Add_friends">
-                    <h1> Search Results</h1>
-                    <div data-bs-spy="scroll" class="scrollspy-example" tabindex="0">
-                        <p> Enter your friends username and add your friend !!</p>
-                    </div>
-                </div>
-
-                <!-- Right Side bar(buttons) -->
-                <div class="container-md" name= "Page_Navigation">
-                    <div class = "Logo_signout">
-                        <a type="button" href="https://cse442.com/" class="btn btn-outline-secondary Logo">Logo</a>
-                        <a type="button" href="https://cse442.com/" class="btn btn-outline-danger">Sign Out</a>
-                    </div>
-                    <div class = "Home_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Home</a></div>
-                    <div class = "Findfriend_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Find Friend</a></div>
-                    <div class = "Createroom_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Create Room</a></div>
-                    <div class = "Joinroom_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Join Room</a></div>
-                    <div class = "Profile_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Profile</a></div>
-                    <div class = "Help_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Help</a></div>
-                </div>
+            <!-- Left Side bar -->
+            <div class="jumbotron side-bar-jumbotron" name = "User_search">
+                <h1 class="display-4">User Search</h1>
+                <!--Post Request
+                <form id="find_user" action="find_user" method="post">
+                    <input type = "text" id="user_name" name="user_name" placeholder="Username">
+                    <p id="Search_popup"></p>
+                    <button id="friend_button" class="btn btn-primary btn-md"> Find Friend! </button> 
+                </form>
+                -->
+                <!-- Onclick -->
+                <input type = "text" id="user_name" name="user_name" placeholder="Username">
+                <p id="Search_popup"></p>
+                <button id="friend_button" onclick = "search_pressed()" class="btn btn-primary btn-md"> Find Friend! </button> 
             </div>
-            
 
-        </body>
+            <!-- Search results -->
+            <div class="Add_friends">
+                <h1> Search Results</h1>
+                
+                <div id = "search_results" data-bs-spy="scroll" class="scrollspy-example" tabindex="0">
+                    <p> Enter your friends username and add your friend !!</p>
+                </div>
+                
+            </div>
+
+            <!-- Right Side bar(buttons) -->
+            <div class="container-md" name= "Page_Navigation">
+                <div class = "Logo_signout">
+                    <a type="button" href="https://cse442.com/" class="btn btn-outline-secondary Logo">Logo</a>
+                    <a type="button" href="https://cse442.com/" class="btn btn-outline-danger">Sign Out</a>
+                </div>
+                <div class = "Home_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Home</a></div>
+                <div class = "Findfriend_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Find Friend</a></div>
+                <div class = "Createroom_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Create Room</a></div>
+                <div class = "Joinroom_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Join Room</a></div>
+                <div class = "Profile_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Profile</a></div>
+                <div class = "Help_button"><a type="button" href="https://cse442.com/" class="btn btn-outline-success">Help</a></div>
+            </div>
+        </div>
+        
+        <script src="find_friends.js"></script>
+    </body>
 </html>
+
+
+       

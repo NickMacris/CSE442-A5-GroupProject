@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Login Page</title>
+        <link rel="stylesheet" type ="text/css" href="/style.css">
+    </head>
+        <body>
+          <div class="ellipse">
+           <a class = "logo" href="/">HighFive <span>Club</span></a>
+          </div>
+             <a href= "/register" class="button1">SIGN UP</a><br> 
+            <div class="sign_in_box">
+                <h1> Sign In</h1>
+                <form method="post"> 
+                    <input type = "text" id="username" name = "username" placeholder="Username" required>
+                    <input type = "password" id="psw" name="psw" placeholder="Password" required><br>
+                    <a href="#" class="holder">Forgot my password</a><p></p>
+                    <div id="message">
+                        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+                    </div>
+                    <button formaction="/login" type = "submit" name = "myButton">SIGN IN</button><br>
+                </form>
+                    <a href="#" class="socialf">Connect on Facebook </a><br>
+                    <p></p>
+                    <a href="#" class="socialg">Connect on Google</a>
+            </div>
+        </body>
+</html>
+
+<script>
+  var myInput = document.getElementById("psw");
+  var length = document.getElementById("length");
+
+  myInput.onfocus = function() {
+    document.getElementById("message").style.display = "block";
+  }
+  
+  myInput.onblur = function() {
+    document.getElementById("message").style.display = "none";
+  }
+  
+  myInput.onkeyup = function() {
+  if(myInput.value.length >= 8) {
+      length.classList.remove("invalid");
+      length.classList.add("valid");
+    } else {
+      length.classList.remove("valid");
+      length.classList.add("invalid");
+    }
+  }
+  </script>

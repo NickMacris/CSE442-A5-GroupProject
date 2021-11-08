@@ -6,6 +6,31 @@ body{
     padding: 70px 30px;
 }
 
+.logo {
+    text-decoration: none;
+    position:absolute;
+    font-weight: bold;
+    color: black;
+    left: 30px;
+    top:70px;
+    font-size: 3em;
+}
+  
+.logo span {
+    color: goldenrod;
+}
+
+.ellipse {
+    position: absolute;
+    width: 256px;
+    height: 250px;
+    left: 80px;
+    top: 69px;
+    border-radius: 50%;
+
+    background: #C4C4C4;
+}
+
 .sign_in_box{
     width : 500px;
     height: 600px;
@@ -73,19 +98,19 @@ h1 {
     text-decoration: underline;
 }
 
-.sign_in_box a.button
+.sign_in_box button[name= "myButton"]
 {
-    margin-left: 40%;
-    text-decoration: none;
+    margin-left: 38%;
+    margin-top: 13%;
     border: 1px solid black;
-    line-height: 150px;
+    line-height: 30px;
     background: red;
     color: black;
     font-size: 30px;
     font-weight: bold;
 }
 
-.sign_in_box a.button:hover
+.sign_in_box button[name = "myButton"]:hover
 {
     cursor: pointer;
     background: #ffc107;

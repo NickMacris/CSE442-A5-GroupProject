@@ -56,7 +56,6 @@ app.get('/create_account.css', (req, res) => {
 
 
 async function insert(req, res) {
-    try {
         await client.connect();
         var Uusername = req.fields.uname
         var Upassword = req.fields.pass
