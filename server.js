@@ -6,6 +6,8 @@ const formidable = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
+const { resourceLimits } = require('worker_threads');
+const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS
 const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
@@ -22,25 +24,26 @@ const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //server variables
 var send_back="No Users Found";
 
+
+let user = "";
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
 
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
-   defaultLayout: 'find_friends_page',
+   defaultLayout: false,
    extname: '.hbs'
    }));
 app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
-   res.sendFile(path.join(__dirname, '/logIn/index.html')) ;
-    
+   res.render('index') ;
 })
 
 app.get('/index.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '/index.html'));
+    res.render('index');
 })
 
 app.get("/createroom.js", (req, res) => {
@@ -104,7 +107,7 @@ app.get('/find_friends', (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`App is running on ${port}`)
+    console.log(`App is running on ${port}`);
 });
 
 const nickclient = new MongoClient(urlNick, {keepAlive: 1})
@@ -191,6 +194,32 @@ async function insert(req, res) {
 
 }
 
+app.post('/login',(req,res) => {
+    finduser(req,res);
+});
+
+async function finduser(req,res){
+    user = "";
+    await client.connect();
+    console.log("MongoDB connected");
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+        if (result == null){
+            user = "0";
+        }
+        else{
+            user = "1";
+        } 
+    });
+    await new Promise(r => setTimeout(r, 50));
+    if (user == "0"){
+        res.render('index');
+    }
+    else if (user == "1"){
+        res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+    }
+}
 
 //Post request to handle adding genres to database
 //The redirect was required to prevent the page from hanging up after pressing button
@@ -198,6 +227,7 @@ app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
     res.redirect("/profile");
 });
+
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
