@@ -15,7 +15,9 @@
     var current_movie = new Map();
 
 //retrieve database info
-    movie_list.push(get_room_info());
+    if(get_room_info()){
+        console.log("Got room data");
+    }
 
 //websocket init
     var WebSocketServer = require('websocket').server;
@@ -80,15 +82,11 @@
  */
     function vote(connection){
         if(movie_list.length > 0){
-            console.log("Movie list:"+ movie_list);
-            console.log("Movie data: "+ movie_list[0]);
-            console.log("Movie info: "+ movie_list[0].get('movie_data'));
-            current_movie = movie_list[0];
-            var thing = current_movie.get('movie_data');
-            console.log("Sending movie: "+ thing);
+            current_movie = movie_list[0].get('movie_data').get('movie_name');
             connection.sendUTF(
-                JSON.stringify({type: 'movie', data: current_movie})
+                JSON.stringify({type: 'movie', data: movie_list[0].get('movie_data')})
             );
+            console.log("Sent: "+ movie_list[0].get('movie_data').get('movie_name'));
         }
     }
     function end_vote(connection){
@@ -128,7 +126,8 @@ async function get_room_info() {
         movie_server.set('movie_data',movie_map);
         movie_server.set('vote', 0);
         console.log(movie_server);
-        return  (movie_server);
+        movie_list.push(movie_server);
+        return  (1);
     }); 
-    return -1;
+    return 0;
 }
