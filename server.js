@@ -247,7 +247,8 @@ async function finduser(req,res){
         res.render('index');
     }
     else if (user == "1"){
-        res.render('homepage');
+        getFavoriteFromDB();
+        res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
     }
 }
 
