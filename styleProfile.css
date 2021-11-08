@@ -3,22 +3,22 @@
     width : 500px;
     height: 600px;
     background:	#D3D3D3;
-    color: #fff;
+    color: #000000;
     top: 50%;
-    left: 25%;
+    left: 20%;
     position: absolute;
     transform: translate(-50%,-50%);
     box-sizing: border-box;
     text-align: center;
 }
 
-.your_movies{
+.your_lists{
     width : 400px;
     height: 500px;
     background:	#D3D3D3;
-    color: #fff;
+    color: #000000;
     top: 50%;
-    left: 65%;
+    left: 45%;
     position: absolute;
     transform: translate(-50%,-50%);
     box-sizing: border-box;

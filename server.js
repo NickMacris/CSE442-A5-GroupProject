@@ -24,6 +24,9 @@ const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //server variables
 var send_back="No Users Found";
 
+let userGenres = ["initial values for genres","test1","test2"];
+let userFavorite = ["initial value for favorites"]
+
 
 let user = "";
 app.use(express.static('public'));
@@ -50,8 +53,9 @@ app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
 app.get("/Homepage", (req, res) => {
-    res.render("homepage");
-   // res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+    //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+    getFavoriteFromDB();
+    res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
 })
 app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
@@ -70,7 +74,12 @@ app.get('/style.css', (req, res) => {
 
 
 app.get('/profile', (req, res) => {
-    res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
+    //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
+    getGenreFromDB();
+    getFavoriteFromDB();
+    console.log("User generes is: ");
+    console.log(userGenres);
+    res.render('profilePage2',{responseObject:JSON.stringify(userGenres),userFavorites:JSON.stringify(userFavorite)});
 })
 
 app.get('/register', (req, res) => {
@@ -132,7 +141,9 @@ app.use(bodyParser.urlencoded({
  * POST Requests: submitting a form usually is
  *      sent as a post request
  */
-const client = new MongoClient(url, {keepAlive: 1})  
+const client = new MongoClient(url, {keepAlive: 1})
+getGenreFromDB();
+getFavoriteFromDB();
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
@@ -198,7 +209,8 @@ async function insert(req, res) {
 
     var user = {
         username: Uusername,
-        password: Upassword
+        password: Upassword,
+        favorite: []
     }
     console.log("MongoDB connected");
 
@@ -253,6 +265,16 @@ app.post('/remove_genre',(req, res) => {
     res.redirect("/profile");
 });
 
+app.post('/add_favorite',(req, res) => {
+    addFavoriteToDB(req,res);
+    res.redirect("/profile");
+});
+//Post request to handle removing genres from database
+//The redirect was required to prevent the page from hanging up after pressing button
+app.post('/remove_favorite',(req, res) => {
+    removeFavoriteFromDB(req,res);
+    res.redirect("/profile");
+});
 
 //This function will add the textbox inputs to User1s document for genres
 async function addGenreToDB(req, res) {
@@ -288,6 +310,37 @@ async function removeGenreFromDB(req, res) {
         });
 }
 
+async function addFavoriteToDB(req, res) {
+    await nickclient.connect();
+    console.log("MongoDB connected");
+
+    const db = nickclient.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.updateOne(
+        { user: "User1" },
+        { $push: { favorite: req.body.addFavorite } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Favorite added: " + req.body.addFavorite);
+        });
+}
+async function removeFavoriteFromDB(req, res) {
+    await nickclient.connect();
+    console.log("MongoDB connected");
+
+    const db = nickclient.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.updateOne(
+        { user: "User1" },
+        { $pull: { favorite: req.body.removeFavorite } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Favorite removed: " + req.body.removeFavorite);
+        });
+}
+
 async function getGenreFromDB(req, res) {
     await nickclient.connect();
     console.log("MongoDB connected");
@@ -297,8 +350,31 @@ async function getGenreFromDB(req, res) {
 
     collection.findOne({user:'User1'},{}, function(err, result) {
         if (err) throw err;
-        console.log(result);
-        console.log(result.genres);
+        //console.log(result);
+        //console.log(result.genres);
+        userGenres = [];
+        for(let i of result.genres){
+            userGenres.push(i);
+        }
         return result;
     })
 };
+
+async function getFavoriteFromDB(req, res) {
+    await nickclient.connect();
+    console.log("MongoDB connected");
+
+    const db = nickclient.db('SimpleTest');
+    const collection = db.collection('documents');
+
+    collection.findOne({user:'User1'},{}, function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        //console.log(result.genres);
+        userFavorite = [];
+
+        for(let i of result.favorite){
+            userFavorite.push(i);
+        }
+    })
+}
