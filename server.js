@@ -1,14 +1,17 @@
-const express = require('express');
-const app = express();
-const path = require("path");
-const { MongoClient } = require('mongodb')
+const socketIO                    = require ("socket.io");
+const http = require("http");
+const express               = require('express');
+const app                   = express();
+const path                  = require("path");
+const { MongoClient }       = require('mongodb')
 const formidable = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
-const bodyParser = require('body-parser')
-const exphbs = require('express-handlebars');
-const port = process.env.PORT || 7000;
+const bodyParser            = require('body-parser')
+const exphbs                = require('express-handlebars');
+
+const port   = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS
-const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 //require('./simpleWebpage/database');
 
 //let MongoClient = require('mongodb').MongoClient;
@@ -103,10 +106,15 @@ app.get('/find_friends', (req, res) => {
      });
 });
 
+app.get('/join', (req, res) => {
+    res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+})
+
+/*
 app.listen(port, () => {
     console.log(`App is running on ${port}`)
 });
-
+*/
 const nickclient = new MongoClient(urlNick, {keepAlive: 1})
 app.use(bodyParser.urlencoded({
     extended:true
@@ -133,6 +141,44 @@ app.post('/find_friends/find_user',(req, res) => {
    find_friend(search,res);
    console.log("Should have sent back"+search);
 });
+
+let server = http.Server(app);
+server.listen(port, () => {
+    console.log(`server running on ${port}`);
+});
+io = socketIO(server);
+// This stuff is for the socket functions
+const {joinUser, removeUser, findUser } = require('./joinRoom/users');
+let thisRoom ="";
+
+io.on('connection', (socket) => {
+    console.log("socket connected");
+    socket.on("join room", (data) => {
+     console.log('in room');
+
+     let Newuser = joinUser(socket.id, data.username,data.roomName)
+
+     socket.emit('send data' ,
+            {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
+
+     thisRoom = Newuser.roomname;
+     console.log(Newuser);
+     socket.join(Newuser.roomname);
+   });
+
+   socket.on("chat message", (data) => {
+     io.to(thisRoom).emit("chat message", {data:data,id : socket.id});
+   });
+
+   socket.on("disconnect", () => {
+     const user = removeUser(socket.id);
+     console.log(user);
+     if(user) {
+       console.log(user.username + ' has left');
+     }
+     console.log("disconnected");
+   });
+})
 
 //database helper for  'find_user' post
 async function find_friend(name,res) {
