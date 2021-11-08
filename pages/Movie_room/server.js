@@ -12,7 +12,10 @@
     var movie_list = [];
     var chat_history = [["User_1","Hello"],["User_2","Goodbye"]];
     var room_size = 1; // Get amount of people in room from db
-    var current_movie;
+    var current_movie = new Map();
+
+//retrieve database info
+    movie_list.push(get_room_info());
 
 //websocket init
     var WebSocketServer = require('websocket').server;
@@ -35,51 +38,34 @@
         var client = clients.push(connection) -1;
         console.log('User #' + client+' has been added');
 
-        movie_info = get_room_info();
-        if(movie_info === -1){
-           console.log("Invalid Movie Search");
-        }
-        else{
-            movie_list.push([
-                [{'movie_name':movie_info['movie_name']}, {'genre':movie_info['genre']},{'year':movie_info['year']}, {'img_url':movie_info['img_url']}],
-                0]);
-        }
-        console.log(movie_list);
-
+        //send chat history
         if(chat_history.length > 0){
             connection.sendUTF(
                 JSON.stringify({type: 'chat_history', data: chat_history}));
         }
 
+        //start voting once everyone joins
         if(client >= room_size){
             console.log("Begin Voting");
             vote(connection);
         }
-
-        
-        // This is the most important callback for us, we'll handle
-        // all messages from users here.
         connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            // try to decode json (I assume that each message
-        // from server is json)
-        try {
-            var json = JSON.parse(message.data);
-        } 
-        catch (e) {
-            console.log('This doesn\'t look like a valid JSON: ',
-                message.data);
-        }
-        if(json.type == 'vote'){
-            console.log("Processing vote from User: ");
-            if(current_movie[0] == json.data[0]){
-                current_movie[1] += json.data[1];
+            try {
+                var json = JSON.parse(message.data);
+            } 
+            catch (e) {
+                console.log('This doesn\'t look like a valid JSON: ',
+                    message.data);
             }
-            voted += 1;
-            if(voted == room_size){
-                end_vote(connection);
+            if(json.type === 'vote'){
+                console.log("Processing vote from User: ");
+                
             }
-        }
+
+            if(json.type === 'chat'){
+                console.log("Processing chat from User: ");
+            }
         }
         });
 
@@ -93,12 +79,16 @@
  * Vote() should restart vote count, select movie to send to clients
  */
     function vote(connection){
-        
-        if(movie_list.length >0){
+        if(movie_list.length > 0){
+            console.log("Movie list:"+ movie_list);
+            console.log("Movie data: "+ movie_list[0]);
+            console.log("Movie info: "+ movie_list[0].get('movie_data'));
             current_movie = movie_list[0];
+            var thing = current_movie.get('movie_data');
+            console.log("Sending movie: "+ thing);
             connection.sendUTF(
-                JSON.stringify({type: 'movie', data: [ current_movie[0]]})
-                );
+                JSON.stringify({type: 'movie', data: current_movie})
+            );
         }
     }
     function end_vote(connection){
@@ -111,25 +101,34 @@
 //database interfaces
 /**
  * Should retrieve room movie list and objects, and user list.
- * Not completed!!
+ * Completed
  */
-    async function get_room_info() {
-          //Movie Data stored as
-        /* movie_name: "moviename"
-           genre:""
-           yeae:""
-           img_url:""
-        */ 
-        await imani_client.connect();
-        console.log("MongoDB connected");
-        const db = imani_client.db("Movies");
-        const global_users = db.collection('MovieData');
-      
-        // Users are stored as [{username: "Username"},{password,"pass"}]
-        global_users.findOne({movie_name:"King Kong"},{}, function(err, result) {
-            if (err) throw err;
-            console.log(result);
-            return  (result);
-        }); 
-        return -1;
-    }
+async function get_room_info() {
+        //Movie Data stored as
+    /* movie_name: "moviename"
+        genre:""
+        yeae:""
+        img_url:""
+    */ 
+    await imani_client.connect();
+    console.log("MongoDB connected");
+    const db = imani_client.db("Movies");
+    const global_users = db.collection('MovieData');
+    
+    // Users are stored as [{username: "Username"},{password,"pass"}]
+    global_users.findOne({movie_name:"King Kong"},{}, function(err, result) {
+        if (err) throw err;
+        var movie_map = new Map();
+        var name = result['movie_name'];
+        movie_map.set('movie_name', name);
+        movie_map.set('genre', result['genre']);
+        movie_map.set('year', result['year']);
+        movie_map.set('img_url', result['img_url']);
+        var movie_server = new Map();
+        movie_server.set('movie_data',movie_map);
+        movie_server.set('vote', 0);
+        console.log(movie_server);
+        return  (movie_server);
+    }); 
+    return -1;
+}
