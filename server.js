@@ -247,7 +247,7 @@ async function finduser(req,res){
         res.render('index');
     }
     else if (user == "1"){
-        res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+        res.render('homepage');
     }
 }
 
