@@ -50,8 +50,15 @@ app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
 app.get("/Homepage", (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+    res.render("homepage");
+   // res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
+app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
+    res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
+
+
+app.get('/movieViews.js',(req,res)=>{
+    res.sendFile(path.join(__dirname, '/movieViews.js'));})
 
 app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
@@ -94,8 +101,14 @@ app.get('/create_account.css', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/stylesheets/create_account.css'));
 })
 
+app.get('/css/main.css.map', (req, res) => {
+    res.sendFile(path.join(__dirname, '/css/main.css.map'))
+})
+app.get('/css/main.scss', (req, res) => {
+    res.sendFile(path.join(__dirname, '/css/main.scss'))})
+
 app.get('/css/main.css', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/main.css'))
+    res.sendFile(path.join(__dirname, '/css/main.css'))
 })
 
 app.get('/find_friends', (req, res) => {
@@ -126,6 +139,11 @@ app.post('/register', (req, res) => {
 
 
     sleepnsend(3000, res)
+});
+
+app.post('/get_streamer',(req, res) => {
+   // (req,res);
+   // res.redirect("/Homepage");
 });
 
 //Get find_friend search request, check it in database
@@ -210,7 +228,7 @@ async function finduser(req,res){
         }
         else{
             user = "1";
-        } 
+        }
     });
     await new Promise(r => setTimeout(r, 50));
     if (user == "0"){

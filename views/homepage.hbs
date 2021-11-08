@@ -14,12 +14,14 @@
                         <a class = "logo" href="#">HighFive <span>Club</span></a> <!-- link for the logo-->
                         <nav>
                             <div class="primary-navigation">
-                                <ul class="username"> Hello Username</ul>
+                                <ul class="username">Username</ul>
                                 <ul class="current">Home</ul>
-                                <ul class="friends-list"><a href="#">Friends List</a></ul> <!-- link to the Friends Page-->
-                                <ul class="create-room"><a href="createRoom.html">Create A Room</a></ul> <!-- link to the create room -->
-                                <ul class="profile"><a href="#">Profile</a></ul>
-                                <ul class="sign out"><a href="#">SIGN OUT</a></ul>
+                                <ul class="friends-list"><a href="https://cse442.herokuapp.com/find_friends">FriendList</a></ul> <!-- link to the Friends Page-->
+                                <ul class="create-room"><a href="../mainpage/creatingroom/createRoom.html">CreateRoom</a></ul> <!-- link to the create room -->
+
+                                <ul class="profile"><a href="/profile">Profile</a></ul>
+                                 <ul class="join"><a href="#">JoinRoom</a></ul>
+                                <ul class="sign out"><a href="../logIn/index.html">SIGN OUT</a></ul>
                             </div>
                         </nav>
                     </div>
@@ -91,15 +93,13 @@
                             <p class="view-stream">View movies currently streaming></p>
                             <nav>
                                 <ul class="secondary-Navigation">
-                                    <!-- user input -->
-                                    <form method = "post">
-                                        <label for="movie_title"> Movie Title:</label><br>
-                                        <input type="text" id="movie_title" ><br>
-                                        <label for="movie_id">Movie ID:</label><br>
-                                        <input type="text" id="movie_id"><br><br>
-                                        <button formaction="/get_streamer" type="submit" name="submit"/>
-
-                                    </form>
+                                 <!-- user input -->
+                                <form>
+                                    <input type = "text" id="movie_title" placeholder="Movie Title">
+                                    <input type = "text" id="movie_id" placeholder= "Movie Id" >
+                                    <button type="button" id="submit" >Submit</button>
+                                </form>
+                                <ul id="Streams"></ul>
                                     <!-- <ul class="netflix">Netflix</ul> -->
                                     <!-- <ul class="hulu">Hulu</ul> -->
                                 </ul>

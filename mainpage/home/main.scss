@@ -46,6 +46,7 @@ body{
         &:hover{
             font-weight:bold;
         }
+      
 
     }
 }
@@ -59,6 +60,8 @@ body{
 
 
 //styling the links 
+
+
 a{
     
     text-decoration: none;
@@ -100,7 +103,7 @@ a{
         border: 1px;
     }
 }
-
+/*
 .left-col2{
     .explore-stream{
         font-weight: bold;
@@ -148,6 +151,93 @@ a{
         width: unset;
         cursor: pointer;
     }
+   
+}*/
+// CSS Design for the Streaming movies 
+
+main{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
+.movie{
+    width:300px;
+    margin : 1rem;
+    border-radius: 3px;
+    box-shadow: 0.2px 4px 5px rgba(0,0,0,0.1);
+    background-color: var (blueviolet);
+    position: relative;
+    overflow: hidden;
+}
 
+.movie img{
+    width: 100%;
+}
+
+.movie-info{
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 1rem;
+    letter-spacing: 0.5px;
+}
+
+.overview{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(207, 252, 102);
+    padding: 1rem;
+    max-height: 100%;
+    transform: translateY(101%);
+    transition: transform 0.3s ease-in;
+}
+
+.movie:hover .overview{
+    transform : translateY(0)
+}
+
+//CSS for Upcoming Movies 
+.main2
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.movie_up{
+    width:300px;
+    margin : 1rem;
+    border-radius: 3px;
+    box-shadow: 0.2px 4px 5px rgba(0,0,0,0.1);
+    background-color: var (blueviolet);
+    position: relative;
+    overflow: hidden;
+}
+.movie_up img{
+    width: 100%;
+}
+.movie-info_up{
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem 1rem;
+    letter-spacing: 0.5px;
+}
+.overview_up{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(102, 252, 219);
+    padding: 1rem;
+    max-height: 100%;
+    transform: translateY(101%);
+    transition: transform 0.3s ease-in;
+}
+.movie_up:hover .overview_up{
+    transform : translateY(0)
+}
