@@ -14,6 +14,7 @@ function getmovies(url){
 
     fetch(url).then(res=> res.json()).then(data => {
         showMovies(data.results)
+        console.log(data)
     })
 }
 
@@ -43,4 +44,42 @@ function showMovies(data){
         main.appendChild(movieElements);
 
     });
+
+//gets which streaming service it's on
+    document.getElementById("submit").onclick = function () {
+    let movie_title = document.getElementById("movie_title").value;
+    let movie_id = document.getElementById("movie_id").value;
+    console.log(movie_title);
+    console.log(movie_id);
+    getStreamer(movie_title,movie_id)
+    }
+
+
+    function getStreamer(title,movieID){
+        let apiKey = "3376f235922a4493f5e9e4e990beead6"
+        let streamUrl = "https://api.themoviedb.org/3/movie/" + movieID;
+        streamUrl += "/watch/providers?api_key=" + apiKey;
+        fetch(streamUrl).then(res=>res.json()).then(data=>{
+            console.log("The movie " + title + " is streaming on :");
+            if("US" in data.results) {
+                if("flatrate" in data.results.US) {
+                    let streamList = [];
+                    for(let service of data.results.US.flatrate){
+                        streamList.push(service.provider_name);
+                    }
+                    console.log(streamList);
+                    let streams = document.getElementById("Streams");
+                    streamList.forEach((item)=>{
+                        let li = document.createElement("li");
+                        li.innerText = item;
+                        streams.appendChild(li);
+                    })
+                }else{
+                    console.log(["NOT STREAMING"]);
+                }
+            }else{
+                console.log(["NOT STREAMING"]);
+            }
+        });
+    }
 }

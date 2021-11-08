@@ -6,7 +6,7 @@ const formidable = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 12000;
 const dbPass = process.env.USER_PASS
 const url = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 //require('./simpleWebpage/database');
@@ -29,7 +29,7 @@ app.set('views', './views');
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
-   defaultLayout: 'find_friends_page',
+   defaultLayout: false,
    extname: '.hbs'
    }));
 app.set('view engine', 'hbs');
@@ -47,7 +47,8 @@ app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
 app.get("/Homepage", (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+    res.render("homepage");
+   // res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
 })
 app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
@@ -135,6 +136,11 @@ app.post('/register', (req, res) => {
 
 
     sleepnsend(3000, res)
+});
+
+app.post('/get_streamer',(req, res) => {
+   // (req,res);
+   // res.redirect("/Homepage");
 });
 
 //Get find_friend search request, check it in database
