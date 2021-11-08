@@ -56,7 +56,7 @@ app.get("/createroom.js", (req, res) => {
 app.get("/Homepage", (req, res) => {
     //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
     getFavoriteFromDB();
-    res.render('index',{userFavorites:JSON.stringify(userFavorite)});
+    res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
 })
 
 app.get("/mainpage/home/index.html", (req, res) => {
