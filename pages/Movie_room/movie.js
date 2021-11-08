@@ -1,7 +1,7 @@
     var chat = document.getElementById('input_chat');
     var chat_history = document.getElementById('chat_history');
     var booth = document.getElementById('voting_booth');
-    var movie_img_url = document.getElementById("movie_img").src;
+    var movie_img_url = document.getElementById("movie_img");
     var movie_name = document.getElementById("movie_name");
     var movie_year = document.getElementById("movie_year");
     var movie_genre = document.getElementById("movie_genre");
@@ -30,10 +30,10 @@
     };
   
     connection.onmessage = function (message) {
-      // try to decode json (I assume that each message
-      // from server is json)
+      
       try {
-        var json = JSON.parse(message.data);
+        console.log("Message: "+ message);
+        var json = JSON.parse(message.data, reviver);
       } 
       catch (e) {
         console.log('This doesn\'t look like a valid JSON: ',
@@ -42,36 +42,54 @@
       }
       // handle incoming message
       if (json.type === 'movie'){
-          console.log("Voting on movie "+json.data.get('movie_name'));
+          booth.innerHTML = '';
+          console.log("Movies" + json.data);
           movie_name.innerHTML = json.data.get('movie_name');
-          movie_genre.innerHTML = json.data.get('genre');
-          movie_year.innerHTML = json.data.get('year');
-          movie_img_url.innerHTML = json.data.get('img_url');
-          booth.innerHTML = movie_name +'<br>'+genre+'<br>'+year+'<br>'+img_url+'<br>';
+          movie_genre.innerHTML = "Genre: " + json.data.get('genre');
+          movie_year.innerHTML = "Year: " + json.data.get('year');
+          movie_img_url.src = json.data.get('img_url');
       }
       if (json.type === 'chat_history'){
         for(chat in json.data){
           chat_history.innerHTML +=json.data[chat][0]+": "+json.data[chat][1] +'<br>';
-          console.log(json.data[chat]);
+          console.log("Chat history: "+json.data[chat]);
         }
-        
       }
     }
 
-    function vote_yes(connection){
-      console.log('Vote Recieved');
-      connection.sendUTF(
-        JSON.stringify({type:'vote',data:[current_movie,0]})
+    function vote_yes(){
+      connection.send(
+        JSON.stringify({type:'vote',data:1},replacer)
       );
+      console.log('Vote Sent');
     }
 
     function vote_no(){
-      console.log('Vote Recieved');
-      connection.sendUTF(
-        JSON.stringify({type:'vote',data:[current_movie,1]})
+      connection.send(
+        JSON.stringify({type:'vote',data:0},replacer)
       );
+      console.log('Vote Sent');
     }
 
     function send_chat(){
       console.log('Sending Message');
+    }
+
+    function replacer(key, value) {
+      if(value instanceof Map) {
+        return {
+          dataType: 'Map',
+          value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
+      } else {
+        return value;
+      }
+    }
+    function reviver(key, value) {
+      if(typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+          return new Map(value.value);
+        }
+      }
+      return value;
     }

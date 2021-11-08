@@ -11,9 +11,11 @@
     var voted = 0;
     var movie_list = [];
     var chat_history = [["User_1","Hello"],["User_2","Goodbye"]];
-    var room_size = 1; // Get amount of people in room from db
+    var room_size = 2; // Get amount of people in room from db
     var current_movie = new Map();
-
+    var favorite_movie = new Map();
+    favorite_movie.set('vote', 0);
+    var movie_cntr = 0;
 //retrieve database info
     if(get_room_info()){
         console.log("Got room data");
@@ -37,7 +39,7 @@
     wsServer.on('request', function(request) {
         console.log((new Date()) + ", Connection from origin: " + request.origin +".");
         var connection = request.accept(null, request.origin);
-        var client = clients.push(connection) -1;
+        var client = clients.push(connection);
         console.log('User #' + client+' has been added');
 
         //send chat history
@@ -52,9 +54,9 @@
             vote(connection);
         }
         connection.on('message', function(message) {
-        if (message.type === 'utf8') {
+        //if (message.type === 'utf8') {
             try {
-                var json = JSON.parse(message.data);
+                var json = JSON.parse(message.data, reviver);
             } 
             catch (e) {
                 console.log('This doesn\'t look like a valid JSON: ',
@@ -62,13 +64,14 @@
             }
             if(json.type === 'vote'){
                 console.log("Processing vote from User: ");
-                
+                voted += 1;
+                process_vote(json.data, connection);
             }
 
             if(json.type === 'chat'){
                 console.log("Processing chat from User: ");
             }
-        }
+        //}
         });
 
         connection.on('close', function(connection) {
@@ -80,21 +83,71 @@
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
-    function vote(connection){
-        if(movie_list.length > 0){
-            current_movie = movie_list[0].get('movie_data').get('movie_name');
-            connection.sendUTF(
-                JSON.stringify({type: 'movie', data: movie_list[0].get('movie_data')})
-            );
-            console.log("Sent: "+ movie_list[0].get('movie_data').get('movie_name'));
+    function vote(){
+        voted = 0;
+        if(movie_list.length > movie_cntr){
+            current_movie = movie_list[movie_cntr];
+            for(let connection = 0; connection < clients.length; connection++){
+                clients[connection].sendUTF(
+                    JSON.stringify({type: 'movie', data: movie_list[0].get('movie_data')},replacer)
+                );
+                console.log("Sent: "+ movie_list[movie_cntr].get('movie_data')+" to client: "+ clients[connection][0]);
+            }
+            movie_cntr += 1;
+        }
+        else{
+            end_vote();
         }
     }
-    function end_vote(connection){
-        voted = 0;
-        connection.sendUTF(
-            JSON.stringify({type:'vote_result',data:[current_movie]})
-        );
+/**
+ * process_vte() should count clients' vote
+ */
+    function process_vote(vote, connection ){
+        // Process vote
+        if (vote > 0){
+            current_movie.get('vote') += 1;
+        }
+       
+        console.log("Processed "+ connection+"'s vote");
+        // Check if everyone voted
+        if(voted >= room_size){
+            //Start new vote
+            vote();
+        }
+        else if (current_movie.get('vote') >= favorite_movie.get('vote')){
+            favorite_movie = current_movie;
+            console.log("New Favorite movie is: "+ favorite_movie.get('movie_data').get('movie_name'));
+        }
     }
+    function end_vote(){
+        voted = 0;
+        movie_cntr = 0;
+        for(let connection = 0; connection < clients.length; connection++){
+            clients[connection].sendUTF(
+                JSON.stringify({type:'vote_result',data:[current_movie]},replacer)
+            );
+        }
+        console.log("Ending Vote");
+    }
+
+    function replacer(key, value) {
+        if(value instanceof Map) {
+          return {
+            dataType: 'Map',
+            value: Array.from(value.entries()), // or with spread: value: [...value]
+          };
+        } else {
+          return value;
+        }
+      }
+      function reviver(key, value) {
+        if(typeof value === 'object' && value !== null) {
+          if (value.dataType === 'Map') {
+            return new Map(value.value);
+          }
+        }
+        return value;
+      }
 
 //database interfaces
 /**
@@ -111,10 +164,10 @@ async function get_room_info() {
     await imani_client.connect();
     console.log("MongoDB connected");
     const db = imani_client.db("Movies");
-    const global_users = db.collection('MovieData');
+    const movies = db.collection('MovieData');
     
     // Users are stored as [{username: "Username"},{password,"pass"}]
-    global_users.findOne({movie_name:"King Kong"},{}, function(err, result) {
+    movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
         if (err) throw err;
         var movie_map = new Map();
         var name = result['movie_name'];
