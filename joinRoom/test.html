@@ -1,0 +1,73 @@
+
+<html>
+<body>
+    <form>
+        <input type="text" id="p" />
+        <input type="submit" id="submitButton" value="submit"/>
+    </form>
+    <ul id="messages"></ul>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script
+        src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"
+        ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
+<script>
+
+var socket = io();
+var ID     = ""
+
+// Get data from server
+socket.on('send data', (data) => {
+    ID = data.id;
+});
+
+$("#p").focus();
+document
+        .getElementByTagName("form")[0]
+        .addEventListener("onSubmit", function (event) {
+        event.preventDefault();
+            var room = document.getElementById("p").value;
+            console.log(room);
+        });
+
+
+    function displayMessage(data) {
+            let authorClass = "";
+            let divClass = "";
+
+            // verify that the user ID and the message sent ID is similar
+            if (data.id === ID) {
+                console.log("this person has sent a message")
+                authorClass = "me";
+                divclass = "myDiv";
+            } else {
+                authorClass = "you";
+                divClass = "yourDiv";
+            }
+            const div = document.createElement("div");
+            div.className = divClass;
+            const li = document.createElement("li");
+            const p = document.createElement("p");
+            p.className = "time";
+            p.innerText = moment().format("hh:mm");
+            div.innerHTML = 
+                '<p class=" ' +
+                authorClass +
+                '">' +
+                data.data.user +
+                "</p>" +
+                '<p class="message"> ' +
+                data.data.value +
+                "</p>";
+            div.appendChild(p);
+            li.appendChild(div);
+
+            document.getElementById("messages").appendChild(li);
+
+            window.scrollTo(0, document.body.scrollHeight);
+        }
+</script>
+</html>
