@@ -18,7 +18,7 @@ console.log("Regular server running on Port "+ Port);
     const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 
 //Global variables
-    var skt_port = 1337;
+    var skt_port = Port;
     var clients = [];
     var voted = 0;
     var movie_list = [];
@@ -40,9 +40,9 @@ console.log("Regular server running on Port "+ Port);
     // process HTTP request. Since we're writing just WebSockets
     // server we don't have to implement anything.
     });
-    server.listen(skt_port, function() { 
+    /*server.listen(skt_port, function() { 
         console.log((new Date()) + ", WebSocket Server is now listening on port: " + skt_port);
-    });
+    });*/
     wsServer = new WebSocketServer({
     httpServer: server
     });
