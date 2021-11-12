@@ -14,7 +14,7 @@
     if (!window.WebSocket) {
     console.log('Browser does not support WebSocket.');
     }
-    var connection = new WebSocket('ws://127.0.0.1:1337');
+    var connection = new WebSocket('ws://127.0.0.1:3000');
     
     connection.onopen = 
     function () {

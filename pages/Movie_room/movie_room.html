@@ -56,8 +56,15 @@
 
             </a>    
         </div>
+        <script src="https://cdn.socket.io/4.3.2/socket.io.min.js" integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs" crossorigin="anonymous"></script>
         <script src="https://www.w3schools.com/lib/w3.js"></script>
+        <script src = "/socket.io/socket.io.js"></script>
         <script src = "movie.js"></script>
+        <script>
+            var socket = io("ws://127.0.0.1:1337");
+            //var connection = new WebSocket('ws://127.0.0.1:1337');
+        
+        </script>
     </body>
 
 </html>

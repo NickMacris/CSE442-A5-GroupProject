@@ -9,7 +9,7 @@ RUN npm install express
 RUN npm install express-formidable
 RUN npm install body-parser
 RUN npm install express-handlebars
-RUN npm install 
+RUN npm install socket.io
 
 EXPOSE $PORT
 

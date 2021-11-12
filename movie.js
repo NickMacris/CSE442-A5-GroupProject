@@ -1,4 +1,4 @@
-    var chat = document.getElementById('input_chat');
+   //var socket = io();
     var chat_history = document.getElementById('chat_history');
     var booth = document.getElementById('voting_booth');
     //var movie_img_url = 
@@ -12,15 +12,20 @@
     var vote_message = document.getElementById("Vote_Message");
 //Web socket stuff
     // if user is running mozilla then use it's built-in WebSocket
-  /*  window.WebSocket = window.WebSocket || window.MozWebSocket;
+    window.WebSocket = window.WebSocket || window.MozWebSocket;
     // if browser doesn't support WebSocket, just show
     // some notification and exit
-    if (!window.WebSocket) {
+    /*if (!window.WebSocket) {
     console.log('Browser does not support WebSocket.');
-    }
+    }*/
     var connection = new WebSocket('ws://127.0.0.1:1337');
-    
-    connection.onopen = 
+    /*const socket = io("ws://127.0.0.1:3000");
+
+    socket.on("connect", () =>{
+      console.log("Connected");
+      socket.send("Hello");
+    })*/
+    /*connection.onopen = 
     function () {
 
         // Greet User
@@ -28,13 +33,14 @@
             //loop through chat history, and 
         chat_history.innerHTML += '<p> Chatting </p>';
         vote_message.innerHTML = 'Vote here';
-    };
+    };*/
   
-    connection.onerror = function (error) {
+   /* connection.onerror = function (error) {
       // an error occurred when sending/receiving data
-    };
+    };*/
+
   
-    connection.onmessage = function (message) {
+  /*connection.onmessage = function (message) {
       
       try {
         console.log("Message: "+ message);
