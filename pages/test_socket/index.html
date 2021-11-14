@@ -1,74 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+   <title>Socket.io Example</title>
+ </head>
 
+ <body>
+         
+    <!-- Voting Action-->
+    <div class="voting_booth" >
+        <p id = "Vote_Message">Vote here</p>
+        <pid id = "voting_booth"></pid>
+        <img id = "movie_img" src="#" alt="Movie Description">
+        <p id = "movie_name"></p>
+        <p id = "movie_year"></p>
+        <p id = "movie_genre"></p>
+        <button onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
+        <button onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+    </div>
 
-<html>
-    <body>
-        <form>
-            <input type="text" id="p" />
-            <input type="submit" id="submitButton" value="submit"/>
-        </form>
-        <ul id="messages"></ul>
-    </body>
-    <script src="/socket.io/socket.io.js"></script>
-    <script
-            src="https://code.jquery.com/jquery-3.5.1.js"
-            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-            crossorigin="anonymous"
-            ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js"></script>
-    <script>
+    <!-- Chatting Action-->
+    <div class=chat>
+        <div class="chat_booth" >
+            <pid id = "chat_history"> </pid>
+            <p>Chat here</p>
+            
+        </div>
+
+        <div class="chat_box">
+            <input type = "text" id="input_chat" name="input_chat" placeholder="Send a message">
+            <button id="send_chat" onclick = "send_chat()" class="btn btn-primary btn-md"> Send! </button> 
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class = page_navigation>
+        <a  href="https://cse442.com">
+            <button class="sign_out"> SIGN OUT</button>
+        </a>
+        <a href="https://cse442.herokuapp.com/Homepage">
+            <button class="home"> Home</button>
+        </a>
+        <a href="https://cse442.herokuapp.com/find_friends">
+            <button class="find_friend"> Find Friend</button>
+        </a>
+        <a href="https://cse442.herokuapp.com/mainpage/creatingroom/createRoom.html">
+            <button class="create_room"> Create Room</button>
+
+        </a>
+        <a href="">
+            <button class="join_room"> Join Room</button>
+        </a>               <button class="profile"> Profile</button>
+        <a href="">
+            <button class="help"> Help</button>    
+
+        </a>    
+    </div>
+   <script src="/socket.io/socket.io.js"></script>
+   <script>
+       
+    // select relevant elements
+    var chat = document.getElementById('input_chat');
+    var chat_history = document.getElementById('chat_history');
+    var booth = document.getElementById('voting_booth');
+    var movie_img_url = document.getElementById("movie_img");
+    var movie_name = document.getElementById("movie_name");
+    var movie_year = document.getElementById("movie_year");
+    var movie_genre = document.getElementById("movie_genre");
+    var vote_message = document.getElementById("Vote_Message");
+   
+    // establish socket.io connection
+    const socket = io();
+   
+    // Greet User
+    booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
+    chat_history.innerHTML += '<p> Chatting </p>';
+    vote_message.innerHTML = 'Vote here';
+
+    function vote_yes(){
+        socket.emit('vote',1);
+        vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
+        console.log('Vote Sent');
+    }
+
+    function vote_no(){
+        socket.emit('vote',0);
+        vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
+        console.log('Vote Sent');
+    }
+
+    function send_chat(){
+        console.log('Sending Message');
+    }
+
     
-    var socket = io();
-    var ID     = ""
-    
-    // Get data from server
-    socket.on('send data', (data) => {
-        ID = data.id;
+     // watch for socket to emit a 'movie'
+    socket.on("movie", function(msg){
+        booth.innerHTML = '';
+        console.log("Movies" + msg);
+        movie_name.innerHTML = msg.get('movie_name');
+        movie_genre.innerHTML = "Genre: " + msg.get('genre');
+        movie_year.innerHTML = "Year: " + msg.get('year');
+        movie_img_url.src = msg.get('img_url');
+    });
+   
+    // watch for socket to emit a 'chat_history'
+    socket.on("chat_history", function(msg){
+        console.log("Chat history: "+msg);
+        chat_history.innerHTML = '';
+        for(chat in msg){
+          chat_history.innerHTML += msg[chat][0]+": "+msg[chat][1] +'<br>';
+        }
     });
     
-    $("#p").focus();
-    document
-            .getElementByTagName("form")[0]
-            .addEventListener("onSubmit", function (event) {
-            event.preventDefault();
-                var room = document.getElementById("p").value;
-                console.log(room);
-            });
-    
-    
-        function displayMessage(data) {
-                let authorClass = "";
-                let divClass = "";
-    
-                // verify that the user ID and the message sent ID is similar
-                if (data.id === ID) {
-                    console.log("this person has sent a message")
-                    authorClass = "me";
-                    divclass = "myDiv";
-                } else {
-                    authorClass = "you";
-                    divClass = "yourDiv";
-                }
-                const div = document.createElement("div");
-                div.className = divClass;
-                const li = document.createElement("li");
-                const p = document.createElement("p");
-                p.className = "time";
-                p.innerText = moment().format("hh:mm");
-                div.innerHTML = 
-                    '<p class=" ' +
-                    authorClass +
-                    '">' +
-                    data.data.user +
-                    "</p>" +
-                    '<p class="message"> ' +
-                    data.data.value +
-                    "</p>";
-                div.appendChild(p);
-                li.appendChild(div);
-    
-                document.getElementById("messages").appendChild(li);
-    
-                window.scrollTo(0, document.body.scrollHeight);
-            }
-    </script>
-    </html>
+    // watch for socket to emit a 'vote_result'
+    socket.on("vote_result", function(msg){
+        console.log("Vote results " + msg);
+    });
+
+     // watch for socket to emit a 'user connected' event
+    socket.on("user connected", function(msg){
+        console.log("User Connected" + msg);
+    });
+   
+   </script>
+ </body>
+</html>

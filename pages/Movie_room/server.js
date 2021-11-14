@@ -65,7 +65,7 @@ console.log("Regular server running on Port "+ Port);
 // Server functionality
     wsServer.on('request', function(request) {
         console.log((new Date()) + ", Connection from origin: " + request.origin +".");
-        var connection = request.accept(null, request.origin);
+       var connection = request.accept(null, request.origin);
         var client = clients.push(connection);
         console.log('User #' + client+' has been added');
 
