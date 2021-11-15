@@ -1,8 +1,10 @@
 const express = require("express");
 const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
-const Port  = process.env.Port || 3000;
+const http = require("http")
+var server = http.createServer(app);
+const socketIO = require("socket.io")
+var io = socketIO(server);
+const port  = process.env.Port || 3000;
 
 //database init
 const { MongoClient } = require("mongodb");
@@ -12,7 +14,6 @@ const imani_uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongo
 const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 
 //Global variables
-var skt_port = Port;
 var clients = 0;
 var voted = 0;
 var movie_list = [];
@@ -63,7 +64,7 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 
  });
 
- http.listen(Port, () => console.log("listening on http://localhost:"+Port));
+ http.listen(port, () => console.log("listening on http://localhost:"+port));
 
  
 /**
