@@ -8,122 +8,62 @@
  </head>
 
  <body>
-         
-    <!-- Voting Action-->
-    <div class="voting_booth" >
-        <p id = "Vote_Message">Vote here</p>
-        <pid id = "voting_booth"></pid>
-        <img id = "movie_img" src="#" alt="Movie Description">
-        <p id = "movie_name"></p>
-        <p id = "movie_year"></p>
-        <p id = "movie_genre"></p>
-        <button onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
-        <button onclick = "vote_no()"class="voting_buttons vote_no">No</button>
-    </div>
-
-    <!-- Chatting Action-->
-    <div class=chat>
-        <div class="chat_booth" >
-            <pid id = "chat_history"> </pid>
-            <p>Chat here</p>
-            
-        </div>
-
-        <div class="chat_box">
-            <input type = "text" id="input_chat" name="input_chat" placeholder="Send a message">
-            <button id="send_chat" onclick = "send_chat()" class="btn btn-primary btn-md"> Send! </button> 
-        </div>
-    </div>
-
-    <!-- Buttons -->
-    <div class = page_navigation>
-        <a  href="https://cse442.com">
-            <button class="sign_out"> SIGN OUT</button>
-        </a>
-        <a href="https://cse442.herokuapp.com/Homepage">
-            <button class="home"> Home</button>
-        </a>
-        <a href="https://cse442.herokuapp.com/find_friends">
-            <button class="find_friend"> Find Friend</button>
-        </a>
-        <a href="https://cse442.herokuapp.com/mainpage/creatingroom/createRoom.html">
-            <button class="create_room"> Create Room</button>
-
-        </a>
-        <a href="">
-            <button class="join_room"> Join Room</button>
-        </a>               <button class="profile"> Profile</button>
-        <a href="">
-            <button class="help"> Help</button>    
-
-        </a>    
-    </div>
+   <h1>Our Socket.io Chat Application</h1>
+   <div>
+     <h2>Messages</h2>
+     <ul></ul>
+   </div>
+   <form action="">
+     <input type="text" />
+     <button onclick = "send_chat()" >Send</button>
+   </form>
    <script src="/socket.io/socket.io.js"></script>
    <script>
-       
+
     // select relevant elements
-    var chat = document.getElementById('input_chat');
-    var chat_history = document.getElementById('chat_history');
-    var booth = document.getElementById('voting_booth');
-    var movie_img_url = document.getElementById("movie_img");
-    var movie_name = document.getElementById("movie_name");
-    var movie_year = document.getElementById("movie_year");
-    var movie_genre = document.getElementById("movie_genre");
-    var vote_message = document.getElementById("Vote_Message");
+    const form = document.querySelector("form");
+    const input = document.querySelector("input");
+    messageList = document.querySelector("ul");
    
     // establish socket.io connection
     const socket = io();
-   
-    // Greet User
-    booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
-    chat_history.innerHTML += '<p> Chatting </p>';
-    vote_message.innerHTML = 'Vote here';
 
-    function vote_yes(){
-        socket.emit('vote',1);
-        vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
-        console.log('Vote Sent');
-    }
-
-    function vote_no(){
-        socket.emit('vote',0);
-        vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
-        console.log('Vote Sent');
-    }
-
+    //test onclick events
     function send_chat(){
-        console.log('Sending Message');
+      socket.emit("test_onclick","Button press");
     }
-
-    
-     // watch for socket to emit a 'movie'
-    socket.on("movie", function(msg){
-        booth.innerHTML = '';
-        console.log("Movies" + msg);
-        movie_name.innerHTML = msg.get('movie_name');
-        movie_genre.innerHTML = "Genre: " + msg.get('genre');
-        movie_year.innerHTML = "Year: " + msg.get('year');
-        movie_img_url.src = msg.get('img_url');
-    });
    
-    // watch for socket to emit a 'chat_history'
-    socket.on("chat_history", function(msg){
-        console.log("Chat history: "+msg);
-        chat_history.innerHTML = '';
-        for(chat in msg){
-          chat_history.innerHTML += msg[chat][0]+": "+msg[chat][1] +'<br>';
-        }
-    });
-    
-    // watch for socket to emit a 'vote_result'
-    socket.on("vote_result", function(msg){
-        console.log("Vote results " + msg);
-    });
-
+    // handle sending message to server & input reset
+    function sendMessage(e) {
+      // prevent form submission refreshing page
+      e.preventDefault();
+      // send input value to server as type 'message'
+      socket.emit("message", input.value);
+      // reset input value
+      input.value = "";
+    }
+   
+    // add listener to form submission
+    form.addEventListener("submit", sendMessage);
+   
+    // add message to our page
+    function addMessageToHTML(message) {
+      // create a new li element
+      const li = document.createElement("li");
+      // add message to the elements text
+      li.innerText = message;
+      // add to list of messages
+      messageList.append(li);
+    }
+     // watch for socket to emit a 'message'
+    socket.on("message", addMessageToHTML);
+   
+    // display message when a user connects
+    function alertUserConnected() {
+      addMessageToHTML("User connected");
+    }
      // watch for socket to emit a 'user connected' event
-    socket.on("user connected", function(msg){
-        console.log("User Connected" + msg);
-    });
+    socket.on("user connected", alertUserConnected);
    
    </script>
  </body>
