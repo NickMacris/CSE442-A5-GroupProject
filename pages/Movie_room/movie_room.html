@@ -30,7 +30,7 @@
     </div>
 
     <div class="chat_box">
-        <input type = "text" id="input_chat" name="input_chat" placeholder="Send a message">
+        <input type = "text" id="input_chat" name="input_chat" placeholder="Send a message" >
         <button id="send_chat" onclick = "send_chat()" class="btn btn-primary btn-md"> Send! </button> 
     </div>
 </div>
@@ -62,7 +62,7 @@
     <script>
         
         // select relevant elements
-        var chat = document.getElementById('input_chat');
+        var chat = document.getElementById("input_chat");
         var chat_history = document.getElementById('chat_history');
         var booth = document.getElementById('voting_booth');
         var movie_img_url = document.getElementById("movie_img");
@@ -73,9 +73,9 @@
         //reset movie_page
         function reset(){
             //set vote table
-            movie_img_url = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Question_mark_%28black%29.svg/200px-Question_mark_%28black%29.svg.png";
-            movie_year = "Coolest Year";
-            movie_genre = "Coolest genre";
+            movie_img_url.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Question_mark_%28black%29.svg/200px-Question_mark_%28black%29.svg.png";
+            movie_year.innerHTML = "Coolest Year";
+            movie_genre.innerHTML = "Coolest genre";
             // Greet User
             booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
             chat_history.innerHTML += '<p> Chatting </p>';
@@ -100,14 +100,14 @@
         }
 
         function send_chat(){
+            chat = document.getElementById("input_chat").value;
+            console.log("chat:"+ chat );
             if(chat != ''){
                 socket.emit("chat",chat);
                 console.log('Sending Message');
-                chat = '';
             }
-            else{
-                chat = 'Enter Something';
-            }
+            document.getElementById("input_chat").value = '';
+            
         }
         socket.on("vote",function(msg){
             console.log("Sent message to myself");

@@ -88,7 +88,7 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 function process_vote(vote){
   // Process vote
   if (vote > 0){
-      current_movie.get('vote') += 1;
+      current_movie.set('vote', current_movie.get('vote') + 1);
   }
   console.log("Processed vote");
 
