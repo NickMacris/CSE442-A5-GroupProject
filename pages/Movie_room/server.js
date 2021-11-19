@@ -18,7 +18,7 @@ var clients = 0;
 var voted = 0;
 var movie_list = [];
 var chat_history = [["User_1","Hello"],["User_2","Goodbye"]];
-var room_size = 2; // Get amount of people in room from db
+var room_size = 2; // Get amount of people in room from db*********************
 var current_movie = new Map();
 var favorite_movie = new Map();
 favorite_movie.set('vote', 0);
@@ -64,7 +64,7 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 
  });
 
- http.listen(port, () => console.log("listening on http://localhost:"+port));
+ server.listen(port, () => console.log("listening on http://localhost:"+port));
 
  
 /**
@@ -130,8 +130,9 @@ await imani_client.connect();
 console.log("MongoDB connected");
 const db = imani_client.db("Movies");
 const movies = db.collection('MovieData');
-
-// Users are stored as [{username: "Username"},{password,"pass"}]
+//get a  list of movies instead ***********************
+//make a list of names of movies in the mongo db, output it to front end*****************
+//send info to front end, where omar will make it pretty********
 movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
   if (err) throw err;
   var movie_map = new Map();
