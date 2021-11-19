@@ -17,8 +17,8 @@
     <p id = "movie_name"></p>
     <p id = "movie_year"></p>
     <p id = "movie_genre"></p>
-    <button onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
-    <button onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+    <button id = "yes_button" onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
+    <button id = "no_button" onclick = "vote_no()"class="voting_buttons vote_no">No</button>
 </div>
 
 <!-- Chatting Action-->
@@ -80,6 +80,8 @@
             booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
             chat_history.innerHTML += '<p> Chatting </p>';
             vote_message.innerHTML = 'Vote here';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
         
         // establish socket.io connection
@@ -122,6 +124,8 @@
             movie_genre.innerHTML = "Genre: " + msg.get('genre');
             movie_year.innerHTML = "Year: " + msg.get('year');
             movie_img_url.src = msg.get('img_url');
+            document.getElementById('yes_button').style.visibility = 'visible';
+            document.getElementById('no_button').style.visibility = 'visible';
         });
 
         // watch for socket to emit a 'chat_history'
@@ -137,6 +141,9 @@
         // watch for socket to emit a 'vote_result'
         socket.on("vote_result", function(msg){
             console.log("Vote results " + msg);
+            vote_message.innerHTML = 'Most Popular Movie:';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         });
 
         // watch for socket to emit a 'user connected' event
