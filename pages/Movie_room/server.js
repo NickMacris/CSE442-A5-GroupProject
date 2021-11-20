@@ -13,17 +13,22 @@ const imani_dbPass = process.env.DB_PASS_442;
 const imani_uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
 const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 
+//Session variable dependent
+var room_name = "test_room"
+var room_size = 2; // Get amount of people in room from db*********************
+
 //Global variables
 var clients = 0;
 var voted = 0;
-var movie_list = [];
-var chat_history = [["User_1","Hello"],["User_2","Goodbye"]];
-var room_size = 2; // Get amount of people in room from db*********************
-var current_movie = new Map();
-var favorite_movie = new Map();
-favorite_movie.set('vote', 0);
+var current_movie = new Map();;
+var favorite_movie = new Map();;
 var movie_cntr = 0;
+
 //retrieve database info
+var room_users = [];
+var movie_list = [];
+var chat_history = [];
+
 if(get_room_info()){
     console.log("Got room data");
 }
@@ -33,14 +38,14 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 
  io.on("connection", function(socket) {
   io.emit("user connected",JSON.stringify("Hello via Json",replacer));
+  //get username from session variable?
+  //loop through room_users and add client
   clients += 1;
   console.log('User #' + clients+' has been added');
 
   //send chat history
-  if(chat_history.length > 0){
-      io.emit('chat_history', JSON.stringify(chat_history,replacer));
-  }
-
+  io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  
   //start voting once everyone joins
   if(clients >= room_size){
       console.log("Begin Voting");
@@ -73,10 +78,12 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
  function vote(){
   voted = 0;
   if(movie_list.length > movie_cntr){
-      current_movie = movie_list[movie_cntr];
+      current_movie.set('movie_name', movie_list[movie_cntr]);
+      current_movie.set('vote', 0);
       io.emit("movie",
-      JSON.stringify(current_movie.get('movie_data'),replacer));
-      console.log("Sent: "+ current_movie.get('movie_data'));
+      JSON.stringify(current_movie.get('movie_name'),replacer));
+      console.log("Sent: "+ current_movie.get('movie_name'));
+      favorite_movie = current_movie;
       movie_cntr += 1;
   }
   else{
@@ -101,7 +108,7 @@ function process_vote(vote){
   //Update favorite movie
   if (current_movie.get('vote') >= favorite_movie.get('vote')){
       favorite_movie = current_movie;
-      console.log("New Favorite movie is: "+ favorite_movie.get('movie_data').get('movie_name'));
+      console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
   }
 }
 
@@ -109,7 +116,7 @@ function process_vote(vote){
 function end_vote(){
   voted = 0;
   movie_cntr = 0;
-  io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_data'),replacer));
+  io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+"with",replacer));
   console.log("Ending Vote");
 }
 
@@ -133,19 +140,13 @@ const movies = db.collection('MovieData');
 //get a  list of movies instead ***********************
 //make a list of names of movies in the mongo db, output it to front end*****************
 //send info to front end, where omar will make it pretty********
-movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
+movies.findOne({room_info:room_name},{}, function(err, result) {
   if (err) throw err;
   var movie_map = new Map();
-  var name = result['movie_name'];
-  movie_map.set('movie_name', name);
-  movie_map.set('genre', result['genre']);
-  movie_map.set('year', result['year']);
-  movie_map.set('img_url', result['img_url']);
-  var movie_server = new Map();
-  movie_server.set('movie_data',movie_map);
-  movie_server.set('vote', 0);
-  console.log(movie_server);
-  movie_list.push(movie_server);
+  movie_list = result['movie_list'];
+  room_users = result['user_list'];
+  chat_history = result['chat_history'];
+  console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
   return  (1);
 }); 
 return 0;
