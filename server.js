@@ -13,7 +13,11 @@ const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
-//require('./simpleWebpage/database');
+
+//session and MongoStore are both used for session variable implementation
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
@@ -34,15 +38,27 @@ var favorite_movie = new Map();
 favorite_movie.set('vote', 0);
 var movie_cntr = 0;
 //retrieve database info
-if(get_room_info()){
-    console.log("Got room data");
-}
+// if(get_room_info()){
+//     console.log("Got room data");
+// }
 //server variables
 var send_back="No Users Found";
 
 let userGenres = ["initial values for genres","test1","test2"];
 let userFavorite = ["initial value for favorites"]
 
+
+// This initializes our session storage
+app.use(session({
+    secret: 'SECRET KEY',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: urlNick,
+        ttl: 24 * 60 * 60,
+        autoRemove: 'native'
+    })
+}));
 
 let user = "";
 app.use(express.static('public'));
@@ -339,7 +355,19 @@ async function finduser(req,res){
     }
     else if (user == "1"){
         getFavoriteFromDB();
-        res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
+        req.session.user = {
+            userN: req.body.username //For now this is the username, should probably be a random uuid
+        }
+        req.session.save(err => {
+            if(err){
+                console.log(err);
+            } else {
+                //res.send(req.session.user)
+                console.log("Session User is: " + req.session.user.userN);
+                res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+            }
+        });
+        // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
     }
 }
 
@@ -461,7 +489,7 @@ async function getFavoriteFromDB(req, res) {
 
     collection.findOne({user:'User1'},{}, function(err, result) {
         if (err) throw err;
-        console.log(result);
+        //console.log(result);
         //console.log(result.genres);
         userFavorite = [];
 
