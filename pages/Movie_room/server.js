@@ -42,7 +42,7 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
   //get username from session variable?
   //loop through room_users and add client
   //if user shouldnt be there, direct to exit
-  
+
   clients += 1;
   console.log('User #' + clients+' has been added');
 
@@ -105,23 +105,29 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 * process_vote() should count clients' vote
 */
 function process_vote(v){
-  // Process vote
-  if (v > 0){
-      current_movie.set('vote', current_movie.get('vote') + 1);
-  }
-  console.log("Processed vote");
+    // Process vote
+    if (v > 0){
+        current_movie.set('vote', current_movie.get('vote') + 1);
+    }
+    console.log("Processed vote");
+  
+    //Update favorite movie
+    if (current_movie.get('vote') > favorite_movie.get('vote')){
+        favorite_movie = current_movie;
+        console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
+    }
+    //Check for unanimous vote
+    if (current_movie.get('vote') === room_size){
+        end_vote();
+    }
+    // Check if everyone voted
+    if(voted >= room_size){
+        vote();
+    }
+  
+    
 
-  // Check if everyone voted
-  if(voted >= room_size){
-      vote();
   }
-
-  //Update favorite movie
-  if (current_movie.get('vote') > favorite_movie.get('vote')){
-      favorite_movie = current_movie;
-      console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
-  }
-}
 
 //Emit vote results
 function end_vote(){
