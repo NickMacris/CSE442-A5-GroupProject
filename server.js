@@ -538,7 +538,7 @@ async function getFavoriteFromDB(req, res) {
   const movies = db.collection('MovieData');
   
   // Users are stored as [{username: "Username"},{password,"pass"}]
-  movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
+  movies.findOne({movie_name:"Godzilla vs. Kong"},{}, function(err, result) {
     if (err) throw err;
     var movie_map = new Map();
     var name = result['movie_name'];
