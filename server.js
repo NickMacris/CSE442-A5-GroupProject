@@ -38,9 +38,9 @@ var favorite_movie = new Map();
 favorite_movie.set('vote', 0);
 var movie_cntr = 0;
 //retrieve database info
-// if(get_room_info()){
-//     console.log("Got room data");
-// }
+if(get_room_info()){
+    console.log("Got room data");
+}
 //server variables
 var send_back="No Users Found";
 
