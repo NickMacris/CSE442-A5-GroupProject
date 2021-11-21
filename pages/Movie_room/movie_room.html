@@ -93,12 +93,16 @@
             socket.emit("vote",1);
             vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
             console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
 
         function vote_no(){
             socket.emit("vote",0);
             vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
             console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
 
         function send_chat(){
@@ -121,6 +125,7 @@
             booth.innerHTML = '';
             console.log("Movie " + msg);
             movie_name.innerHTML = msg;
+            vote_message.innerHTML = 'Vote here:';
             document.getElementById('yes_button').style.visibility = 'visible';
             document.getElementById('no_button').style.visibility = 'visible';
         });
@@ -131,7 +136,7 @@
             console.log("Chat history: "+msg);
             chat_history.innerHTML = '';
             for(chat in msg){
-            chat_history.innerHTML += msg[chat][0]+": "+msg[chat][1] +'<br>';
+            chat_history.innerHTML += msg[chat] +'<br>';
             }
         });
 

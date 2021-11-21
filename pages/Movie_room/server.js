@@ -19,9 +19,10 @@ var room_size = 2; // Get amount of people in room from db*********************
 
 //Global variables
 var clients = 0;
-var voted = 0;
-var current_movie = new Map();;
-var favorite_movie = new Map();;
+var voted = -1;
+var current_movie = new Map();
+var favorite_movie = new Map();
+favorite_movie.set('vote',0);
 var movie_cntr = 0;
 
 //retrieve database info
@@ -40,6 +41,8 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
   io.emit("user connected",JSON.stringify("Hello via Json",replacer));
   //get username from session variable?
   //loop through room_users and add client
+  //if user shouldnt be there, direct to exit
+  
   clients += 1;
   console.log('User #' + clients+' has been added');
 
@@ -48,9 +51,18 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
   
   //start voting once everyone joins
   if(clients >= room_size){
+    if(voted === -1){
       console.log("Begin Voting");
       vote();
+    }
+    else{
+      console.log("Add user on to vote");
+      current_movie.set('vote',0);
+      io.emit("movie",
+      JSON.stringify(current_movie.get('movie_name'),replacer));
+    }
   }
+    
   socket.on("client", function(msg) {
     console.log("hello from client"+msg);    
   });
@@ -83,7 +95,6 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
       io.emit("movie",
       JSON.stringify(current_movie.get('movie_name'),replacer));
       console.log("Sent: "+ current_movie.get('movie_name'));
-      favorite_movie = current_movie;
       movie_cntr += 1;
   }
   else{
@@ -93,9 +104,9 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 /**
 * process_vote() should count clients' vote
 */
-function process_vote(vote){
+function process_vote(v){
   // Process vote
-  if (vote > 0){
+  if (v > 0){
       current_movie.set('vote', current_movie.get('vote') + 1);
   }
   console.log("Processed vote");
@@ -106,7 +117,7 @@ function process_vote(vote){
   }
 
   //Update favorite movie
-  if (current_movie.get('vote') >= favorite_movie.get('vote')){
+  if (current_movie.get('vote') > favorite_movie.get('vote')){
       favorite_movie = current_movie;
       console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
   }
