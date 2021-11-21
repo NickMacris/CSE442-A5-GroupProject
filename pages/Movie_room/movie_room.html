@@ -119,11 +119,8 @@
         socket.on("movie", function(msg){
             msg = JSON.parse(msg, reviver);
             booth.innerHTML = '';
-            console.log("Movies" + msg);
-            movie_name.innerHTML = msg.get('movie_name');
-            movie_genre.innerHTML = "Genre: " + msg.get('genre');
-            movie_year.innerHTML = "Year: " + msg.get('year');
-            movie_img_url.src = msg.get('img_url');
+            console.log("Movie " + msg);
+            movie_name.innerHTML = msg;
             document.getElementById('yes_button').style.visibility = 'visible';
             document.getElementById('no_button').style.visibility = 'visible';
         });

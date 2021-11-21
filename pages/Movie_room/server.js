@@ -116,7 +116,7 @@ function process_vote(vote){
 function end_vote(){
   voted = 0;
   movie_cntr = 0;
-  io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+"with",replacer));
+  io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
   console.log("Ending Vote");
 }
 
