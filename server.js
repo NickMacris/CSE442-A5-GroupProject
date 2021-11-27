@@ -431,89 +431,105 @@ async function finduser(req,res){
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
     removeGenreFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 app.post('/add_favorite',(req, res) => {
     addFavoriteToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_favorite',(req, res) => {
     removeFavoriteFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 //This function will add the textbox inputs to User1s document for genres
-async function addGenreToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addGenreToDB(req, res1) {
+    // await nickclient.connect();
+    // console.log("MongoDB connected");
+    //
+    // const db = nickclient.db('SimpleTest');
+    // const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { genres: req.body.addGenre } },
         (err,res) => {
         if (err) throw err;
-        console.log("Genre added: " + req.body.addGenre);
+        console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+        res1.redirect("profile");
     });
 }
 
 //This function will remove the textbox inputs to User1s document for genres
-async function removeGenreFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeGenreFromDB(req, res1) {
+    // await nickclient.connect();
+    // console.log("MongoDB connected");
+    //
+    // const db = nickclient.db('SimpleTest');
+    // const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { genres: req.body.removeGenre } },
         (err,res) => {
             if (err) throw err;
-            console.log("Genre removed: " + req.body.removeGenre);
+            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
-async function addFavoriteToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addFavoriteToDB(req, res1) {
+    // await nickclient.connect();
+    // console.log("MongoDB connected");
+    //
+    // const db = nickclient.db('SimpleTest');
+    // const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { favorite: req.body.addFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite added: " + req.body.addFavorite);
+            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
-async function removeFavoriteFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeFavoriteFromDB(req, res1) {
+    // await nickclient.connect();
+    // console.log("MongoDB connected");
+    //
+    // const db = nickclient.db('SimpleTest');
+    // const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { favorite: req.body.removeFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite removed: " + req.body.removeFavorite);
+            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
