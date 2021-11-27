@@ -121,16 +121,18 @@ app.get('/profile', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
         console.log(req.session.user.userN + " navigated to the profile page");
-        getGenreFromDB();
-        getFavoriteFromDB();
+        //getGenreFromDB();
+        //getFavoriteFromDB();
         // console.log("User genres is: ");
         // console.log(userGenres);
-        res.render('profilePage2',
-            {
-                responseObject: JSON.stringify(userGenres),
-                userFavorites: JSON.stringify(userFavorite),
-                userSession: JSON.stringify(req.session.user.userN)
-            });
+        // res.render('profilePage2',
+        //     {
+        //         responseObject: JSON.stringify(userGenres),
+        //         userFavorites: JSON.stringify(userFavorite),
+        //         userSession: JSON.stringify(req.session.user.userN)
+        //     });
+        getProfileData(req,res);
+
     }else{
         console.log("Someone who wasn't logged in tried going to the profile page")
         res.render('notLoggedIn');
@@ -371,7 +373,8 @@ async function insert(req, res) {
     var user = {
         username: Uusername,
         password: Upassword,
-        favorite: []
+        favorite: [],
+        genres: []
     }
     console.log("MongoDB connected");
 
@@ -551,6 +554,28 @@ async function getGenreFromDB(req, res) {
         return result;
     })
 };
+
+async function getProfileData(req,res){
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    global_users.findOne({username:req.session.user.userN},{}, function(err, result) {
+        if (err) throw err;
+        //console.log(result);
+        //console.log(result.genres);
+
+        res.render('profilePage2',
+            {
+                responseObject: JSON.stringify(result.genres),
+                userFavorites: JSON.stringify(result.favorite),
+                userSession: JSON.stringify(req.session.user.userN)
+            });
+
+    })
+
+
+
+}
 
 async function getFavoriteFromDB(req, res) {
     await nickclient.connect();
