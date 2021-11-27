@@ -12,8 +12,12 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
-//require('./simpleWebpage/database');
+const url    = 'mongodb+srv://createaccount:'+ "hello" + '@cluster0.k7tia.mongodb.net/test';
+
+//session and MongoStore are both used for session variable implementation
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
@@ -51,7 +55,20 @@ var send_back="No Users Found";
 
 let userGenres = ["initial values for genres","test1","test2"];
 let userFavorite = ["initial value for favorites"]
+let loggedInUsers = [];
 
+
+// This initializes our session storage
+app.use(session({
+    secret: 'SECRET KEY',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: urlNick,
+        ttl: 60 * 60,
+        autoRemove: 'native'
+    })
+}));
 
 let user = "";
 app.use(express.static('public'));
@@ -80,9 +97,18 @@ app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
 app.get("/Homepage", (req, res) => {
-    //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
-    getFavoriteFromDB();
-    res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
+    if(req.session.user !== undefined && req.session.user !== null) {
+        //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
+        getFavoriteFromDB();
+        console.log(req.session.user.userN + " navigated to the homepage");
+        res.render('homepage', {
+            userFavorites: JSON.stringify(userFavorite),
+            userSession: JSON.stringify(req.session.user.userN)
+        });
+    }else{
+        console.log("Someone who wasn't logged in tried going to the homepage")
+        res.render('notLoggedIn');
+    }
 })
 app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
@@ -101,12 +127,23 @@ app.get('/style.css', (req, res) => {
 
 
 app.get('/profile', (req, res) => {
-    //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
-    getGenreFromDB();
-    getFavoriteFromDB();
-    console.log("User generes is: ");
-    console.log(userGenres);
-    res.render('profilePage2',{responseObject:JSON.stringify(userGenres),userFavorites:JSON.stringify(userFavorite)});
+    if(req.session.user !== undefined && req.session.user !== null) {
+        //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
+        console.log(req.session.user.userN + " navigated to the profile page");
+        getGenreFromDB();
+        getFavoriteFromDB();
+        // console.log("User genres is: ");
+        // console.log(userGenres);
+        res.render('profilePage2',
+            {
+                responseObject: JSON.stringify(userGenres),
+                userFavorites: JSON.stringify(userFavorite),
+                userSession: JSON.stringify(req.session.user.userN)
+            });
+    }else{
+        console.log("Someone who wasn't logged in tried going to the profile page")
+        res.render('notLoggedIn');
+    }
 })
 
 app.get('/register', (req, res) => {
@@ -148,15 +185,48 @@ app.get('/css/main.css', (req, res) => {
 })
 
 app.get('/find_friends', (req, res) => {
-   res.render('find_friends' ,{
-       Search_Results: {
-             users:"Enter a friends username!"
-         }
-     });
+    if(req.session.user !== undefined && req.session.user !== null) {
+        res.render('find_friends', {
+            Search_Results: {
+                users: "Enter a friends username!"
+            }
+        });
+    }else{
+        console.log("Someone who wasn't logged in tried going to the find friends page")
+        res.render('notLoggedIn');
+    }
 });
 
 app.get('/join', (req, res) => {
-    res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+    if(req.session.user !== undefined && req.session.user !== null) {
+        res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+    }else{
+        console.log("Someone who wasn't logged in tried going to the join page")
+        res.render('notLoggedIn');
+    }
+})
+
+//This route handles session destruction on logging out, and will redirect user to login page.
+app.get('/logout',(req,res) => {
+    //This loop removes the user from the global list of logged in users
+    //Both the global loggedInUsers list and this loops are just for debugging purposes atm
+    //and can probably be safely removed if needed - Nick 11/21/2021
+    for(let i in loggedInUsers) {
+        if (loggedInUsers[i] === req.session.user.userN) {
+            console.log(req.session.user.userN + " has logged out.")
+            loggedInUsers.splice(Number(i), 1);
+        }
+    }
+    console.log("Current logged in users after logout: " + loggedInUsers)
+
+    //This will destroy the session that the user is using.
+    req.session.destroy(err => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("index")
+        }
+    });
 })
 
 /*
@@ -334,7 +404,21 @@ async function finduser(req,res){
     }
     else if (user == "1"){
         getFavoriteFromDB();
-        res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
+        req.session.user = {
+            userN: req.body.username //For now this is the username, should probably be a random uuid
+        }
+        loggedInUsers.push(req.session.user.userN)
+        console.log(req.session.user.userN + " just logged on");
+        console.log("Current logged in users are: " + loggedInUsers);
+        req.session.save(err => {
+            if(err){
+                console.log(err);
+            } else {
+                //res.send(req.session.user)
+                res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+            }
+        });
+        // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
     }
 }
 
@@ -456,7 +540,7 @@ async function getFavoriteFromDB(req, res) {
 
     collection.findOne({user:'User1'},{}, function(err, result) {
         if (err) throw err;
-        console.log(result);
+        //console.log(result);
         //console.log(result.genres);
         userFavorite = [];
 
