@@ -90,12 +90,13 @@ app.get("/createroom.js", (req, res) => {
 app.get("/Homepage", (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
-        getFavoriteFromDB();
+        //getFavoriteFromDB();
         console.log(req.session.user.userN + " navigated to the homepage");
-        res.render('homepage', {
-            userFavorites: JSON.stringify(userFavorite),
-            userSession: JSON.stringify(req.session.user.userN)
-        });
+        getPageData(req,res,'homepage');
+        // res.render('homepage', {
+        //     userFavorites: JSON.stringify(userFavorite),
+        //     userSession: JSON.stringify(req.session.user.userN)
+        // });
     }else{
         console.log("Someone who wasn't logged in tried going to the homepage")
         res.render('notLoggedIn');
@@ -131,7 +132,7 @@ app.get('/profile', (req, res) => {
         //         userFavorites: JSON.stringify(userFavorite),
         //         userSession: JSON.stringify(req.session.user.userN)
         //     });
-        getProfileData(req,res);
+        getPageData(req,res,'profilePage2');
 
     }else{
         console.log("Someone who wasn't logged in tried going to the profile page")
@@ -237,8 +238,7 @@ app.use(bodyParser.urlencoded({
  *      sent as a post request
  */
 const client = new MongoClient(url, {keepAlive: 1})
-getGenreFromDB();
-getFavoriteFromDB();
+
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
@@ -411,7 +411,7 @@ async function finduser(req,res){
         res.render('index');
     }
     else if (user == "1"){
-        getFavoriteFromDB();
+        //getFavoriteFromDB();
         req.session.user = {
             userN: req.body.username //For now this is the username, should probably be a random uuid
         }
@@ -423,7 +423,8 @@ async function finduser(req,res){
                 console.log(err);
             } else {
                 //res.send(req.session.user)
-                res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                //res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                res.redirect('homepage')
             }
         });
         // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
@@ -555,7 +556,7 @@ async function getGenreFromDB(req, res) {
     })
 };
 
-async function getProfileData(req,res){
+async function getPageData(req,res,pageName){
     await client.connect();
     const db = client.db("UserInfo");
     const global_users = db.collection('username');
@@ -564,7 +565,7 @@ async function getProfileData(req,res){
         //console.log(result);
         //console.log(result.genres);
 
-        res.render('profilePage2',
+        res.render(pageName,
             {
                 responseObject: JSON.stringify(result.genres),
                 userFavorites: JSON.stringify(result.favorite),
