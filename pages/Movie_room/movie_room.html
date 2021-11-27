@@ -136,7 +136,7 @@
             console.log("Chat history: "+msg);
             chat_history.innerHTML = '';
             for(chat in msg){
-            chat_history.innerHTML += msg[chat] +'<br>';
+            chat_history.innerHTML += msg[chat][0]+": "+ msg[chat][1]+'<br>';
             }
         });
 
