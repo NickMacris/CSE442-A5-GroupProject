@@ -12,7 +12,7 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ "hello" + '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -53,8 +53,6 @@ if(get_room_info()){
 //server variables
 var send_back="No Users Found";
 
-let userGenres = ["initial values for genres","test1","test2"];
-let userFavorite = ["initial value for favorites"]
 let loggedInUsers = [];
 
 
@@ -96,20 +94,18 @@ app.get('/index.html', (req, res) => {
 app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
+
 app.get("/Homepage", (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
-        //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
-        getFavoriteFromDB();
         console.log(req.session.user.userN + " navigated to the homepage");
-        res.render('homepage', {
-            userFavorites: JSON.stringify(userFavorite),
-            userSession: JSON.stringify(req.session.user.userN)
-        });
+        getPageData(req,res,'homepage');
+
     }else{
         console.log("Someone who wasn't logged in tried going to the homepage")
         res.render('notLoggedIn');
     }
 })
+
 app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
 
@@ -128,18 +124,9 @@ app.get('/style.css', (req, res) => {
 
 app.get('/profile', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
-        //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
         console.log(req.session.user.userN + " navigated to the profile page");
-        getGenreFromDB();
-        getFavoriteFromDB();
-        // console.log("User genres is: ");
-        // console.log(userGenres);
-        res.render('profilePage2',
-            {
-                responseObject: JSON.stringify(userGenres),
-                userFavorites: JSON.stringify(userFavorite),
-                userSession: JSON.stringify(req.session.user.userN)
-            });
+        getPageData(req,res,'profilePage2');
+
     }else{
         console.log("Someone who wasn't logged in tried going to the profile page")
         res.render('notLoggedIn');
@@ -244,8 +231,7 @@ app.use(bodyParser.urlencoded({
  *      sent as a post request
  */
 const client = new MongoClient(url, {keepAlive: 1})
-getGenreFromDB();
-getFavoriteFromDB();
+
 app.post('/register', (req, res) => {
     insert(req,res);
     client.close();
@@ -366,7 +352,8 @@ async function insert(req, res) {
     var user = {
         username: Uusername,
         password: Upassword,
-        favorite: []
+        favorite: [],
+        genres: []
     }
     console.log("MongoDB connected");
 
@@ -403,7 +390,6 @@ async function finduser(req,res){
         res.render('index');
     }
     else if (user == "1"){
-        getFavoriteFromDB();
         req.session.user = {
             userN: req.body.username //For now this is the username, should probably be a random uuid
         }
@@ -415,7 +401,8 @@ async function finduser(req,res){
                 console.log(err);
             } else {
                 //res.send(req.session.user)
-                res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                //res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                res.redirect('homepage')
             }
         });
         // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
@@ -426,128 +413,112 @@ async function finduser(req,res){
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
     removeGenreFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 app.post('/add_favorite',(req, res) => {
     addFavoriteToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_favorite',(req, res) => {
     removeFavoriteFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 //This function will add the textbox inputs to User1s document for genres
-async function addGenreToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addGenreToDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { genres: req.body.addGenre } },
         (err,res) => {
         if (err) throw err;
-        console.log("Genre added: " + req.body.addGenre);
+        console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+        res1.redirect("profile");
     });
 }
 
 //This function will remove the textbox inputs to User1s document for genres
-async function removeGenreFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeGenreFromDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { genres: req.body.removeGenre } },
         (err,res) => {
             if (err) throw err;
-            console.log("Genre removed: " + req.body.removeGenre);
+            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
-async function addFavoriteToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addFavoriteToDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { favorite: req.body.addFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite added: " + req.body.addFavorite);
+            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
-async function removeFavoriteFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeFavoriteFromDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { favorite: req.body.removeFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite removed: " + req.body.removeFavorite);
+            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
-async function getGenreFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
-
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.findOne({user:'User1'},{}, function(err, result) {
+async function getPageData(req,res,pageName){
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    global_users.findOne({username:req.session.user.userN},{}, function(err, result) {
         if (err) throw err;
         //console.log(result);
         //console.log(result.genres);
-        userGenres = [];
-        for(let i of result.genres){
-            userGenres.push(i);
-        }
-        return result;
+
+        res.render(pageName,
+            {
+                responseObject: JSON.stringify(result.genres),
+                userFavorites: JSON.stringify(result.favorite),
+                userSession: JSON.stringify(req.session.user.userN)
+            });
+
     })
-};
 
-async function getFavoriteFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
 
-    collection.findOne({user:'User1'},{}, function(err, result) {
-        if (err) throw err;
-        //console.log(result);
-        //console.log(result.genres);
-        userFavorite = [];
-
-        for(let i of result.favorite){
-            userFavorite.push(i);
-        }
-    })
 }
 
 //movie_room
