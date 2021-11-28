@@ -19,5 +19,41 @@
             document.getElementById("roomID").innerHTML = roomID;
         </script>
     </div> 
+ 
+    <div class="Add_People">    
+        <form action="/populate_room" method="post">  
+            <input type = "text" name="room_name" placeholder="Room Name">
+            <input type = "text" name="user_in1" placeholder="Add User Name">
+            <input type = "text" name="user_in2" placeholder="Add User Name">
+            <input type = "text" name="user_in3" placeholder="Add User Name">
+            <input type = "text" name="user_in4" placeholder="Add User Name">
+            <input type = "text" name="user_in5" placeholder="Add User Name">
+            <input type = "text" name="user_in6" placeholder="Add User Name">
+            <input type = "text" name="user_in7" placeholder="Add User Name">
+            <input type = "text" name="user_in8" placeholder="Add User Name">
+            <input type = "text" name="user_in9" placeholder="Add User Name">
+            <input type = "text" name="user_in10" placeholder="Add User Name">
+            <button class="btn btn-primary btn-md"> Create! </button>
+        </form> 
+    </div>
+
+    <div class="submit_room">
+        
+    </div>
+   <script>
+       var out = document.getElementById("in_Room");
+
+        let users = [];
+       function add_user(){
+        var inp = document.getElementById("user_in").value;
+            if( inp!=''){
+                out.innerHTML += inp+'<br>';
+                document.getElementById("hide").value = out;
+            }
+            console.log(document.getElementById("hide").value);
+            document.getElementById("user_in").value= '';
+       }
+
+   </script>
 </body>
 </html>

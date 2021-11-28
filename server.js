@@ -268,6 +268,11 @@ app.post('/find_friends/find_user',(req, res) => {
    console.log("Should have sent back"+search);
 });
 
+app.post('/populate_room',(req, res) => {
+   console.log(req.body);
+    populate_Room(body,res);
+ });
+
 let server = http.Server(app);
 server.listen(port, () => {
     console.log(`server running on ${port}`);
@@ -347,6 +352,29 @@ async function find_friend(name,res) {
    }); 
 }
 
+//database helper for  'find_user' post
+async function populate_Room(body,res) {
+    await imani_client.connect();
+    console.log("MongoDB connected");
+    const db = imani_client.db("Movies");
+    const movies = db.collection('MovieData');
+    //get a  list of movies instead ***********************
+    //make a list of names of movies in the mongo db, output it to front end*****************
+    //send info to front end, where omar will make it pretty********
+    movies.findOne({room_info:room_name},{}, function(err, result) {
+        if (err) throw err;
+         console.log(result);
+    /*insert ths stuff
+    movie_list = result['movie_list'];
+    room_users = result['user_list'];
+    chat_history = result['chat_history'];
+    console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
+        */
+    const insertResult = await collection.insertMany([{ Nicki_mickey: 10012435667 }, { lil_cooljaii: 10000908678 }]);
+    console.log('Inserted in rooms =>', insertResult);
+ 
+    }); 
+ }
 async function sleepnsend(t, res) {
 
     await new Promise(r => setTimeout(r, t));
@@ -627,7 +655,6 @@ async function getFavoriteFromDB(req, res) {
   //send info to front end, where omar will make it pretty********
   movies.findOne({room_info:room_name},{}, function(err, result) {
     if (err) throw err;
-    var movie_map = new Map();
     movie_list = result['movie_list'];
     room_users = result['user_list'];
     chat_history = result['chat_history'];
