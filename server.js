@@ -21,11 +21,11 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
+let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
-const imani_uri = 'mongodb+srv://CSE442:' + 'CSE442cse' + '@cluster0.k7tia.mongodb.net/test';
+const imani_uri = urlNick
 const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //movie_room**********
 //Session variable dependent
@@ -221,7 +221,6 @@ app.listen(port, () => {
     console.log(`App is running on ${port}`);
 });
 */
-const nickclient = new MongoClient(urlNick, {keepAlive: 1})
 app.use(bodyParser.urlencoded({
     extended:true
 }));
