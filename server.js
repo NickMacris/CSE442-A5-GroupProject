@@ -384,7 +384,7 @@ async function finduser(req,res){
             user = "1";
         }
     });
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise(r => setTimeout(r, 100));
     if (user == "0"){
         res.render('index');
     }
