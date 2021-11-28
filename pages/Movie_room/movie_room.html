@@ -17,8 +17,8 @@
     <p id = "movie_name"></p>
     <p id = "movie_year"></p>
     <p id = "movie_genre"></p>
-    <button onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
-    <button onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+    <button id = "yes_button" onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
+    <button id = "no_button" onclick = "vote_no()"class="voting_buttons vote_no">No</button>
 </div>
 
 <!-- Chatting Action-->
@@ -80,6 +80,8 @@
             booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
             chat_history.innerHTML += '<p> Chatting </p>';
             vote_message.innerHTML = 'Vote here';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
         
         // establish socket.io connection
@@ -91,12 +93,16 @@
             socket.emit("vote",1);
             vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
             console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
 
         function vote_no(){
             socket.emit("vote",0);
             vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
             console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         }
 
         function send_chat(){
@@ -117,11 +123,11 @@
         socket.on("movie", function(msg){
             msg = JSON.parse(msg, reviver);
             booth.innerHTML = '';
-            console.log("Movies" + msg);
-            movie_name.innerHTML = msg.get('movie_name');
-            movie_genre.innerHTML = "Genre: " + msg.get('genre');
-            movie_year.innerHTML = "Year: " + msg.get('year');
-            movie_img_url.src = msg.get('img_url');
+            console.log("Movie " + msg);
+            movie_name.innerHTML = msg;
+            vote_message.innerHTML = 'Vote here:';
+            document.getElementById('yes_button').style.visibility = 'visible';
+            document.getElementById('no_button').style.visibility = 'visible';
         });
 
         // watch for socket to emit a 'chat_history'
@@ -130,13 +136,16 @@
             console.log("Chat history: "+msg);
             chat_history.innerHTML = '';
             for(chat in msg){
-            chat_history.innerHTML += msg[chat][0]+": "+msg[chat][1] +'<br>';
+            chat_history.innerHTML += msg[chat][0]+": "+ msg[chat][1]+'<br>';
             }
         });
 
         // watch for socket to emit a 'vote_result'
         socket.on("vote_result", function(msg){
             console.log("Vote results " + msg);
+            vote_message.innerHTML = 'Most Popular Movie:';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
         });
 
         // watch for socket to emit a 'user connected' event
