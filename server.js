@@ -12,7 +12,7 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+ 'CSE442cse'+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -21,7 +21,7 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
+let urlNick = 'mongodb+srv://CSE442:' +'CSE442cse'+ '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
@@ -254,8 +254,8 @@ app.post('/find_friends/find_user',(req, res) => {
 });
 
 app.post('/populate_room',(req, res) => {
-   console.log(req.body);
-    populate_Room(body,res);
+    console.log("Populating Room");
+    populate_Room(req.body,res);
  });
 
 let server = http.Server(app);
@@ -338,27 +338,38 @@ async function find_friend(name,res) {
 }
 
 //database helper for  'find_user' post
-async function populate_Room(body,res) {
+async function populate_Room(info,res) {
     await imani_client.connect();
     console.log("MongoDB connected");
     const db = imani_client.db("Movies");
     const movies = db.collection('MovieData');
-    //get a  list of movies instead ***********************
-    //make a list of names of movies in the mongo db, output it to front end*****************
-    //send info to front end, where omar will make it pretty********
-    movies.findOne({room_info:room_name},{}, function(err, result) {
-        if (err) throw err;
-         console.log(result);
-    /*insert ths stuff
-    movie_list = result['movie_list'];
-    room_users = result['user_list'];
-    chat_history = result['chat_history'];
-    console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
-        */
-    const insertResult = await collection.insertMany([{ Nicki_mickey: 10012435667 }, { lil_cooljaii: 10000908678 }]);
-    console.log('Inserted in rooms =>', insertResult);
- 
-    }); 
+    console.log(info);
+    let room_name = '';
+    let roomid = '';
+    let user_list= [];
+    let movie_arr = ['Transformers','Insidious','Bee','Toy Story','Escape Room','Cinderella'];
+    let chat_history = [];
+    for (const [key, value] of Object.entries(info)) {
+        if (key == 'room_name'){
+            room_name = value;
+        }
+        else if (key == 'room_ID_send'){
+            roomid = value;
+        } 
+        else{//must be a user value
+            if(value != ''){
+                user_list.push(value);
+            }
+        }
+    }
+        const insertResult = await movies.insertOne({
+            room_info: roomid,
+            id: room_name,
+            movie_list: movie_arr,
+            room_users: user_list,  
+            chat_history:chat_history
+         });
+        console.log('Inserted in rooms =>', insertResult);
  }
 async function sleepnsend(t, res) {
 
