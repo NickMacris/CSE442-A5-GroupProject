@@ -444,7 +444,7 @@ async function finduser(req,res){
             user = "1";
         }
     });
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise(r => setTimeout(r, 100));
     if (user == "0"){
         res.render('index');
     }
@@ -495,67 +495,98 @@ app.post('/remove_favorite',(req, res) => {
 
 //This function will add the textbox inputs to User1s document for genres
 async function addGenreToDB(req, res1) {
+    let temp1 = req.body.addGenre
+    temp1 = temp1.trim()
 
-    await client.connect();
-    const db = client.db("UserInfo");
-    const global_users = db.collection('username');
+    if(temp1 !== "") {
 
-    global_users.updateOne(
-        { username: req.session.user.userN },
-        { $push: { genres: req.body.addGenre } },
-        (err,res) => {
-        if (err) throw err;
-        console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+        await client.connect();
+        const db = client.db("UserInfo");
+        const global_users = db.collection('username');
+
+        global_users.updateOne(
+            {username: req.session.user.userN},
+            {$push: {genres: temp1}},
+            (err, res) => {
+                if (err) throw err;
+                console.log("Genre added: " + temp1 + " to " + req.session.user.userN);
+                res1.redirect("profile");
+            });
+    }else{
         res1.redirect("profile");
-    });
+    }
 }
 
 //This function will remove the textbox inputs to User1s document for genres
 async function removeGenreFromDB(req, res1) {
 
-    await client.connect();
-    const db = client.db("UserInfo");
-    const global_users = db.collection('username');
+    let temp1 = req.body.removeGenre
+    temp1 = temp1.trim()
 
-    global_users.updateOne(
-        { username: req.session.user.userN },
-        { $pull: { genres: req.body.removeGenre } },
-        (err,res) => {
-            if (err) throw err;
-            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
-            res1.redirect("profile");
-        });
+    if(temp1 !== "") {
+
+        await client.connect();
+        const db = client.db("UserInfo");
+        const global_users = db.collection('username');
+
+        global_users.updateOne(
+            {username: req.session.user.userN},
+            {$pull: {genres: temp1}},
+            (err, res) => {
+                if (err) throw err;
+                console.log("Genre removed: " + temp1 + " from " + req.session.user.userN);
+                res1.redirect("profile");
+            });
+    }else{
+        res1.redirect("profile");
+    }
 }
 
 async function addFavoriteToDB(req, res1) {
 
-    await client.connect();
-    const db = client.db("UserInfo");
-    const global_users = db.collection('username');
+    let temp1 = req.body.addFavorite
+    temp1 = temp1.trim()
 
-    global_users.updateOne(
-        { username: req.session.user.userN },
-        { $push: { favorite: req.body.addFavorite } },
-        (err,res) => {
-            if (err) throw err;
-            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
-            res1.redirect("profile");
-        });
+    if(temp1 !== "") {
+
+        await client.connect();
+        const db = client.db("UserInfo");
+        const global_users = db.collection('username');
+
+        global_users.updateOne(
+            {username: req.session.user.userN},
+            {$push: {favorite: temp1}},
+            (err, res) => {
+                if (err) throw err;
+                console.log("Favorite added: " + temp1 + " to " + req.session.user.userN);
+                res1.redirect("profile");
+            });
+    }else{
+        res1.redirect("profile");
+    }
 }
 async function removeFavoriteFromDB(req, res1) {
 
-    await client.connect();
-    const db = client.db("UserInfo");
-    const global_users = db.collection('username');
+    let temp1 = req.body.removeFavorite
+    temp1 = temp1.trim()
 
-    global_users.updateOne(
-        { username: req.session.user.userN },
-        { $pull: { favorite: req.body.removeFavorite } },
-        (err,res) => {
-            if (err) throw err;
-            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
-            res1.redirect("profile");
-        });
+    if(temp1 !== "") {
+
+        await client.connect();
+        const db = client.db("UserInfo");
+        const global_users = db.collection('username');
+
+        global_users.updateOne(
+            {username: req.session.user.userN},
+            {$pull: {favorite: temp1}},
+            (err, res) => {
+                if (err) throw err;
+                console.log("Favorite removed: " + temp1 + " from " + req.session.user.userN);
+                res1.redirect("profile");
+            });
+    }else{
+        res1.redirect("profile");
+    }
 }
 
 async function getPageData(req,res,pageName){
