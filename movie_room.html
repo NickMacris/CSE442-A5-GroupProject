@@ -83,10 +83,20 @@
             document.getElementById('yes_button').style.visibility = 'hidden';
             document.getElementById('no_button').style.visibility = 'hidden';
         }
+
+        let userName = prompt("What is your username?");
+        let room     = prompt("Room Name");
+
         
         // establish socket.io connection
         const socket = io();
         reset();
+
+        socket.emit("join room", {username : userName, roomName : room});
+        socket.on('send data', (data) => {
+            ID = data.id;
+            console.log(" my ID:" + ID);
+        });
 
         //button click events
         function vote_yes(){
