@@ -12,7 +12,7 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ dbPass+ '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+dbPass+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -21,7 +21,7 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' +dbPassNick+ '@cluster0.k7tia.mongodb.net/test';
+let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
