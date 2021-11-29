@@ -68,11 +68,12 @@ app.use(session({
     })
 }));
 
-let user = "";
+let curuser = "";
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-    extended:false
+    extended:true
 }));
 app.use(formidable());
 
@@ -193,7 +194,7 @@ app.get('/join', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
         res.sendFile(path.join(__dirname, '/movie_room.html'));
-        user = JSON.stringify(req.session.user.userN);
+        curuser = JSON.stringify(req.session.user.userN);
         
     }else{
         console.log("Someone who wasn't logged in tried going to the join page")
@@ -297,7 +298,8 @@ io.on("connection", function(socket) {
     socket.on("join room", (data) => {
      console.log('in room');
 
-     let Newuser = joinUser(socket.id, data.username,data.roomName)
+     //let Newuser = joinUser(socket.id, data.username,data.roomName)
+     let Newuser = joinUser(socket.id, curuser, req,data.roomName)
 
      socket.emit('send data' ,
             {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
@@ -410,7 +412,6 @@ app.post('/login',(req,res) => {
     finduser(req,res);
 });
 
-
 /*
 async function finduser(req,res){
     user = "";
@@ -418,7 +419,9 @@ async function finduser(req,res){
     console.log("MongoDB connected");
     const db = client.db("UserInfo");
     const global_users = db.collection('username');
-    global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    //global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    global_users.findOne({username:req.fields.username,password:req.fields.psw}, function(err, result) {
+    
         if (result == null){
             user = "0";
         }
@@ -428,6 +431,7 @@ async function finduser(req,res){
     });
     await new Promise(r => setTimeout(r, 1000));
     if (user == "0"){
+        console.log("\nhere\n");
         res.render('index');
     }
     else if (user == "1"){
@@ -458,21 +462,25 @@ app.post('/add_genre',(req, res) => {
     //res.redirect("/profile");
 });
 
+
 async function finduser(req,res){
     user = "";
     await client.connect();
     console.log("MongoDB connected");
     const db = client.db("UserInfo");
     const global_users = db.collection('username');
-    global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    //global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    global_users.findOne({username:req.fields.username},{password:req.fields.psw}, function(err, result) {
+        console.log(req.fields.username);
+        console.log(req.fields.psw);
+        console.log(result);
         if (result == null){
-            console.log("\nhere\n");
    //         res.render('index');
             res.redirect('/');
         }
         else{
             req.session.user = {
-                userN: req.body.username //For now this is the username, should probably be a random uuid
+                userN: req.fields.username //For now this is the username, should probably be a random uuid
             }
             loggedInUsers.push(req.session.user.userN)
             console.log(req.session.user.userN + " just logged on");
