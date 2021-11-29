@@ -74,7 +74,14 @@ app.use('/css', express.static(__dirname + 'public/css'));
 
 app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
-app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"));
+app.get("/movie_room", (req, res) => {
+    if(req.session.user !== undefined && req.session.user !== null) {
+        res.sendFile(__dirname + "/movie_room.html");
+    }else{
+        console.log("Someone who wasn't logged in tried going in a movie room")
+        res.render('notLoggedIn');
+    }
+});
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
@@ -256,6 +263,8 @@ app.post('/find_friends/find_user',(req, res) => {
 app.post('/populate_room',(req, res) => {
     console.log("Populating Room");
     populate_Room(req.body,res);
+    res.redirect('join')
+    //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
  });
 
 let server = http.Server(app);
@@ -358,7 +367,19 @@ async function populate_Room(info,res) {
         } 
         else{//must be a user value
             if(value != ''){
-                user_list.push(value);
+                const d = imani_client.db("UserInfo");
+                const global_users = d.collection('username');//Global Users
+                // Users are stored as [{username: "Username"},{password,"pass"}]
+                global_users.findOne({username:value},{}, function(err, result) {
+                    if (err) throw err;
+                        console.log(result);
+                    if(result != null){
+                        user_list.push(value); 
+                    }
+                    else{
+                        console.log("User not found");
+                    }
+                });
             }
         }
     }
