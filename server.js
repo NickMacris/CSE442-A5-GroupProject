@@ -299,7 +299,7 @@ io.on("connection", function(socket) {
      console.log('in room');
 
      //let Newuser = joinUser(socket.id, data.username,data.roomName)
-     let Newuser = joinUser(socket.id, curuser, req,data.roomName)
+     let Newuser = joinUser(socket.id, curuser, data.roomName)
 
      socket.emit('send data' ,
             {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
