@@ -10,8 +10,8 @@ const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
-const port = process.env.PORT || 7000;
-const dbPass = process.env.USER_PASS;
+const port = process.env.PORT || 8000;
+const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+dbPass+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
@@ -20,7 +20,7 @@ const MongoStore = require('connect-mongo');
 
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPassNick = process.env.DB_PASS_442;
+let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -120,6 +120,9 @@ app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
 
 app.get('/movieViews.js',(req,res)=>{
     res.sendFile(path.join(__dirname, '/movieViews.js'));})
+
+app.get('/viewUpComing.js',(req,res) => {
+    res.sendFile(path.join(__dirname, '/viewUpComing.js'));})
 
 app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
