@@ -8,8 +8,8 @@ const formidable = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
 const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
-const { resourceLimits } = require('worker_threads');
-const { getSystemErrorMap } = require('util');
+//const { resourceLimits } = require('worker_threads');
+//const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
@@ -22,7 +22,12 @@ let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.ne
 //Imani Database init
 const imani_dbPass = dbPassNick;
 const imani_uri = 'mongodb+srv://CSE442:' + imani_dbPass + '@cluster0.k7tia.mongodb.net/test';
-const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
+const imani_client = new MongoClient(imani_uri,{
+    keepAlive: 1,
+    useNewUrlParser: true,
+    useUnifiedTopology: false,
+});
+
 //Global variables
 var clients = 0;
 var voted = 0;
@@ -47,6 +52,10 @@ let userFavorite = ["initial value for favorites"]
 let user = "";
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
+app.use(bodyParser.urlencoded({
+    extended:false
+}));
+app.use(formidable());
 
 app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
@@ -110,7 +119,7 @@ app.get('/mainpage/creatingroom/index.html', (req, res) => {
 })
 
 app.get('/mainpage/creatingroom/createRoom.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
+    es.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
 })
 
 app.get('/mainpage/creatingroom/cssRoom/roomlook.css', (req, res) => {
@@ -131,6 +140,7 @@ app.get('/create_account.css', (req, res) => {
 app.get('/css/main.css.map', (req, res) => {
     res.sendFile(path.join(__dirname, '/css/main.css.map'))
 })
+
 app.get('/css/main.scss', (req, res) => {
     res.sendFile(path.join(__dirname, '/css/main.scss'))})
 
@@ -147,7 +157,8 @@ app.get('/find_friends', (req, res) => {
 });
 
 app.get('/join', (req, res) => {
-    res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+    res.sendFile(path.join(__dirname, '/movie_room.html'));
+    user = JSON.stringify(req.session.user.userN);
 })
 
 /*
@@ -155,19 +166,27 @@ app.listen(port, () => {
     console.log(`App is running on ${port}`);
 });
 */
-const nickclient = new MongoClient(urlNick, {keepAlive: 1})
-app.use(bodyParser.urlencoded({
-    extended:true
-}));
+const nickclient = new MongoClient(urlNick, {
+    keepAlive: 1,
+    useNewUrlParser: true,
+    useUnifiedTopology: false,
+});
 
 /*
  * POST Requests: submitting a form usually is
  *      sent as a post request
  */
-const client = new MongoClient(url, {keepAlive: 1})
+const client = new MongoClient(url, {
+    keepAlive: 1,
+    useNewUrlParser: true,
+    useUnifiedTopology: false,
+});
 getGenreFromDB();
 getFavoriteFromDB();
 app.post('/register', (req, res) => {
+    console.log("Post req for register");
+    console.log(req.fields.uname)
+    console.log(req.fields.pass)
     insert(req,res);
     client.close();
 
@@ -241,9 +260,16 @@ io.on('connection', (socket) => {
     process_vote(msg);
   });
 
+/*
   socket.on("chat", function(msg){
     console.log("Processing chat from User: " + msg);
     chat_history.push(["User x",msg]);
+    io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  });
+*/
+  socket.on("chat", function(msg){
+    console.log("Processing chat from User: " + msg);
+    chat_history.push([user,msg]);
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
   });
 
@@ -255,7 +281,7 @@ io.on('connection', (socket) => {
      }
      console.log("disconnected");
    });
-})
+});
 
 //database helper for  'find_user' post
 async function find_friend(name,res) {
@@ -295,23 +321,30 @@ async function sleepnsend(t, res) {
  */
 async function insert(req, res) {
     await client.connect();
-    var Uusername = req.fields.uname
-    var Upassword = req.fields.pass
 
-    var user = {
-        username: Uusername,
-        password: Upassword,
-        favorite: []
+    var Uusername = req.fields.uname;
+    var Upassword = req.fields.pass;
+
+    if ( Uusername != undefined && Upassword != undefined  ) {
+        var user = {
+            username: Uusername,
+            password: Upassword,
+            favorite: []
+        };
+        console.log("MongoDB connected");
+
+        const db = client.db('UserInfo');
+        const collection = db.collection('username');
+
+        collection.insertOne(user, (err,res) => {
+            if (err) throw err;
+            console.log("1 User Added");
+        });
+    } else {
+        console.log("error");
     }
-    console.log("MongoDB connected");
 
-    const db = client.db('UserInfo');
-    const collection = db.collection('username');
 
-    collection.insertOne(user, (err,res) => {
-        if (err) throw err;
-        console.log("1 User Added");
-    });
 
 }
 
@@ -449,7 +482,7 @@ async function getGenreFromDB(req, res) {
             userGenres.push(i);
         }
         return result;
-    })
+    });
 };
 
 async function getFavoriteFromDB(req, res) {
@@ -468,7 +501,7 @@ async function getFavoriteFromDB(req, res) {
         for(let i of result.favorite){
             userFavorite.push(i);
         }
-    })
+    });
 }
 
 //movie_room
@@ -498,19 +531,19 @@ async function getFavoriteFromDB(req, res) {
         current_movie.set('vote', current_movie.get('vote') + 1);
     }
     console.log("Processed vote");
-  
+
     // Check if everyone voted
     if(voted >= room_size){
         vote();
     }
-  
+
     //Update favorite movie
     if (current_movie.get('vote') >= favorite_movie.get('vote')){
         favorite_movie = current_movie;
         console.log("New Favorite movie is: "+ favorite_movie.get('movie_data').get('movie_name'));
     }
   }
-  
+
   //Emit vote results
   function end_vote(){
     voted = 0;
@@ -518,8 +551,8 @@ async function getFavoriteFromDB(req, res) {
     io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_data'),replacer));
     console.log("Ending Vote");
   }
-  
-  
+
+
   //database interfaces
   /**
   * Should retrieve room movie list and objects, and user list.
@@ -531,14 +564,14 @@ async function getFavoriteFromDB(req, res) {
     genre:""
     yeae:""
     img_url:""
-  */ 
+  */
   await imani_client.connect();
   console.log("MongoDB connected");
   const db = imani_client.db("Movies");
   const movies = db.collection('MovieData');
-  
+
   // Users are stored as [{username: "Username"},{password,"pass"}]
-  movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
+  /*movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
     if (err) throw err;
     var movie_map = new Map();
     var name = result['movie_name'];
@@ -552,10 +585,10 @@ async function getFavoriteFromDB(req, res) {
     console.log(movie_server);
     movie_list.push(movie_server);
     return  (1);
-  }); 
+  }); */
   return 0;
   }
-  
+
   //JSON wrapper & unwrapper functions
   function replacer(key, value) {
     if(value instanceof Map) {
