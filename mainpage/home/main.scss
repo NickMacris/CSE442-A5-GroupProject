@@ -13,19 +13,19 @@ body{
 }
 
 .navi-bar{
-   display: flex;
-   background: white;
-   padding: 1em;
+    display: flex;
+    background: white;
+    padding: 1em;
     //margin: 0;
-   // position : fixed;
+    // position : fixed;
     z-index : 999;
     width: 97%;
-   // right:0%;
-   top: 0%;
-   height: 50;
-   
-  
-//dealing with the logo
+    // right:0%;
+    top: 0%;
+    height: 50;
+
+
+    //dealing with the logo
     .logo{
         text-decoration: none;
         font-weight: bold;
@@ -42,16 +42,16 @@ body{
         display: flex;
         font-size: 1.3em;
         margin-right: 300 px;
-        
+
         &:hover{
             font-weight:bold;
         }
-      
+
 
     }
 }
 
-//spread across the top 
+//spread across the top
 .container{
     font-family: 'Sansita';
     display: flex;
@@ -59,22 +59,22 @@ body{
 }
 
 
-//styling the links 
+//styling the links
 
 
 a{
-    
+
     text-decoration: none;
     color: black;
 }
 
-//controls what to watch section 
+//controls what to watch section
 .left-col{
     .watch-what{
         //text-transform: uppercase;
         font-weight: bold;
         color :black;
-       // letter-spacing: .3em;
+        // letter-spacing: .3em;
     }
 
     .watchlist{
@@ -87,13 +87,13 @@ a{
     }
 }
 
-//controls what to More to Watch 
+//controls what to More to Watch
 .left-col1{
     .watch-more-movies{
         font-weight: bold;
         color: black;
     }
-    
+
     .select-perfect{
         width:100%;
         padding: -.1em;
@@ -117,13 +117,10 @@ a{
         border-radius: .1em;
         border: 1px;
     }
-
     .secondary-Navigation{
         display: flex;
         place-content: space-between;
-
     }
-
     .netflix{
         background-color: var(--color-red);
         color :black;
@@ -137,7 +134,6 @@ a{
         width: unset;
         cursor: pointer;
     }
-
     .hulu{
         background-color: var(--primary-color);
         color :black;
@@ -151,9 +147,9 @@ a{
         width: unset;
         cursor: pointer;
     }
-   
+
 }*/
-// CSS Design for the Streaming movies 
+// CSS Design for the Streaming movies
 
 main{
     display: flex;
@@ -200,7 +196,7 @@ main{
     transform : translateY(0)
 }
 
-//CSS for Upcoming Movies 
+//CSS for Upcoming Movies
 .main2
 {
     display: flex;
