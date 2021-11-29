@@ -1,19 +1,23 @@
-const socketIO                    = require ("socket.io");
-const http = require("http");
+const socketIO              = require ("socket.io");
+const http                  = require("http");
 const express               = require('express');
 const app                   = express();
 const path                  = require("path");
 const { MongoClient }       = require('mongodb')
-const formidable = require('express-formidable');
+const formidable            = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
-const bodyParser = require('body-parser')
-const exphbs = require('express-handlebars');
-//const { resourceLimits } = require('worker_threads');
-//const { getSystemErrorMap } = require('util');
+const bodyParser            = require('body-parser')
+const exphbs                = require('express-handlebars');
+const { resourceLimits } = require('worker_threads');
+const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
-//require('./simpleWebpage/database');
+
+//session and MongoStore are both used for session variable implementation
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
@@ -21,22 +25,26 @@ let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.ne
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
-const imani_uri = 'mongodb+srv://CSE442:' + imani_dbPass + '@cluster0.k7tia.mongodb.net/test';
-const imani_client = new MongoClient(imani_uri,{
-    keepAlive: 1,
-    useNewUrlParser: true,
-    useUnifiedTopology: false,
-});
+const imani_uri = urlNick
+const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
+//movie_room**********
+//Session variable dependent
+var room_name = "test_room"
+var room_size = 2; // Get amount of people in room from db*********************
 
 //Global variables
 var clients = 0;
-var voted = 0;
-var movie_list = [];
-var chat_history = [["User_1","Hello"],["User_2","Goodbye"]];
-var room_size = 2; // Get amount of people in room from db
+var voted = -1;
 var current_movie = new Map();
 var favorite_movie = new Map();
-favorite_movie.set('vote', 0);
+favorite_movie.set('vote',0);
+var movie_cntr = 0;
+
+//retrieve database info
+var room_users = [];
+var movie_list = [];
+var chat_history = [];
+
 var movie_cntr = 0;
 //retrieve database info
 if(get_room_info()){
@@ -45,9 +53,20 @@ if(get_room_info()){
 //server variables
 var send_back="No Users Found";
 
-let userGenres = ["initial values for genres","test1","test2"];
-let userFavorite = ["initial value for favorites"]
+let loggedInUsers = [];
 
+
+// This initializes our session storage
+app.use(session({
+    secret: 'SECRET KEY',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: urlNick,
+        ttl: 60 * 60,
+        autoRemove: 'native'
+    })
+}));
 
 let user = "";
 app.use(express.static('public'));
@@ -79,11 +98,18 @@ app.get('/index.html', (req, res) => {
 app.get("/createroom.js", (req, res) => {
     res.sendFile(path.join(__dirname, '/createroom.js'))
 })
+
 app.get("/Homepage", (req, res) => {
-    //res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
-    getFavoriteFromDB();
-    res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
+    if(req.session.user !== undefined && req.session.user !== null) {
+        console.log(req.session.user.userN + " navigated to the homepage");
+        getPageData(req,res,'homepage');
+
+    }else{
+        console.log("Someone who wasn't logged in tried going to the homepage")
+        res.render('notLoggedIn');
+    }
 })
+
 app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
     res.sendFile(path.join(__dirname, '/mainpage/home/denise-jans-Lq6rcifGjOU-unsplash.jpg'));})
 
@@ -101,12 +127,14 @@ app.get('/style.css', (req, res) => {
 
 
 app.get('/profile', (req, res) => {
-    //res.sendFile(path.join(__dirname, 'profilePage2.html')) ;
-    getGenreFromDB();
-    getFavoriteFromDB();
-    console.log("User generes is: ");
-    console.log(userGenres);
-    res.render('profilePage2',{responseObject:JSON.stringify(userGenres),userFavorites:JSON.stringify(userFavorite)});
+    if(req.session.user !== undefined && req.session.user !== null) {
+        console.log(req.session.user.userN + " navigated to the profile page");
+        getPageData(req,res,'profilePage2');
+
+    }else{
+        console.log("Someone who wasn't logged in tried going to the profile page")
+        res.render('notLoggedIn');
+    }
 })
 
 app.get('/register', (req, res) => {
@@ -149,40 +177,61 @@ app.get('/css/main.css', (req, res) => {
 })
 
 app.get('/find_friends', (req, res) => {
-   res.render('find_friends' ,{
-       Search_Results: {
-             users:"Enter a friends username!"
-         }
-     });
+    if(req.session.user !== undefined && req.session.user !== null) {
+        res.render('find_friends', {
+            Search_Results: {
+                users: "Enter a friends username!"
+            }
+        });
+    }else{
+        console.log("Someone who wasn't logged in tried going to the find friends page")
+        res.render('notLoggedIn');
+    }
 });
 
 app.get('/join', (req, res) => {
-    res.sendFile(path.join(__dirname, '/movie_room.html'));
-    user = JSON.stringify(req.session.user.userN);
+    if(req.session.user !== undefined && req.session.user !== null) {
+        //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+        res.sendFile(path.join(__dirname, '/movie_room.html'));
+        user = JSON.stringify(req.session.user.userN);
+        
+    }else{
+        console.log("Someone who wasn't logged in tried going to the join page")
+        res.render('notLoggedIn');
+    }
 })
 
-/*
-app.listen(port, () => {
-    console.log(`App is running on ${port}`);
-});
-*/
-const nickclient = new MongoClient(urlNick, {
-    keepAlive: 1,
-    useNewUrlParser: true,
-    useUnifiedTopology: false,
-});
+//This route handles session destruction on logging out, and will redirect user to login page.
+app.get('/logout',(req,res) => {
+    //This loop removes the user from the global list of logged in users
+    //Both the global loggedInUsers list and this loops are just for debugging purposes atm
+    //and can probably be safely removed if needed - Nick 11/21/2021
+    for(let i in loggedInUsers) {
+        if (loggedInUsers[i] === req.session.user.userN) {
+            console.log(req.session.user.userN + " has logged out.")
+            loggedInUsers.splice(Number(i), 1);
+        }
+    }
+    console.log("Current logged in users after logout: " + loggedInUsers)
+
+    //This will destroy the session that the user is using.
+    req.session.destroy(err => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("index")
+        }
+    });
+})
+
 
 /*
  * POST Requests: submitting a form usually is
  *      sent as a post request
  */
-const client = new MongoClient(url, {
-    keepAlive: 1,
-    useNewUrlParser: true,
-    useUnifiedTopology: false,
-});
-getGenreFromDB();
-getFavoriteFromDB();
+const client = new MongoClient(url, {keepAlive: 1})
+
+
 app.post('/register', (req, res) => {
     console.log("Post req for register");
     console.log(req.fields.uname)
@@ -198,6 +247,7 @@ app.post('/get_streamer',(req, res) => {
    // (req,res);
    // res.redirect("/Homepage");
 });
+
 
 //Get find_friend search request, check it in database
 app.post('/find_friends/find_user',(req, res) => {
@@ -217,22 +267,33 @@ io = socketIO(server);
 const {joinUser, removeUser, findUser } = require('./joinRoom/users');
 let thisRoom ="";
 
-io.on('connection', (socket) => {
-    console.log("socket connected");
+
+io.on("connection", function(socket) {
     io.emit("user connected",JSON.stringify("Hello via Json",replacer));
+    //get username from session variable?
+    //loop through room_users and add client
+    //if user shouldnt be there, direct to exit
+    
     clients += 1;
     console.log('User #' + clients+' has been added');
   
     //send chat history
-    if(chat_history.length > 0){
-        io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    }
-  
+    io.emit('chat_history', JSON.stringify(chat_history,replacer));
+    
     //start voting once everyone joins
     if(clients >= room_size){
+      if(voted === -1){
         console.log("Begin Voting");
         vote();
+      }
+      else{
+        console.log("Add user on to vote");
+        current_movie.set('vote',0);
+        io.emit("movie",
+        JSON.stringify(current_movie.get('movie_name'),replacer));
+      }
     }
+
     socket.on("join room", (data) => {
      console.log('in room');
 
@@ -343,15 +404,14 @@ async function insert(req, res) {
     } else {
         console.log("error");
     }
-
-
-
 }
 
 app.post('/login',(req,res) => {
     finduser(req,res);
 });
 
+
+/*
 async function finduser(req,res){
     user = "";
     await client.connect();
@@ -366,142 +426,170 @@ async function finduser(req,res){
             user = "1";
         }
     });
-    await new Promise(r => setTimeout(r, 50));
+    await new Promise(r => setTimeout(r, 1000));
     if (user == "0"){
         res.render('index');
     }
     else if (user == "1"){
-        getFavoriteFromDB();
-        res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
+        req.session.user = {
+            userN: req.body.username //For now this is the username, should probably be a random uuid
+        }
+        loggedInUsers.push(req.session.user.userN)
+        console.log(req.session.user.userN + " just logged on");
+        console.log("Current logged in users are: " + loggedInUsers);
+        req.session.save(err => {
+            if(err){
+                console.log(err);
+            } else {
+                //res.send(req.session.user)
+                //res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                res.redirect('homepage')
+            }
+        });
+        // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
     }
 }
+*/
 
 //Post request to handle adding genres to database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
+
+async function finduser(req,res){
+    user = "";
+    await client.connect();
+    console.log("MongoDB connected");
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+        if (result == null){
+            console.log("\nhere\n");
+   //         res.render('index');
+            res.redirect('/');
+        }
+        else{
+            req.session.user = {
+                userN: req.body.username //For now this is the username, should probably be a random uuid
+            }
+            loggedInUsers.push(req.session.user.userN)
+            console.log(req.session.user.userN + " just logged on");
+            console.log("Current logged in users are: " + loggedInUsers);
+            req.session.save(err => {
+                if(err){
+                    console.log(err);
+                } else {
+                    //res.send(req.session.user)
+                    //res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                    res.redirect('homepage')
+                }
+            });
+        }
+    });
+}
 
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_genre',(req, res) => {
     removeGenreFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 app.post('/add_favorite',(req, res) => {
     addFavoriteToDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
 app.post('/remove_favorite',(req, res) => {
     removeFavoriteFromDB(req,res);
-    res.redirect("/profile");
+    //res.redirect("/profile");
 });
 
 //This function will add the textbox inputs to User1s document for genres
-async function addGenreToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addGenreToDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { genres: req.body.addGenre } },
         (err,res) => {
         if (err) throw err;
-        console.log("Genre added: " + req.body.addGenre);
+        console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+        res1.redirect("profile");
     });
 }
 
 //This function will remove the textbox inputs to User1s document for genres
-async function removeGenreFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeGenreFromDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { genres: req.body.removeGenre } },
         (err,res) => {
             if (err) throw err;
-            console.log("Genre removed: " + req.body.removeGenre);
+            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
-async function addFavoriteToDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function addFavoriteToDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $push: { favorite: req.body.addFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite added: " + req.body.addFavorite);
+            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
-async function removeFavoriteFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+async function removeFavoriteFromDB(req, res1) {
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    collection.updateOne(
-        { user: "User1" },
+    global_users.updateOne(
+        { username: req.session.user.userN },
         { $pull: { favorite: req.body.removeFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite removed: " + req.body.removeFavorite);
+            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
+            res1.redirect("profile");
         });
 }
 
-async function getGenreFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
-
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.findOne({user:'User1'},{}, function(err, result) {
+async function getPageData(req,res,pageName){
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    global_users.findOne({username:req.session.user.userN},{}, function(err, result) {
         if (err) throw err;
         //console.log(result);
         //console.log(result.genres);
-        userGenres = [];
-        for(let i of result.genres){
-            userGenres.push(i);
-        }
-        return result;
-    });
-};
 
-async function getFavoriteFromDB(req, res) {
-    await nickclient.connect();
-    console.log("MongoDB connected");
+        res.render(pageName,
+            {
+                responseObject: JSON.stringify(result.genres),
+                userFavorites: JSON.stringify(result.favorite),
+                userSession: JSON.stringify(req.session.user.userN)
+            });
 
-    const db = nickclient.db('SimpleTest');
-    const collection = db.collection('documents');
-
-    collection.findOne({user:'User1'},{}, function(err, result) {
-        if (err) throw err;
-        console.log(result);
-        //console.log(result.genres);
-        userFavorite = [];
-
-        for(let i of result.favorite){
-            userFavorite.push(i);
-        }
-    });
+    })
 }
 
 //movie_room
@@ -512,10 +600,11 @@ async function getFavoriteFromDB(req, res) {
  function vote(){
     voted = 0;
     if(movie_list.length > movie_cntr){
-        current_movie = movie_list[movie_cntr];
+        current_movie.set('movie_name', movie_list[movie_cntr]);
+        current_movie.set('vote', 0);
         io.emit("movie",
-        JSON.stringify(current_movie.get('movie_data'),replacer));
-        console.log("Sent: "+ current_movie.get('movie_data'));
+        JSON.stringify(current_movie.get('movie_name'),replacer));
+        console.log("Sent: "+ current_movie.get('movie_name'));
         movie_cntr += 1;
     }
     else{
@@ -525,22 +614,25 @@ async function getFavoriteFromDB(req, res) {
   /**
   * process_vote() should count clients' vote
   */
-  function process_vote(vote_p){
+  function process_vote(v){
     // Process vote
-    if (vote_p > 0){
+    if (v > 0){
         current_movie.set('vote', current_movie.get('vote') + 1);
     }
     console.log("Processed vote");
-
+  
+    //Update favorite movie
+    if (current_movie.get('vote') > favorite_movie.get('vote')){
+        favorite_movie = current_movie;
+        console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
+    }
+    //Check for unanimous vote
+    if (current_movie.get('vote') === room_size){
+        end_vote();
+    }
     // Check if everyone voted
     if(voted >= room_size){
         vote();
-    }
-
-    //Update favorite movie
-    if (current_movie.get('vote') >= favorite_movie.get('vote')){
-        favorite_movie = current_movie;
-        console.log("New Favorite movie is: "+ favorite_movie.get('movie_data').get('movie_name'));
     }
   }
 
@@ -548,7 +640,7 @@ async function getFavoriteFromDB(req, res) {
   function end_vote(){
     voted = 0;
     movie_cntr = 0;
-    io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_data'),replacer));
+    io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
     console.log("Ending Vote");
   }
 
@@ -569,23 +661,18 @@ async function getFavoriteFromDB(req, res) {
   console.log("MongoDB connected");
   const db = imani_client.db("Movies");
   const movies = db.collection('MovieData');
-
-  // Users are stored as [{username: "Username"},{password,"pass"}]
-  /*movies.findOne({movie_name:"King Kong"},{}, function(err, result) {
+  //get a  list of movies instead ***********************
+  //make a list of names of movies in the mongo db, output it to front end*****************
+  //send info to front end, where omar will make it pretty********
+  movies.findOne({room_info:room_name},{}, function(err, result) {
     if (err) throw err;
     var movie_map = new Map();
-    var name = result['movie_name'];
-    movie_map.set('movie_name', name);
-    movie_map.set('genre', result['genre']);
-    movie_map.set('year', result['year']);
-    movie_map.set('img_url', result['img_url']);
-    var movie_server = new Map();
-    movie_server.set('movie_data',movie_map);
-    movie_server.set('vote', 0);
-    console.log(movie_server);
-    movie_list.push(movie_server);
+    movie_list = result['movie_list'];
+    room_users = result['user_list'];
+    chat_history = result['chat_history'];
+    console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
     return  (1);
-  }); */
+  }); 
   return 0;
   }
 
