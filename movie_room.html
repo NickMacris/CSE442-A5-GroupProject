@@ -86,6 +86,7 @@
         
         // establish socket.io connection
         const socket = io();
+        socket.emit("joinmovieroom","Username");
         reset();
 
         //button click events

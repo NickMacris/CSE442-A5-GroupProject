@@ -12,7 +12,7 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ 'CSE442cse'+ '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+ dbPass+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -21,7 +21,7 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' +'CSE442cse'+ '@cluster0.k7tia.mongodb.net/test';
+let urlNick = 'mongodb+srv://CSE442:' +dbPassNick+ '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
@@ -39,17 +39,16 @@ var current_movie = new Map();
 var favorite_movie = new Map();
 favorite_movie.set('vote',0);
 var movie_cntr = 0;
-
-//retrieve database info
+var open_movie_rooms = {};
+//movie room &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 var room_users = [];
 var movie_list = [];
 var chat_history = [];
-
 var movie_cntr = 0;
-//retrieve database info
 if(get_room_info()){
     console.log("Got room data");
 }
+//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //server variables
 var send_back="No Users Found";
 
@@ -76,6 +75,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
 app.get("/movie_room", (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
+        
+        console.log(req.session.user);
         res.sendFile(__dirname + "/movie_room.html");
     }else{
         console.log("Someone who wasn't logged in tried going in a movie room")
@@ -278,6 +279,7 @@ let thisRoom ="";
 
 
 io.on("connection", function(socket) {
+   // console.log(socket);
     io.emit("user connected",JSON.stringify("Hello via Json",replacer));
     //get username from session variable?
     //loop through room_users and add client
@@ -302,7 +304,29 @@ io.on("connection", function(socket) {
         JSON.stringify(current_movie.get('movie_name'),replacer));
       }
     }
-      
+    
+/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+    socket.on("joinmovieroom", function(msg) {
+        console.log("Join Movie Room: "+msg);
+        //send chat history
+        join_room(roomname,usersname,socket);
+        io.emit('chat_history', JSON.stringify(chat_history,replacer));
+        
+        //start voting once everyone joins
+        if(clients >= room_size){
+        if(voted === -1){
+            console.log("Begin Voting");
+            vote(roomname);
+        }
+        else{
+            console.log("Add user on to vote");
+            current_movie.set('vote',0);
+            io.emit("movie",
+            JSON.stringify(current_movie.get('movie_name'),replacer));
+        }
+        }    
+      });
+*/
     socket.on("client", function(msg) {
       console.log("hello from client"+msg);    
     });
@@ -346,7 +370,7 @@ async function find_friend(name,res) {
    }); 
 }
 
-//database helper for  'find_user' post
+//database helper for create room
 async function populate_Room(info,res) {
     await imani_client.connect();
     console.log("MongoDB connected");
@@ -366,7 +390,7 @@ async function populate_Room(info,res) {
             roomid = value;
         } 
         else{//must be a user value
-            if(value != ''){
+            if(value != '' && !user_list.includes(value)){
                 const d = imani_client.db("UserInfo");
                 const global_users = d.collection('username');//Global Users
                 // Users are stored as [{username: "Username"},{password,"pass"}]
@@ -612,7 +636,33 @@ async function getPageData(req,res,pageName){
 }
 
 //movie_room
-
+/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+function join_room(roomname,usersname,socket){
+    let c =0;
+    for (r in open_movie_rooms){
+        if (r == roomname){
+            c = 1;
+            //add user to room
+        }                
+    }
+    if(!c){
+        //create new room
+        open_movie_rooms.push({
+            roomname:{
+                'roominfo': get_room_info(roomname),
+                'users':[socket]
+            }
+        });
+    }
+    else{
+        open_movie_rooms['roomname']['users'].push(username);
+        if (open_movie_rooms['roomname']['roominfo'][room_size] === open_movie_rooms['roomname']['users'].length()){
+            vote(roomname);
+        }
+    }
+    
+}
+*/
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
