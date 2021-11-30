@@ -10,8 +10,8 @@ const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
-const port = process.env.PORT || 7000;
-const dbPass = process.env.USER_PASS;
+const port = process.env.PORT || 8000;
+const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+dbPass+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
@@ -20,7 +20,7 @@ const MongoStore = require('connect-mongo');
 
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPassNick = process.env.DB_PASS_442;
+let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -53,7 +53,8 @@ if(get_room_info()){
 var send_back="No Users Found";
 
 let loggedInUsers = [];
-
+//for fields to work
+app.use(formidable());
 
 // This initializes our session storage
 app.use(session({
@@ -429,11 +430,41 @@ async function sleepnsend(t, res) {
  */
 async function insert(req, res) {
     await client.connect();
-    var Uusername = req.fields.uname
-    var Upassword = req.fields.pass
+    var Uusername = req.fields.uname;
+    var Upassword = req.fields.pass;
+
+    // html conversion
+    let checked_username = "";
+    if (Uusername.includes("<")){
+        checked_username = Uusername.replace(/</g, "&lt");
+    }
+    else if (Uusername.includes(">")){
+        checked_username = Uusername.replace(/>/g, "&gt");
+    }
+    else if (Uusername.includes("&")){
+        checked_username = Uusername.replace(/&/g, "&amp");
+    }
+    else if (Uusername.includes("!")){
+        checked_username = Uusername.replace(/!/g, "&excl");
+    }
+    else if (Uusername.includes(",")){
+        checked_username = Uusername.replace(/,/g, "&comma");
+    }
+    else if (Uusername.includes(".")){
+        checked_username = Uusername.replace(/./g, "&period");
+    }
+    else if (Uusername.includes(":")){
+        checked_username = Uusername.replace(/:/g, "&colon");
+    }
+    else if (Uusername.includes("@")){
+        checked_username = Uusername.replace(/@/g, "&commat");
+    }
+    else if (Uusername.includes("_")){
+        checked_username = Uusername.replace(/_/g, "&lowbar");
+    }
 
     var user = {
-        username: Uusername,
+        username: checked_username,
         password: Upassword,
         favorite: [],
         genres: []
@@ -449,6 +480,9 @@ async function insert(req, res) {
     });
 
 }
+
+
+
 
 app.post('/login',(req,res) => {
     finduser(req,res);
