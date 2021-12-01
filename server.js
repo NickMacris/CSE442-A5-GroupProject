@@ -432,36 +432,12 @@ async function insert(req, res) {
     await client.connect();
     var Uusername = req.fields.uname;
     var Upassword = req.fields.pass;
-
-    // html conversion
+/*
+    let dummyString = 'Javascript^ is$ the most popular _language';
+    newString = dummyString.replace('_',':').replace('^', '').replace('$','+');
+    // html conversion*/
     let checked_username = "";
-    if (Uusername.includes("<")){
-        checked_username = Uusername.replace(/</g, "&lt");
-    }
-    else if (Uusername.includes(">")){
-        checked_username = Uusername.replace(/>/g, "&gt");
-    }
-    else if (Uusername.includes("&")){
-        checked_username = Uusername.replace(/&/g, "&amp");
-    }
-    else if (Uusername.includes("!")){
-        checked_username = Uusername.replace(/!/g, "&excl");
-    }
-    else if (Uusername.includes(",")){
-        checked_username = Uusername.replace(/,/g, "&comma");
-    }
-    else if (Uusername.includes(".")){
-        checked_username = Uusername.replace(/./g, "&period");
-    }
-    else if (Uusername.includes(":")){
-        checked_username = Uusername.replace(/:/g, "&colon");
-    }
-    else if (Uusername.includes("@")){
-        checked_username = Uusername.replace(/@/g, "&commat");
-    }
-    else if (Uusername.includes("_")){
-        checked_username = Uusername.replace(/_/g, "&lowbar");
-    }
+    checked_username = Uusername.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
 
     var user = {
         username: checked_username,
