@@ -10,9 +10,10 @@ const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
-const port = process.env.PORT || 8000;
-const dbPass = process.env.USER_PASS || "hello";
-const url    = 'mongodb+srv://createaccount:'+dbPass+ '@cluster0.k7tia.mongodb.net/test';
+const port = process.env.PORT || 7000;
+const dbPass = process.env.USER_PASS ;
+//const dbPass = process.env.USER_PASS || "hello";
+const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -20,7 +21,8 @@ const MongoStore = require('connect-mongo');
 
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
+let dbPassNick = process.env.DB_PASS_442;
+//let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -39,22 +41,22 @@ var current_movie = new Map();
 var favorite_movie = new Map();
 favorite_movie.set('vote',0);
 var movie_cntr = 0;
-var open_movie_rooms = {};
-//movie room &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+
+//retrieve database info
 var room_users = [];
 var movie_list = [];
 var chat_history = [];
+
 var movie_cntr = 0;
+//retrieve database info
 if(get_room_info()){
     console.log("Got room data");
 }
-//&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 //server variables
 var send_back="No Users Found";
 
 let loggedInUsers = [];
-//for fields to work
-app.use(formidable());
+
 
 // This initializes our session storage
 app.use(session({
@@ -71,29 +73,21 @@ app.use(session({
 let user = "";
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
+//app.use(formidable());
 
 app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
-app.get("/movie_room", (req, res) => {
-    if(req.session.user !== undefined && req.session.user !== null) {
-        
-        console.log(req.session.user);
-        res.sendFile(__dirname + "/movie_room.html");
-    }else{
-        console.log("Someone who wasn't logged in tried going in a movie room")
-        res.render('notLoggedIn');
-    }
-});
+app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"));
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
-   defaultLayout: false,
-   extname: '.hbs'
-   }));
+    defaultLayout: false,
+    extname: '.hbs'
+}));
 app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
-   res.render('index') ;
+    res.render('index') ;
 })
 
 app.get('/index.html', (req, res) => {
@@ -187,7 +181,7 @@ app.get('/find_friends', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         res.render('find_friends', {
             Search_Results: {
-                users: "Enter a friends username!"
+                users: "Enter a friend's username!"
             }
         });
     }else{
@@ -252,25 +246,18 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/get_streamer',(req, res) => {
-   // (req,res);
-   // res.redirect("/Homepage");
+    // (req,res);
+    // res.redirect("/Homepage");
 });
 
 //Get find_friend search request, check it in database
 app.post('/find_friends/find_user',(req, res) => {
-   var search = req.body.input_text;
-   console.log("Requesting "+search);
-   //access database
-   find_friend(search,res);
-   console.log("Should have sent back"+search);
+    var search = req.body.input_text;
+    console.log("Requesting "+search);
+    //access database
+    find_friend(search,res);
+    console.log("Should have sent back"+search);
 });
-
-app.post('/populate_room',(req, res) => {
-    console.log("Populating Room");
-    populate_Room(req.body,res);
-    res.redirect('join')
-    //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
- });
 
 let server = http.Server(app);
 server.listen(port, () => {
@@ -283,148 +270,79 @@ let thisRoom ="";
 
 
 io.on("connection", function(socket) {
-   // console.log(socket);
     io.emit("user connected",JSON.stringify("Hello via Json",replacer));
     //get username from session variable?
     //loop through room_users and add client
     //if user shouldnt be there, direct to exit
-    
+
     clients += 1;
     console.log('User #' + clients+' has been added');
-  
+
     //send chat history
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    
+
     //start voting once everyone joins
     if(clients >= room_size){
-      if(voted === -1){
-        console.log("Begin Voting");
-        vote();
-      }
-      else{
-        console.log("Add user on to vote");
-        current_movie.set('vote',0);
-        io.emit("movie",
-        JSON.stringify(current_movie.get('movie_name'),replacer));
-      }
-    }
-    
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-    socket.on("joinmovieroom", function(msg) {
-        console.log("Join Movie Room: "+msg);
-        //send chat history
-        join_room(roomname,usersname,socket);
-        io.emit('chat_history', JSON.stringify(chat_history,replacer));
-        
-        //start voting once everyone joins
-        if(clients >= room_size){
         if(voted === -1){
             console.log("Begin Voting");
-            vote(roomname);
+            vote();
         }
         else{
             console.log("Add user on to vote");
             current_movie.set('vote',0);
             io.emit("movie",
-            JSON.stringify(current_movie.get('movie_name'),replacer));
+                JSON.stringify(current_movie.get('movie_name'),replacer));
         }
-        }    
-      });
-*/
+    }
+
     socket.on("client", function(msg) {
-      console.log("hello from client"+msg);    
+        console.log("hello from client"+msg);
     });
-  
+
     socket.on("vote", function(msg){
-      console.log("Processing vote from User: " + msg);
-      voted += 1;
-      process_vote(msg);
+        console.log("Processing vote from User: " + msg);
+        voted += 1;
+        process_vote(msg);
     });
-  
+
     socket.on("chat", function(msg){
-      console.log("Processing chat from User: " + msg);
-      chat_history.push(["User x",msg]);
-      io.emit('chat_history', JSON.stringify(chat_history,replacer));
+        console.log("Processing chat from User: " + msg);
+        chat_history.push(["User x",msg]);
+        io.emit('chat_history', JSON.stringify(chat_history,replacer));
     });
-  
-   });
+
+});
 
 //database helper for  'find_user' post
 async function find_friend(name,res) {
-   await imani_client.connect();
-   console.log("MongoDB connected");
-   console.log(name);
-   const db = imani_client.db("UserInfo");
-   const global_users = db.collection('username');//Global Users
-   // Users are stored as [{username: "Username"},{password,"pass"}]
-   global_users.findOne({username:name},{}, function(err, result) {
-       if (err) throw err;
-       console.log(result);
-       if(result != null){
-           send_back = name; 
-       }
-       else{
-           send_back = "No Users Found";
-       }
-       res.render('find_friends' ,{
-           Search_Results: {
-               users:send_back
-           }
-       });     
-   }); 
-}
-
-//database helper for create room
-async function populate_Room(info,res) {
     await imani_client.connect();
     console.log("MongoDB connected");
-    const db = imani_client.db("Movies");
-    const movies = db.collection('MovieData');
-    console.log(info);
-    let room_name = '';
-    let roomid = '';
-    let user_list= [];
-    let movie_arr = ['Transformers','Insidious','Bee','Toy Story','Escape Room','Cinderella'];
-    let chat_history = [];
-    for (const [key, value] of Object.entries(info)) {
-        if (key == 'room_name'){
-            room_name = value;
+    console.log(name);
+    const db = imani_client.db("UserInfo");
+    const global_users = db.collection('username');//Global Users
+    // Users are stored as [{username: "Username"},{password,"pass"}]
+    global_users.findOne({username:name},{}, function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        if(result != null){
+            send_back = name;
         }
-        else if (key == 'room_ID_send'){
-            roomid = value;
-        } 
-        else{//must be a user value
-            if(value != '' && !user_list.includes(value)){
-                const d = imani_client.db("UserInfo");
-                const global_users = d.collection('username');//Global Users
-                // Users are stored as [{username: "Username"},{password,"pass"}]
-                global_users.findOne({username:value},{}, function(err, result) {
-                    if (err) throw err;
-                        console.log(result);
-                    if(result != null){
-                        user_list.push(value); 
-                    }
-                    else{
-                        console.log("User not found");
-                    }
-                });
+        else{
+            send_back = "No Users Found";
+        }
+        res.render('find_friends' ,{
+            Search_Results: {
+                users:send_back
             }
-        }
-    }
-        const insertResult = await movies.insertOne({
-            room_info: roomid,
-            id: room_name,
-            movie_list: movie_arr,
-            room_users: user_list,  
-            chat_history:chat_history
-         });
-        console.log('Inserted in rooms =>', insertResult);
- }
+        });
+    });
+}
+
 async function sleepnsend(t, res) {
 
     await new Promise(r => setTimeout(r, t));
     res.sendFile(path.join(__dirname, 'create-account.html')) ;
-    
+
 }
 
 /*
@@ -433,14 +351,12 @@ async function sleepnsend(t, res) {
  */
 async function insert(req, res) {
     await client.connect();
-    var Uusername = req.fields.uname;
-    var Upassword = req.fields.pass;
-/*
-    let dummyString = 'Javascript^ is$ the most popular _language';
-    newString = dummyString.replace('_',':').replace('^', '').replace('$','+');
-    // html conversion*/
+    var Uusername = req.fields.uname
+    var Upassword = req.fields.pass
+
     let checked_username = "";
     checked_username = Uusername.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
+
 
     var user = {
         username: checked_username,
@@ -459,9 +375,6 @@ async function insert(req, res) {
     });
 
 }
-
-
-
 
 app.post('/login',(req,res) => {
     finduser(req,res);
@@ -532,98 +445,67 @@ app.post('/remove_favorite',(req, res) => {
 
 //This function will add the textbox inputs to User1s document for genres
 async function addGenreToDB(req, res1) {
-    let temp1 = req.body.addGenre
-    temp1 = temp1.trim()
 
-    if(temp1 !== "") {
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-        await client.connect();
-        const db = client.db("UserInfo");
-        const global_users = db.collection('username');
-
-        global_users.updateOne(
-            {username: req.session.user.userN},
-            {$push: {genres: temp1}},
-            (err, res) => {
-                if (err) throw err;
-                console.log("Genre added: " + temp1 + " to " + req.session.user.userN);
-                res1.redirect("profile");
-            });
-    }else{
-        res1.redirect("profile");
-    }
+    global_users.updateOne(
+        { username: req.session.user.userN },
+        { $push: { genres: req.body.addGenre } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+            res1.redirect("profile");
+        });
 }
 
 //This function will remove the textbox inputs to User1s document for genres
 async function removeGenreFromDB(req, res1) {
 
-    let temp1 = req.body.removeGenre
-    temp1 = temp1.trim()
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    if(temp1 !== "") {
-
-        await client.connect();
-        const db = client.db("UserInfo");
-        const global_users = db.collection('username');
-
-        global_users.updateOne(
-            {username: req.session.user.userN},
-            {$pull: {genres: temp1}},
-            (err, res) => {
-                if (err) throw err;
-                console.log("Genre removed: " + temp1 + " from " + req.session.user.userN);
-                res1.redirect("profile");
-            });
-    }else{
-        res1.redirect("profile");
-    }
+    global_users.updateOne(
+        { username: req.session.user.userN },
+        { $pull: { genres: req.body.removeGenre } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
+            res1.redirect("profile");
+        });
 }
 
 async function addFavoriteToDB(req, res1) {
 
-    let temp1 = req.body.addFavorite
-    temp1 = temp1.trim()
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    if(temp1 !== "") {
-
-        await client.connect();
-        const db = client.db("UserInfo");
-        const global_users = db.collection('username');
-
-        global_users.updateOne(
-            {username: req.session.user.userN},
-            {$push: {favorite: temp1}},
-            (err, res) => {
-                if (err) throw err;
-                console.log("Favorite added: " + temp1 + " to " + req.session.user.userN);
-                res1.redirect("profile");
-            });
-    }else{
-        res1.redirect("profile");
-    }
+    global_users.updateOne(
+        { username: req.session.user.userN },
+        { $push: { favorite: req.body.addFavorite } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
+            res1.redirect("profile");
+        });
 }
 async function removeFavoriteFromDB(req, res1) {
 
-    let temp1 = req.body.removeFavorite
-    temp1 = temp1.trim()
+    await client.connect();
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
 
-    if(temp1 !== "") {
-
-        await client.connect();
-        const db = client.db("UserInfo");
-        const global_users = db.collection('username');
-
-        global_users.updateOne(
-            {username: req.session.user.userN},
-            {$pull: {favorite: temp1}},
-            (err, res) => {
-                if (err) throw err;
-                console.log("Favorite removed: " + temp1 + " from " + req.session.user.userN);
-                res1.redirect("profile");
-            });
-    }else{
-        res1.redirect("profile");
-    }
+    global_users.updateOne(
+        { username: req.session.user.userN },
+        { $pull: { favorite: req.body.removeFavorite } },
+        (err,res) => {
+            if (err) throw err;
+            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
+            res1.redirect("profile");
+        });
 }
 
 async function getPageData(req,res,pageName){
@@ -649,60 +531,34 @@ async function getPageData(req,res,pageName){
 }
 
 //movie_room
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function join_room(roomname,usersname,socket){
-    let c =0;
-    for (r in open_movie_rooms){
-        if (r == roomname){
-            c = 1;
-            //add user to room
-        }                
-    }
-    if(!c){
-        //create new room
-        open_movie_rooms.push({
-            roomname:{
-                'roominfo': get_room_info(roomname),
-                'users':[socket]
-            }
-        });
-    }
-    else{
-        open_movie_rooms['roomname']['users'].push(username);
-        if (open_movie_rooms['roomname']['roominfo'][room_size] === open_movie_rooms['roomname']['users'].length()){
-            vote(roomname);
-        }
-    }
-    
-}
-*/
+
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
- function vote(){
+function vote(){
     voted = 0;
     if(movie_list.length > movie_cntr){
         current_movie.set('movie_name', movie_list[movie_cntr]);
         current_movie.set('vote', 0);
         io.emit("movie",
-        JSON.stringify(current_movie.get('movie_name'),replacer));
+            JSON.stringify(current_movie.get('movie_name'),replacer));
         console.log("Sent: "+ current_movie.get('movie_name'));
         movie_cntr += 1;
     }
     else{
         end_vote();
     }
-  }
-  /**
-  * process_vote() should count clients' vote
-  */
-  function process_vote(v){
+}
+/**
+ * process_vote() should count clients' vote
+ */
+function process_vote(v){
     // Process vote
     if (v > 0){
         current_movie.set('vote', current_movie.get('vote') + 1);
     }
     console.log("Processed vote");
-  
+
     //Update favorite movie
     if (current_movie.get('vote') > favorite_movie.get('vote')){
         favorite_movie = current_movie;
@@ -716,66 +572,67 @@ function join_room(roomname,usersname,socket){
     if(voted >= room_size){
         vote();
     }
-  
-    
 
-  }
-  
-  //Emit vote results
-  function end_vote(){
+
+
+}
+
+//Emit vote results
+function end_vote(){
     voted = 0;
     movie_cntr = 0;
     io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
     console.log("Ending Vote");
-  }
-  
-  
-  //database interfaces
-  /**
-  * Should retrieve room movie list and objects, and user list.
-  * Completed
-  */
-  async function get_room_info() {
+}
+
+
+//database interfaces
+/**
+ * Should retrieve room movie list and objects, and user list.
+ * Completed
+ */
+async function get_room_info() {
     //Movie Data stored as
-  /* movie_name: "moviename"
-    genre:""
-    yeae:""
-    img_url:""
-  */ 
-  await imani_client.connect();
-  console.log("MongoDB connected");
-  const db = imani_client.db("Movies");
-  const movies = db.collection('MovieData');
-  //get a  list of movies instead ***********************
-  //make a list of names of movies in the mongo db, output it to front end*****************
-  //send info to front end, where omar will make it pretty********
-  movies.findOne({room_info:room_name},{}, function(err, result) {
-    if (err) throw err;
-    movie_list = result['movie_list'];
-    room_users = result['user_list'];
-    chat_history = result['chat_history'];
-    console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
-    return  (1);
-  }); 
-  return 0;
-  }
-  
-  //JSON wrapper & unwrapper functions
-  function replacer(key, value) {
+    /* movie_name: "moviename"
+      genre:""
+      yeae:""
+      img_url:""
+    */
+    await imani_client.connect();
+    console.log("MongoDB connected");
+    const db = imani_client.db("Movies");
+    const movies = db.collection('MovieData');
+    //get a  list of movies instead ***********************
+    //make a list of names of movies in the mongo db, output it to front end*****************
+    //send info to front end, where omar will make it pretty********
+    movies.findOne({room_info:room_name},{}, function(err, result) {
+        if (err) throw err;
+        var movie_map = new Map();
+        movie_list = result['movie_list'];
+        room_users = result['user_list'];
+        chat_history = result['chat_history'];
+        console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
+        return  (1);
+    });
+    return 0;
+}
+
+//JSON wrapper & unwrapper functions
+function replacer(key, value) {
     if(value instanceof Map) {
-      return {
-        dataType: 'Map',
-        value: Array.from(value.entries()), // or with spread: value: [...value]
-      };
+        return {
+            dataType: 'Map',
+            value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
     } else {
-      return value;
+        return value;
     }
-  }
-  function reviver(key, value) {
+}
+function reviver(key, value) {
     if(typeof value === 'object' && value !== null) {
-      if (value.dataType === 'Map') {
-        return new Map(value.value);
-      }
+        if (value.dataType === 'Map') {
+            return new Map(value.value);
+        }
     }
     return value;
-  }
+}

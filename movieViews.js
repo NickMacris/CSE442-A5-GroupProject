@@ -55,6 +55,7 @@ function showMovies(data){
     }
 
 
+
     function getStreamer(title,movieID){
         let apiKey = "3376f235922a4493f5e9e4e990beead6"
         let streamUrl = "https://api.themoviedb.org/3/movie/" + movieID;
