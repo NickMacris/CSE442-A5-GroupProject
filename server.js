@@ -10,8 +10,8 @@ const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
-const port = process.env.PORT || 7000;
-const dbPass = process.env.USER_PASS;
+const port = process.env.PORT || 8000;
+const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
@@ -20,7 +20,7 @@ const MongoStore = require('connect-mongo');
 
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPassNick = process.env.DB_PASS_442;
+let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -175,7 +175,7 @@ app.get('/find_friends', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         res.render('find_friends', {
             Search_Results: {
-                users: "Enter a friends username!"
+                users: "Enter a friend's username!"
             }
         });
     }else{
