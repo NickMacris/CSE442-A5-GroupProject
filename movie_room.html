@@ -57,6 +57,11 @@
 
     </a>    
 </div>
+    <script>
+          let text = document.getElementById("input_chat").innerHTML;
+          let result = text.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
+          document.getElementById("input_chat").innerHTML = result;
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         

@@ -53,7 +53,8 @@ if(get_room_info()){
 var send_back="No Users Found";
 
 let loggedInUsers = [];
-
+//for fields to work
+app.use(formidable());
 
 // This initializes our session storage
 app.use(session({
@@ -432,11 +433,17 @@ async function sleepnsend(t, res) {
  */
 async function insert(req, res) {
     await client.connect();
-    var Uusername = req.fields.uname
-    var Upassword = req.fields.pass
+    var Uusername = req.fields.uname;
+    var Upassword = req.fields.pass;
+/*
+    let dummyString = 'Javascript^ is$ the most popular _language';
+    newString = dummyString.replace('_',':').replace('^', '').replace('$','+');
+    // html conversion*/
+    let checked_username = "";
+    checked_username = Uusername.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
 
     var user = {
-        username: Uusername,
+        username: checked_username,
         password: Upassword,
         favorite: [],
         genres: []
@@ -452,6 +459,9 @@ async function insert(req, res) {
     });
 
 }
+
+
+
 
 app.post('/login',(req,res) => {
     finduser(req,res);
