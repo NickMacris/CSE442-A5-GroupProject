@@ -12,7 +12,7 @@ const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
-const url    = 'mongodb+srv://createaccount:'+ dbPass+ '@cluster0.k7tia.mongodb.net/test';
+const url    = 'mongodb+srv://createaccount:'+ 'hello'+ '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
@@ -21,7 +21,8 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
-let urlNick = 'mongodb+srv://CSE442:' +dbPassNick+ '@cluster0.k7tia.mongodb.net/test';
+let urlNick = 'mongodb+srv://CSE442:' +'CSE442cse'+ '@cluster0.k7tia.mongodb.net/test';
+
 
 //Imani Database init
 const imani_dbPass = dbPassNick;
@@ -75,8 +76,14 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
 app.get("/movie_room", (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
-        
-        console.log(req.session.user);
+        if(room_users.includes(req.session.user)){
+            console.log(req.session.user+ "User already here!");
+        }
+        else{
+            room_users.push(req.session.user);
+            console.log(req.session.user+ "has been added!");
+            chat_history.push(req.session.user +"has joined the vote!");
+        }
         res.sendFile(__dirname + "/movie_room.html");
     }else{
         console.log("Someone who wasn't logged in tried going in a movie room")
@@ -286,47 +293,15 @@ io.on("connection", function(socket) {
     //if user shouldnt be there, direct to exit
     
     clients += 1;
+    room_size += 1;
+    console.log("Begin Voting");
+    vote();
     console.log('User #' + clients+' has been added');
   
-    //send chat history
+    //send info
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    
-    //start voting once everyone joins
-    if(clients >= room_size){
-      if(voted === -1){
-        console.log("Begin Voting");
-        vote();
-      }
-      else{
-        console.log("Add user on to vote");
-        current_movie.set('vote',0);
-        io.emit("movie",
-        JSON.stringify(current_movie.get('movie_name'),replacer));
-      }
-    }
-    
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-    socket.on("joinmovieroom", function(msg) {
-        console.log("Join Movie Room: "+msg);
-        //send chat history
-        join_room(roomname,usersname,socket);
-        io.emit('chat_history', JSON.stringify(chat_history,replacer));
-        
-        //start voting once everyone joins
-        if(clients >= room_size){
-        if(voted === -1){
-            console.log("Begin Voting");
-            vote(roomname);
-        }
-        else{
-            console.log("Add user on to vote");
-            current_movie.set('vote',0);
-            io.emit("movie",
-            JSON.stringify(current_movie.get('movie_name'),replacer));
-        }
-        }    
-      });
-*/
+    io.emit("movie",    JSON.stringify(current_movie.get('movie_name'),replacer));    
+
     socket.on("client", function(msg) {
       console.log("hello from client"+msg);    
     });
@@ -636,33 +611,6 @@ async function getPageData(req,res,pageName){
 }
 
 //movie_room
-/*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-function join_room(roomname,usersname,socket){
-    let c =0;
-    for (r in open_movie_rooms){
-        if (r == roomname){
-            c = 1;
-            //add user to room
-        }                
-    }
-    if(!c){
-        //create new room
-        open_movie_rooms.push({
-            roomname:{
-                'roominfo': get_room_info(roomname),
-                'users':[socket]
-            }
-        });
-    }
-    else{
-        open_movie_rooms['roomname']['users'].push(username);
-        if (open_movie_rooms['roomname']['roominfo'][room_size] === open_movie_rooms['roomname']['users'].length()){
-            vote(roomname);
-        }
-    }
-    
-}
-*/
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
