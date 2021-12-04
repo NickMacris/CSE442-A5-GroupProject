@@ -43,6 +43,7 @@ var movie_cntr = 0;
 //retrieve database info
 var room_users = [];
 var movie_list = [];
+//var chat_history = [];
 var chat_history = [];
 
 var movie_cntr = 0;
@@ -54,6 +55,7 @@ if(get_room_info()){
 var send_back="No Users Found";
 
 let loggedInUsers = [];
+let thisRoom ="";
 
 
 // This initializes our session storage
@@ -194,7 +196,10 @@ app.get('/join', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
         res.sendFile(path.join(__dirname, '/movie_room.html'));
-        curuser = JSON.stringify(req.session.user.userN);
+
+        /* keeps track of a user in global scope */
+        curuser = req.session.user.userN;
+
         
     }else{
         console.log("Someone who wasn't logged in tried going to the join page")
@@ -264,9 +269,9 @@ server.listen(port, () => {
     console.log(`server running on ${port}`);
 });
 io = socketIO(server);
+
 // This stuff is for the socket functions
 const {joinUser, removeUser, findUser } = require('./joinRoom/users');
-let thisRoom ="";
 
 
 io.on("connection", function(socket) {
@@ -287,30 +292,31 @@ io.on("connection", function(socket) {
         console.log("Begin Voting");
         vote();
       }
-      else{
+      else
         console.log("Add user on to vote");
         current_movie.set('vote',0);
         io.emit("movie",
         JSON.stringify(current_movie.get('movie_name'),replacer));
       }
-    }
+    
 
     socket.on("join room", (data) => {
-     console.log('in room');
 
-     //let Newuser = joinUser(socket.id, data.username,data.roomName)
      let Newuser = joinUser(socket.id, curuser, data.roomName)
+     socket.username = curuser;
 
      socket.emit('send data' ,
-            {id : socket.id ,username:Newuser.username, roomname : Newuser.roomname });
+            {id : socket.id , username:socket.username, roomname : Newuser.roomname });
 
-     thisRoom = Newuser.roomname;
-     console.log(Newuser);
-     socket.join(Newuser.roomname);
+     //thisRoom  = Newuser.roomname;
+     //console.log(thisRoom);
+     //socket.join(thisRoom);
    });
 
    socket.on("chat message", (data) => {
-     io.to(thisRoom).emit("chat message", {data:data,id : socket.id});
+     //io.to(thisRoom).emit("chat message", {data:data,id : socket.id});
+     io.emit("chat message", {data:data,id : socket.id});
+
    });
 
    socket.on("client", function(msg) {
@@ -332,8 +338,11 @@ io.on("connection", function(socket) {
 */
   socket.on("chat", function(msg){
     console.log("Processing chat from User: " + msg);
-    chat_history.push([user,msg]);
-    io.emit('chat_history', JSON.stringify(chat_history,replacer));
+
+    chat_history.push([socket.username,msg]);
+
+    //io.sockets.in(thisRoom).emit('chat_history', JSON.stringify(chat_history,replacer));
+    io.sockets.emit('chat_history', JSON.stringify(chat_history,replacer));
   });
 
    socket.on("disconnect", () => {
@@ -677,6 +686,7 @@ async function getPageData(req,res,pageName){
     var movie_map = new Map();
     movie_list = result['movie_list'];
     room_users = result['user_list'];
+    /* The line below is 100% a bug in the case of adding to whatever room was last joined */   
     chat_history = result['chat_history'];
     console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
     return  (1);

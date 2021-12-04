@@ -84,15 +84,14 @@
             document.getElementById('no_button').style.visibility = 'hidden';
         }
 
-        let userName = prompt("What is your username?");
-        let room     = prompt("Room Name");
-
+        //let room     = prompt("Room Id");
+        let room = room;
         
         // establish socket.io connection
         const socket = io();
         reset();
 
-        socket.emit("join room", {username : userName, roomName : room});
+        socket.emit("join room", {roomName : room});
         socket.on('send data', (data) => {
             ID = data.id;
             console.log(" my ID:" + ID);
