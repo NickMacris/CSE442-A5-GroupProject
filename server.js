@@ -10,7 +10,7 @@ const bodyParser = require('body-parser')
 const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
