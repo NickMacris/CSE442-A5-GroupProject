@@ -483,7 +483,7 @@ async function finduser(req,res){
         console.log(req.fields.username);
         console.log(req.fields.psw);
         console.log(result);
-        if (result == null){
+        if (result == null || result.password != req.fields.psw){
    //         res.render('index');
             res.redirect('/');
         }
