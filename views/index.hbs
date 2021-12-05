@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>Login Page</title>
@@ -10,14 +11,14 @@
              <a href= "/register" class="button1">SIGN UP</a><br> 
             <div class="sign_in_box">
                 <h1> Sign In</h1>
-                <form method="post"> 
+                <form  method="POST" action="/login" enctype="multipart/form-data"> 
                     <input type = "text" id="username" name = "username" placeholder="Username" required>
                     <input type = "password" id="psw" name="psw" placeholder="Password" required><br>
                     <a href="#" class="holder">Forgot my password</a><p></p>
                     <div id="message">
                         <p id="length" class="invalid">Minimum <b>8 characters</b></p>
                     </div>
-                    <button formaction="/login" type = "submit" name = "myButton">SIGN IN</button><br>
+                    <button type="submit" name="myButton">SIGN IN</button><br>
                 </form>
                     <a href="#" class="socialf">Connect on Facebook </a><br>
                     <p></p>

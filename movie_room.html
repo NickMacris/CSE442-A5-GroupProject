@@ -89,11 +89,24 @@
             document.getElementById('yes_button').style.visibility = 'hidden';
             document.getElementById('no_button').style.visibility = 'hidden';
         }
+
+        //let room     = prompt("Room Id");
+        let room = 'room';
         
         // establish socket.io connection
         const socket = io();
+<<<<<<< HEAD
+        //reset();
+=======
         socket.emit("joinmovieroom","Username");
         reset();
+>>>>>>> 7e3a1eeb2e5396aebe0b70bdc5b7bc1893de2d9c
+
+        socket.emit("join room", {roomName : room});
+        socket.on('send data', (data) => {
+            ID = data.id;
+            console.log(" my ID:" + ID);
+        });
 
         //button click events
         function vote_yes(){
@@ -113,6 +126,7 @@
         }
 
         function send_chat(){
+            console.log("hello");
             chat = document.getElementById("input_chat").value;
             //html conversion
             if ((chat.includes("<")) || (chat.includes(">")) || (chat.includes("&"))) {

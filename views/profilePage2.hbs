@@ -47,10 +47,10 @@
 
 <button class="sign_out" onclick="location.href='/logout';"> SIGN OUT</button>
 <button class="home" onclick="location.href='/homepage';"> Home</button>
-<button class="find_friend" onclick="location.href='/find_friends';"> Find Friend</button>
-<button class="create_room" onclick="location.href='../mainpage/creatingroom/createRoom.html';"> Create Room</button>
-<button class="join_room" onclick="location.href='/join'"> Join Room</button>
-<button class="profile"> Profile</button>
+<button class="find_friend"> Find Friend</button>
+<button class="create_room"> Create Room</button>
+<button class="join_room"> Join Room</button>
+<button class="profile" > Profile</button>
 <button class="help"> Help</button>
 
 <div class="your_lists">
@@ -70,32 +70,20 @@
 
     let genrelist = document.getElementById("genreList");
 
-    if(genres1.length === 0){
+    genres1.forEach((item)=>{
         let li = document.createElement("li");
-        li.innerText = "You have no favorite genres!";
+        li.innerText = item;
         genrelist.appendChild(li);
-    }else{
-        genres1.forEach((item)=>{
-            let li = document.createElement("li");
-            li.innerText = item;
-            genrelist.appendChild(li);
-        })
-    }
+    })
 
     let favorites1 = JSON.parse(`{{{userFavorites}}}`);
 
     let favoritelist2 = document.getElementById("favoritesList");
 
-    if(favorites1.length === 0){
-        let li = document.createElement("li");
-        li.innerText = "You have no favorite movies!";
-        favoritelist2.appendChild(li);
-    }else{
     favorites1.forEach((item)=>{
        let li = document.createElement("li");
        li.innerText = item;
        favoritelist2.appendChild(li);
     })
-    }
 </script>
 </html>

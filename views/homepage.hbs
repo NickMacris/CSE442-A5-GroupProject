@@ -16,7 +16,7 @@
                             <div class="primary-navigation">
                                 <ul class="username"><div id="userN"></div></ul>
                                 <ul class="current">Home</ul>
-                                <ul class="friends-list"><a href="/find_friends">FriendList</a></ul> <!-- link to the Friends Page-->
+                                <ul class="friends-list"><a href="https://cse442.herokuapp.com/find_friends">FriendList</a></ul> <!-- link to the Friends Page-->
                                 <ul class="create-room"><a href="../mainpage/creatingroom/createRoom.html">CreateRoom</a></ul> <!-- link to the create room -->
 
                                 <ul class="profile"><a href="/profile">Profile</a></ul>
@@ -30,7 +30,8 @@
                 <section class="hero">
                     <div class="container">
                         <div class="left-col">
-                            <h1 class="watch-what">Movies from your favorites list!</h1>
+                            <h1 class="watch-what">What to Watch</h1>
+                            <p class="watchlist">from your watchlist><p>
                             <main id="favorite">
                             </main>
                             <!-- how to add images that continously change from an API-->
@@ -46,7 +47,6 @@
                             <main id="main_up">
                                 <div class="movie_up">
                                     <!--img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/-->
-                                     <img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/>
                                     <div class = "movie-info_up">
                                         <h3> Movie Title</h3>
                                         <h4>Release_Date</h4>
@@ -59,7 +59,6 @@
                                 </div>
 
                                 <div class="movie_up">
-                                    <img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/>
                                     <!--img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/-->
                                     <div class = "movie-info_up">
                                         <h3> Movie Title</h3>
@@ -73,7 +72,6 @@
                                 </div>
 
                                 <div class="movie_up">
-                                     <img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/>
                                     <!--img src = "denise-jans-Lq6rcifGjOU-unsplash.jpg" height="480" width="640"/-->
                                     <div class = "movie-info_up">
                                         <h3> Movie Title</h3>
@@ -150,17 +148,11 @@
                         </div>
                     </main>
                 </section>
-                <script src="../../viewUpComing.js"></script>
                 <script src="../../movieViews.js"></script>
-                <script src="../../viewUpComing.js"></script>
             </body>
 
             <script>
             document.getElementById("userN").innerHTML = "Welcome " + JSON.parse('{{{userSession}}}');
-            if(JSON.parse(`{{{userFavorites}}}`).length === 0){
-                document.getElementById("favorite").innerHTML = "You have no favorite movies!"
-            }else{
-                favoriteMovies(JSON.parse(`{{{userFavorites}}}`)).then(data1 => showFavoriteMovies(data1))
-            }
+            favoriteMovies(JSON.parse(`{{{userFavorites}}}`)).then(data1 => showFavoriteMovies(data1))
             </script>
 </html>
