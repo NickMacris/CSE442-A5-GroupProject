@@ -11,7 +11,8 @@ const exphbs                = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
-const dbPass = process.env.USER_PASS;
+const dbPass = process.env.USER_PASS ;
+//const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
@@ -21,6 +22,7 @@ const MongoStore = require('connect-mongo');
 
 //let MongoClient = require('mongodb').MongoClient;
 let dbPassNick = process.env.DB_PASS_442;
+//let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -85,13 +87,13 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
-   defaultLayout: false,
-   extname: '.hbs'
-   }));
+    defaultLayout: false,
+    extname: '.hbs'
+}));
 app.set('view engine', 'hbs');
 
 app.get('/', (req, res) => {
-   res.render('index') ;
+    res.render('index') ;
 })
 
 app.get('/index.html', (req, res) => {
@@ -119,6 +121,9 @@ app.get('/denise-jans-Lq6rcifGjOU-unsplash.jpg', (req,res) =>{
 
 app.get('/movieViews.js',(req,res)=>{
     res.sendFile(path.join(__dirname, '/movieViews.js'));})
+
+app.get('/viewUpComing.js',(req,res) => {
+    res.sendFile(path.join(__dirname, '/viewUpComing.js'));})
 
 app.get("/mainpage/home/index.html", (req, res) => {
     res.sendFile(path.join(__dirname, '/mainpage/home/index.html'));
@@ -183,7 +188,7 @@ app.get('/find_friends', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
         res.render('find_friends', {
             Search_Results: {
-                users: "Enter a friends username!"
+                users: "Enter a friend's username!"
             }
         });
     }else{
@@ -250,18 +255,18 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/get_streamer',(req, res) => {
-   // (req,res);
-   // res.redirect("/Homepage");
+    // (req,res);
+    // res.redirect("/Homepage");
 });
 
 
 //Get find_friend search request, check it in database
 app.post('/find_friends/find_user',(req, res) => {
-   var search = req.body.input_text;
-   console.log("Requesting "+search);
-   //access database
-   find_friend(search,res);
-   console.log("Should have sent back"+search);
+    var search = req.body.input_text;
+    console.log("Requesting "+search);
+    //access database
+    find_friend(search,res);
+    console.log("Should have sent back"+search);
 });
 
 let server = http.Server(app);
@@ -279,13 +284,13 @@ io.on("connection", function(socket) {
     //get username from session variable?
     //loop through room_users and add client
     //if user shouldnt be there, direct to exit
-    
+
     clients += 1;
     console.log('User #' + clients+' has been added');
-  
+
     //send chat history
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    
+
     //start voting once everyone joins
     if(clients >= room_size){
       if(voted === -1){
@@ -357,34 +362,34 @@ io.on("connection", function(socket) {
 
 //database helper for  'find_user' post
 async function find_friend(name,res) {
-   await imani_client.connect();
-   console.log("MongoDB connected");
-   console.log(name);
-   const db = imani_client.db("UserInfo");
-   const global_users = db.collection('username');//Global Users
-   // Users are stored as [{username: "Username"},{password,"pass"}]
-   global_users.findOne({username:name},{}, function(err, result) {
-       if (err) throw err;
-       console.log(result);
-       if(result != null){
-           send_back = name; 
-       }
-       else{
-           send_back = "No Users Found";
-       }
-       res.render('find_friends' ,{
-           Search_Results: {
-               users:send_back
-           }
-       });     
-   }); 
+    await imani_client.connect();
+    console.log("MongoDB connected");
+    console.log(name);
+    const db = imani_client.db("UserInfo");
+    const global_users = db.collection('username');//Global Users
+    // Users are stored as [{username: "Username"},{password,"pass"}]
+    global_users.findOne({username:name},{}, function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        if(result != null){
+            send_back = name;
+        }
+        else{
+            send_back = "No Users Found";
+        }
+        res.render('find_friends' ,{
+            Search_Results: {
+                users:send_back
+            }
+        });
+    });
 }
 
 async function sleepnsend(t, res) {
 
     await new Promise(r => setTimeout(r, t));
     res.sendFile(path.join(__dirname, 'create-account.html')) ;
-    
+
 }
 
 /*
@@ -397,11 +402,15 @@ async function insert(req, res) {
     var Uusername = req.fields.uname;
     var Upassword = req.fields.pass;
 
+    let checked_username = "";
+    checked_username = Uusername.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
+
     if ( Uusername != undefined && Upassword != undefined  ) {
         var user = {
-            username: Uusername,
+            username: checked_username,
             password: Upassword,
-            favorite: []
+            favorite: [],
+            genres: []
         };
         console.log("MongoDB connected");
 
@@ -536,10 +545,10 @@ async function addGenreToDB(req, res1) {
         { username: req.session.user.userN },
         { $push: { genres: req.body.addGenre } },
         (err,res) => {
-        if (err) throw err;
-        console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
-        res1.redirect("profile");
-    });
+            if (err) throw err;
+            console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+            res1.redirect("profile");
+        });
 }
 
 //This function will remove the textbox inputs to User1s document for genres
@@ -614,30 +623,30 @@ async function getPageData(req,res,pageName){
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
- function vote(){
+function vote(){
     voted = 0;
     if(movie_list.length > movie_cntr){
         current_movie.set('movie_name', movie_list[movie_cntr]);
         current_movie.set('vote', 0);
         io.emit("movie",
-        JSON.stringify(current_movie.get('movie_name'),replacer));
+            JSON.stringify(current_movie.get('movie_name'),replacer));
         console.log("Sent: "+ current_movie.get('movie_name'));
         movie_cntr += 1;
     }
     else{
         end_vote();
     }
-  }
-  /**
-  * process_vote() should count clients' vote
-  */
-  function process_vote(v){
+}
+/**
+ * process_vote() should count clients' vote
+ */
+function process_vote(v){
     // Process vote
     if (v > 0){
         current_movie.set('vote', current_movie.get('vote') + 1);
     }
     console.log("Processed vote");
-  
+
     //Update favorite movie
     if (current_movie.get('vote') > favorite_movie.get('vote')){
         favorite_movie = current_movie;
@@ -651,65 +660,67 @@ async function getPageData(req,res,pageName){
     if(voted >= room_size){
         vote();
     }
-  }
 
-  //Emit vote results
-  function end_vote(){
+
+
+}
+
+//Emit vote results
+function end_vote(){
     voted = 0;
     movie_cntr = 0;
     io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
     console.log("Ending Vote");
-  }
+}
 
 
-  //database interfaces
-  /**
-  * Should retrieve room movie list and objects, and user list.
-  * Completed
-  */
-  async function get_room_info() {
+//database interfaces
+/**
+ * Should retrieve room movie list and objects, and user list.
+ * Completed
+ */
+async function get_room_info() {
     //Movie Data stored as
-  /* movie_name: "moviename"
-    genre:""
-    yeae:""
-    img_url:""
-  */
-  await imani_client.connect();
-  console.log("MongoDB connected");
-  const db = imani_client.db("Movies");
-  const movies = db.collection('MovieData');
-  //get a  list of movies instead ***********************
-  //make a list of names of movies in the mongo db, output it to front end*****************
-  //send info to front end, where omar will make it pretty********
-  movies.findOne({room_info:room_name},{}, function(err, result) {
-    if (err) throw err;
-    var movie_map = new Map();
-    movie_list = result['movie_list'];
-    room_users = result['user_list'];
-    /* The line below is 100% a bug in the case of adding to whatever room was last joined */   
-    chat_history = result['chat_history'];
-    console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
-    return  (1);
-  }); 
-  return 0;
-  }
+    /* movie_name: "moviename"
+      genre:""
+      yeae:""
+      img_url:""
+    */
+    await imani_client.connect();
+    console.log("MongoDB connected");
+    const db = imani_client.db("Movies");
+    const movies = db.collection('MovieData');
+    //get a  list of movies instead ***********************
+    //make a list of names of movies in the mongo db, output it to front end*****************
+    //send info to front end, where omar will make it pretty********
+    movies.findOne({room_info:room_name},{}, function(err, result) {
+        if (err) throw err;
+        var movie_map = new Map();
+        movie_list = result['movie_list'];
+        room_users = result['user_list'];
+        chat_history = result['chat_history'];
+        console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
+        return  (1);
+    });
+    return 0;
+}
 
-  //JSON wrapper & unwrapper functions
-  function replacer(key, value) {
+//JSON wrapper & unwrapper functions
+function replacer(key, value) {
     if(value instanceof Map) {
-      return {
-        dataType: 'Map',
-        value: Array.from(value.entries()), // or with spread: value: [...value]
-      };
+        return {
+            dataType: 'Map',
+            value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
     } else {
-      return value;
+        return value;
     }
-  }
-  function reviver(key, value) {
+}
+function reviver(key, value) {
     if(typeof value === 'object' && value !== null) {
-      if (value.dataType === 'Map') {
-        return new Map(value.value);
-      }
+        if (value.dataType === 'Map') {
+            return new Map(value.value);
+        }
     }
     return value;
-  }
+}
