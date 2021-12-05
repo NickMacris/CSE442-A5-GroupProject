@@ -85,11 +85,11 @@
         }
 
         //let room     = prompt("Room Id");
-        let room = room;
+        let room = 'room';
         
         // establish socket.io connection
         const socket = io();
-        reset();
+        //reset();
 
         socket.emit("join room", {roomName : room});
         socket.on('send data', (data) => {
@@ -115,6 +115,7 @@
         }
 
         function send_chat(){
+            console.log("hello");
             chat = document.getElementById("input_chat").value;
             console.log("chat:"+ chat );
             if(chat != ''){
