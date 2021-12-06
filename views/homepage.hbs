@@ -30,7 +30,8 @@
                 <section class="hero">
                     <div class="container">
                         <div class="left-col">
-                            <h1 class="watch-what">Movies from your favorites list!</h1>
+                            <h1 class="watch-what">What to Watch</h1>
+                            <p class="watchlist">from your watchlist><p>
                             <main id="favorite">
                             </main>
                             <!-- how to add images that continously change from an API-->
@@ -153,10 +154,6 @@
 
             <script>
             document.getElementById("userN").innerHTML = "Welcome " + JSON.parse('{{{userSession}}}');
-            if(JSON.parse(`{{{userFavorites}}}`).length === 0){
-                document.getElementById("favorite").innerHTML = "You have no favorite movies!"
-            }else{
-                favoriteMovies(JSON.parse(`{{{userFavorites}}}`)).then(data1 => showFavoriteMovies(data1))
-            }
+            favoriteMovies(JSON.parse(`{{{userFavorites}}}`)).then(data1 => showFavoriteMovies(data1))
             </script>
 </html>

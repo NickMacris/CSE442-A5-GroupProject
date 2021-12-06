@@ -205,7 +205,6 @@ app.get('/join', (req, res) => {
         /* keeps track of a user in global scope */
         curuser = req.session.user.userN;
 
-
     }else{
         console.log("Someone who wasn't logged in tried going to the join page")
         res.render('notLoggedIn');
@@ -313,6 +312,7 @@ io.on("connection", function(socket) {
      socket.emit('send data' ,
             {id : socket.id , username:socket.username, roomname : Newuser.roomname });
 
+
      //thisRoom  = Newuser.roomname;
      //console.log(thisRoom);
      //socket.join(thisRoom);
@@ -323,6 +323,7 @@ io.on("connection", function(socket) {
      io.emit("chat message", {data:data,id : socket.id});
 
    });
+
 
    socket.on("client", function(msg) {
     console.log("hello from client"+msg);    
