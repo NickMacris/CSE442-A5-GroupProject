@@ -15,7 +15,7 @@ const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 
 //Session variable dependent
 var room_name = "test_room"
-var room_size = 0; // Get amount of people in room from db*********************
+var room_size = 0; //Live
 
 //Global variables
 var voted = -1;
@@ -25,7 +25,8 @@ favorite_movie.set('vote',0);
 var movie_cntr = -1;
 
 //retrieve database info
-var room_users = [];
+var last_entered = "hello";
+var room_users = {};
 var movie_list = [];
 var chat_history = [];
 
@@ -36,14 +37,15 @@ if(get_room_info()){
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
 app.get("/movie_room", (req, res) => {
   res.sendFile(__dirname + "/movie_room.html");
-  room_users.push("Random"+room_users.length);
+  //last_entered = req.username...
   console.log("Random"+room_users.length+" has been added");
 });
 
  io.on("connection", function(socket) {
   room_size += 1;
+  room_users[socket] = last_entered;
   io.emit("user connected",room_size);
-  console.log('User ' + room_users.slice(1)+' has been added');
+  console.log('User ' + last_entered+' has been added');
   //If voting needs to be started
   if(movie_cntr < 0){
     console.log("Begin Voting");
@@ -70,9 +72,15 @@ app.get("/movie_room", (req, res) => {
   });
 
   socket.on("chat", function(msg){
-    console.log("Processing chat from User: " + msg);
-    chat_history.push(msg);
+    console.log("Processing chat: " +[room_users[socket],msg]);
+    chat_history.push([room_users[socket],msg]);
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  });
+
+  socket.on("disconnect",function(){
+    console.log("User disconnected");
+    room_size -= 1;
+    room_users.remove[socket];
   });
 
  });
@@ -117,7 +125,7 @@ function process_vote(v){
         end_vote();
     }
     // Check if everyone voted
-    if(voted >= room_size){
+    if(voted >= room_users.length){
         vote();
     }
   

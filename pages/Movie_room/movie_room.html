@@ -12,13 +12,14 @@
   <!-- Voting Action-->
   <div class="voting_booth" >
     <p id = "Vote_Message" style="background-color:black;">Vote here</p>
-    <p id = "Vote_Num" style="background-color:black;">1</p>
+    
     <pid id = "voting_booth"></pid>
     <img id = "movie_img" src="#" alt="Movie Description">
     <p id = "movie_name"></p>
     <p id = "movie_description"></p>
     <button id = "yes_button" onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
     <button id = "no_button" onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+    <p id = "Vote_Num" style="background-color:black;">Voters: 1</p>
 </div>
 
 <!-- Chatting Action-->
@@ -65,7 +66,6 @@
         
         // select relevant elements
         var voter_num = document.getElementById("Vote_Num");
-        var Uname;
         var chat = document.getElementById("input_chat");
         var chat_history = document.getElementById('chat_history');
         var booth = document.getElementById('voting_booth');
@@ -110,7 +110,7 @@
         }
 
         function send_chat(){
-            chat = [Uname,document.getElementById("input_chat").value];
+            chat = document.getElementById("input_chat").value;
             console.log("chat:"+ chat );
             if(chat != ''){
                 socket.emit("chat",chat);
@@ -180,7 +180,7 @@
         // watch for socket to emit a 'user connected' event
         socket.on("user connected", function(msg){    
             console.log("Users in vote: " + msg);
-            voter_num.innerHTML = msg;
+            voter_num.innerHTML = "Active Voters: "+msg;
         });
 
         //JSON wrapper & unwrapper functions
