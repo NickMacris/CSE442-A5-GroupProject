@@ -1,13 +1,13 @@
-const socketIO                    = require ("socket.io");
-const http = require("http");
+const socketIO              = require ("socket.io");
+const http                  = require("http");
 const express               = require('express');
 const app                   = express();
 const path                  = require("path");
 const { MongoClient }       = require('mongodb')
-const formidable = require('express-formidable');
+const formidable            = require('express-formidable');
 const { WSATYPE_NOT_FOUND } = require('constants');
-const bodyParser = require('body-parser')
-const exphbs = require('express-handlebars');
+const bodyParser            = require('body-parser')
+const exphbs                = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
@@ -21,8 +21,8 @@ const MongoStore = require('connect-mongo');
 
 
 //let MongoClient = require('mongodb').MongoClient;
-let dbPassNick = process.env.DB_PASS_442;
-//let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
+//let dbPassNick = process.env.DB_PASS_442;
+let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
@@ -45,6 +45,7 @@ var movie_cntr = 0;
 //retrieve database info
 var room_users = [];
 var movie_list = [];
+//var chat_history = [];
 var chat_history = [];
 
 var movie_cntr = 0;
@@ -56,6 +57,7 @@ if(get_room_info()){
 var send_back="No Users Found";
 
 let loggedInUsers = [];
+let thisRoom ="";
 
 
 // This initializes our session storage
@@ -70,10 +72,14 @@ app.use(session({
     })
 }));
 
-let user = "";
+let curuser = "";
 app.use(express.static('public'));
 app.use('/css', express.static(__dirname + 'public/css'));
-//app.use(formidable());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({
+    extended:true
+}));
+app.use(formidable());
 
 app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
@@ -149,7 +155,7 @@ app.get('/mainpage/creatingroom/index.html', (req, res) => {
 })
 
 app.get('/mainpage/creatingroom/createRoom.html', (req, res) => {
-    res.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
+    es.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
 })
 
 app.get('/mainpage/creatingroom/cssRoom/roomlook.css', (req, res) => {
@@ -170,6 +176,7 @@ app.get('/create_account.css', (req, res) => {
 app.get('/css/main.css.map', (req, res) => {
     res.sendFile(path.join(__dirname, '/css/main.css.map'))
 })
+
 app.get('/css/main.scss', (req, res) => {
     res.sendFile(path.join(__dirname, '/css/main.scss'))})
 
@@ -192,7 +199,13 @@ app.get('/find_friends', (req, res) => {
 
 app.get('/join', (req, res) => {
     if(req.session.user !== undefined && req.session.user !== null) {
-        res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+        //res.sendFile(path.join(__dirname, '/joinRoom/index.html'));
+        res.sendFile(path.join(__dirname, '/movie_room.html'));
+
+        /* keeps track of a user in global scope */
+        curuser = req.session.user.userN;
+
+
     }else{
         console.log("Someone who wasn't logged in tried going to the join page")
         res.render('notLoggedIn');
@@ -222,14 +235,6 @@ app.get('/logout',(req,res) => {
     });
 })
 
-/*
-app.listen(port, () => {
-    console.log(`App is running on ${port}`);
-});
-*/
-app.use(bodyParser.urlencoded({
-    extended:true
-}));
 
 /*
  * POST Requests: submitting a form usually is
@@ -237,7 +242,11 @@ app.use(bodyParser.urlencoded({
  */
 const client = new MongoClient(url, {keepAlive: 1})
 
+
 app.post('/register', (req, res) => {
+    console.log("Post req for register");
+    console.log(req.fields.uname)
+    console.log(req.fields.pass)
     insert(req,res);
     client.close();
 
@@ -249,6 +258,7 @@ app.post('/get_streamer',(req, res) => {
     // (req,res);
     // res.redirect("/Homepage");
 });
+
 
 //Get find_friend search request, check it in database
 app.post('/find_friends/find_user',(req, res) => {
@@ -264,9 +274,9 @@ server.listen(port, () => {
     console.log(`server running on ${port}`);
 });
 io = socketIO(server);
+
 // This stuff is for the socket functions
 const {joinUser, removeUser, findUser } = require('./joinRoom/users');
-let thisRoom ="";
 
 
 io.on("connection", function(socket) {
@@ -283,34 +293,71 @@ io.on("connection", function(socket) {
 
     //start voting once everyone joins
     if(clients >= room_size){
-        if(voted === -1){
-            console.log("Begin Voting");
-            vote();
-        }
-        else{
-            console.log("Add user on to vote");
-            current_movie.set('vote',0);
-            io.emit("movie",
-                JSON.stringify(current_movie.get('movie_name'),replacer));
-        }
-    }
+      if(voted === -1){
+        console.log("Begin Voting");
+        vote();
+      }
+      else
+        console.log("Add user on to vote");
+        current_movie.set('vote',0);
+        io.emit("movie",
+        JSON.stringify(current_movie.get('movie_name'),replacer));
+      }
+    
 
-    socket.on("client", function(msg) {
-        console.log("hello from client"+msg);
-    });
+    socket.on("join room", (data) => {
 
-    socket.on("vote", function(msg){
-        console.log("Processing vote from User: " + msg);
-        voted += 1;
-        process_vote(msg);
-    });
+     let Newuser = joinUser(socket.id, curuser, data.roomName)
+     socket.username = curuser;
 
-    socket.on("chat", function(msg){
-        console.log("Processing chat from User: " + msg);
-        chat_history.push(["User x",msg]);
-        io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    });
+     socket.emit('send data' ,
+            {id : socket.id , username:socket.username, roomname : Newuser.roomname });
 
+     //thisRoom  = Newuser.roomname;
+     //console.log(thisRoom);
+     //socket.join(thisRoom);
+   });
+
+   socket.on("chat message", (data) => {
+     //io.to(thisRoom).emit("chat message", {data:data,id : socket.id});
+     io.emit("chat message", {data:data,id : socket.id});
+
+   });
+
+   socket.on("client", function(msg) {
+    console.log("hello from client"+msg);    
+  });
+
+  socket.on("vote", function(msg){
+    console.log("Processing vote from User: " + msg);
+    voted += 1;
+    process_vote(msg);
+  });
+
+/*
+  socket.on("chat", function(msg){
+    console.log("Processing chat from User: " + msg);
+    chat_history.push(["User x",msg]);
+    io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  });
+*/
+  socket.on("chat", function(msg){
+    console.log("Processing chat from User: " + msg);
+
+    chat_history.push([socket.username,msg]);
+
+    //io.sockets.in(thisRoom).emit('chat_history', JSON.stringify(chat_history,replacer));
+    io.sockets.emit('chat_history', JSON.stringify(chat_history,replacer));
+  });
+
+   socket.on("disconnect", () => {
+     const user = removeUser(socket.id);
+     console.log(user);
+     if(user) {
+       console.log(user.username + ' has left');
+     }
+     console.log("disconnected");
+   });
 });
 
 //database helper for  'find_user' post
@@ -351,42 +398,48 @@ async function sleepnsend(t, res) {
  */
 async function insert(req, res) {
     await client.connect();
-    var Uusername = req.fields.uname
-    var Upassword = req.fields.pass
+
+    var Uusername = req.fields.uname;
+    var Upassword = req.fields.pass;
 
     let checked_username = "";
     checked_username = Uusername.replace(/</g,'&lt').replace(/>/g,'&gt').replace(/&/g, '&amp');
 
+    if ( Uusername != undefined && Upassword != undefined  ) {
+        var user = {
+            username: checked_username,
+            password: Upassword,
+            favorite: [],
+            genres: []
+        };
+        console.log("MongoDB connected");
 
-    var user = {
-        username: checked_username,
-        password: Upassword,
-        favorite: [],
-        genres: []
+        const db = client.db('UserInfo');
+        const collection = db.collection('username');
+
+        collection.insertOne(user, (err,res) => {
+            if (err) throw err;
+            console.log("1 User Added");
+        });
+    } else {
+        console.log("error");
     }
-    console.log("MongoDB connected");
-
-    const db = client.db('UserInfo');
-    const collection = db.collection('username');
-
-    collection.insertOne(user, (err,res) => {
-        if (err) throw err;
-        console.log("1 User Added");
-    });
-
 }
 
 app.post('/login',(req,res) => {
     finduser(req,res);
 });
 
+/*
 async function finduser(req,res){
     user = "";
     await client.connect();
     console.log("MongoDB connected");
     const db = client.db("UserInfo");
     const global_users = db.collection('username');
-    global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    //global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    global_users.findOne({username:req.fields.username,password:req.fields.psw}, function(err, result) {
+    
         if (result == null){
             user = "0";
         }
@@ -394,8 +447,9 @@ async function finduser(req,res){
             user = "1";
         }
     });
-    await new Promise(r => setTimeout(r, 100));
+    await new Promise(r => setTimeout(r, 1000));
     if (user == "0"){
+        console.log("\nhere\n");
         res.render('index');
     }
     else if (user == "1"){
@@ -417,6 +471,7 @@ async function finduser(req,res){
         // res.render('homepage',{userFavorites:JSON.stringify(userFavorite)});
     }
 }
+*/
 
 //Post request to handle adding genres to database
 //The redirect was required to prevent the page from hanging up after pressing button
@@ -424,6 +479,42 @@ app.post('/add_genre',(req, res) => {
     addGenreToDB(req,res);
     //res.redirect("/profile");
 });
+
+
+async function finduser(req,res){
+    user = "";
+    await client.connect();
+    console.log("MongoDB connected");
+    const db = client.db("UserInfo");
+    const global_users = db.collection('username');
+    //global_users.findOne({username:req.body.username,password:req.body.psw}, function(err, result) {
+    global_users.findOne({username:req.fields.username},{password:req.fields.psw}, function(err, result) {
+        console.log(req.fields.username);
+        console.log(req.fields.psw);
+        console.log(result);
+        if (result == null || result.password != req.fields.psw){
+   //         res.render('index');
+            res.redirect('/');
+        }
+        else{
+            req.session.user = {
+                userN: req.fields.username //For now this is the username, should probably be a random uuid
+            }
+            loggedInUsers.push(req.session.user.userN)
+            console.log(req.session.user.userN + " just logged on");
+            console.log("Current logged in users are: " + loggedInUsers);
+            req.session.save(err => {
+                if(err){
+                    console.log(err);
+                } else {
+                    //res.send(req.session.user)
+                    //res.render('homepage',{userFavorites:JSON.stringify(userFavorite),userSession:JSON.stringify(req.session.user.userN)});
+                    res.redirect('homepage')
+                }
+            });
+        }
+    });
+}
 
 //Post request to handle removing genres from database
 //The redirect was required to prevent the page from hanging up after pressing button
@@ -525,9 +616,6 @@ async function getPageData(req,res,pageName){
             });
 
     })
-
-
-
 }
 
 //movie_room
