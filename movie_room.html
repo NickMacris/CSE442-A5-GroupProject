@@ -60,9 +60,6 @@
 
     </a>    
 </div>
-    <script>
-
-    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         
@@ -89,20 +86,10 @@
             document.getElementById('yes_button').style.visibility = 'hidden';
             document.getElementById('no_button').style.visibility = 'hidden';
         }
-
-        //let room     = prompt("Room Id");
-        let room = 'room';
         
         // establish socket.io connection
         const socket = io();
-        socket.emit("joinmovieroom","Username");
         reset();
-
-        socket.emit("join room", {roomName : room});
-        socket.on('send data', (data) => {
-            ID = data.id;
-            console.log(" my ID:" + ID);
-        });
 
         //button click events
         function vote_yes(){
@@ -122,18 +109,7 @@
         }
 
         function send_chat(){
-            console.log("hello");
             chat = document.getElementById("input_chat").value;
-            //html conversion
-            if ((chat.includes("<")) || (chat.includes(">")) || (chat.includes("&"))) {
-                chat = chat.replace(/</g, " < ");
-                chat = chat.replace(/>/g, " > ");
-                chat = chat.replace(/ < /g, "&lt");
-                chat = chat.replace(/ > /g, "&gt");
-                chat = chat.replace(/&/g, " & ");
-                chat = chat.replace(/ & /g, "&amp");
-            }
-
             console.log("chat:"+ chat );
             if(chat != ''){
                 socket.emit("chat",chat);

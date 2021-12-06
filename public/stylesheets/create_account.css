@@ -1,5 +1,5 @@
 #imsg {
-    postion: relative;
+    position: relative;
     color: #e83f3f;
     font-weight: bold;
     top: 230px;
@@ -52,6 +52,18 @@ input[type=submit].signin {
     text-align: center;
 
     background: #C4C4C4;
+}
+
+.logo {
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+    top:50%;
+    font-size: 1.5em;
+}
+  
+.logo span {
+    color: goldenrod;
 }
 
 .ellipse {
