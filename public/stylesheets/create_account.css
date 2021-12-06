@@ -54,6 +54,10 @@ input[type=submit].signin {
     background: #C4C4C4;
 }
 
+.logo span {
+    color: goldenrod;
+}
+
 .ellipse {
     position: absolute;
     width: 256px;
