@@ -12,30 +12,30 @@
 <div class="update_profile_box">
 <h1>Welcome, Username</h1>
 <h2>Add/Remove Genre.</h2>
-<form method="post">
-    <input type="text" name="addGenre" placeholder="Type genre to add here">
+<form method="post" enctype="multipart/form-data">
+    <input type="text" id="addGenre" name="addGenre" placeholder="Type genre to add here">
     <button formaction="/add_genre" type="submit" name="submit">
         Add Genre to Profile
     </button>
 </form>
-<form method="post">
-    <input type="text" name="removeGenre" placeholder="Type genre to remove here">
+<form method="post" enctype="multipart/form-data">
+    <input type="text" id="removeGenre" name="removeGenre" placeholder="Type genre to remove here">
     <button formaction="/remove_genre" type="submit" name="submit">
         Remove Genre from Profile
     </button>
 </form>
 
 <h2>Add/Remove Favorite Movies.</h2>
-<form method="post">
-    <input type="text" name="addFavorite" placeholder="Type Favorite movie to add here">
+<form method="POST" enctype="multipart/form-data">
+    <input type="text" id="addFavorite" name="addFavorite" placeholder="Type Favorite movie to add here">
     <button formaction="/add_favorite" type="submit" name="submit">
         Add Favorite movie to page
     </button>
 </form>
 
 
-<form method="post">
-    <input type="text" name="removeFavorite" placeholder="Type Favorite movie to remove here">
+<form method="post" enctype="multipart/form-data">
+    <input type="text" id="removeFavorite" name="removeFavorite" placeholder="Type Favorite movie to remove here">
     <button formaction="/remove_favorite" type="submit" name="submit">
         Remove favorite movie from page
     </button>
@@ -47,10 +47,10 @@
 
 <button class="sign_out"> SIGN OUT</button>
 <button class="home" onclick="location.href='/homepage';"> Home</button>
-<button class="find_friend"> Find Friend</button>
-<button class="create_room"> Create Room</button>
-<button class="join_room"> Join Room</button>
-<button class="profile"> Profile</button>
+<button class="find_friend" onclick="location.href='/find_friends';"> Find Friend</button>
+<button class="create_room" onclick="location.href='../mainpage/creatingroom/createRoom.html';"> Create Room</button>
+<button class="join_room" onclick="location.href='/join'"> Join Room</button>
+<button class="profile" > Profile</button>
 <button class="help"> Help</button>
 
 <div class="your_lists">
@@ -69,20 +69,32 @@
 
     let genrelist = document.getElementById("genreList");
 
-    genres1.forEach((item)=>{
+    if(genres1.length === 0){
         let li = document.createElement("li");
-        li.innerText = item;
+        li.innerText = "You have no favorite genres!";
         genrelist.appendChild(li);
-    })
+    }else{
+        genres1.forEach((item)=>{
+            let li = document.createElement("li");
+            li.innerText = item;
+            genrelist.appendChild(li);
+        })
+    }
 
     let favorites1 = JSON.parse(`{{{userFavorites}}}`);
 
     let favoritelist2 = document.getElementById("favoritesList");
 
+    if(favorites1.length === 0){
+        let li = document.createElement("li");
+        li.innerText = "You have no favorite movies!";
+        favoritelist2.appendChild(li);
+    }else{
     favorites1.forEach((item)=>{
        let li = document.createElement("li");
        li.innerText = item;
        favoritelist2.appendChild(li);
     })
+    }
 </script>
 </html>
