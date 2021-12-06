@@ -11,7 +11,7 @@
     <body>
   <!-- Voting Action-->
   <div class="voting_booth" >
-    <p id = "Vote_Message">Vote here</p>
+    <p id = "Vote_Message"  style="color: black">Vote here</p>
     <pid id = "voting_booth"></pid>
     <img id = "movie_img" src="#" alt="Movie Description">
     <p id = "movie_name"></p>
@@ -36,22 +36,25 @@
 
 <!-- Buttons -->
 <div class = page_navigation>
-    <a  href="https://cse442.com">
+    <a  href="/logout">
         <button class="sign_out"> SIGN OUT</button>
     </a>
-    <a href="https://cse442.herokuapp.com/Homepage">
+    <a href="/Homepage">
         <button class="home"> Home</button>
     </a>
-    <a href="https://cse442.herokuapp.com/find_friends">
+    <a href="find_friends">
         <button class="find_friend"> Find Friend</button>
     </a>
-    <a href="https://cse442.herokuapp.com/mainpage/creatingroom/createRoom.html">
+    <a href="/mainpage/creatingroom/createRoom.html">
         <button class="create_room"> Create Room</button>
 
     </a>
-    <a href="">
+    <a href="/join">
         <button class="join_room"> Join Room</button>
-    </a>               <button class="profile"> Profile</button>
+    </a>               
+    <a href="/profile">
+        <button class="profile"> Profile</button>
+    </a>     
     <a href="">
         <button class="help"> Help</button>    
 
@@ -86,11 +89,20 @@
             document.getElementById('yes_button').style.visibility = 'hidden';
             document.getElementById('no_button').style.visibility = 'hidden';
         }
+
+        //let room     = prompt("Room Id");
+        let room = 'room';
         
         // establish socket.io connection
         const socket = io();
         socket.emit("joinmovieroom","Username");
         reset();
+
+        socket.emit("join room", {roomName : room});
+        socket.on('send data', (data) => {
+            ID = data.id;
+            console.log(" my ID:" + ID);
+        });
 
         //button click events
         function vote_yes(){
@@ -110,6 +122,7 @@
         }
 
         function send_chat(){
+            console.log("hello");
             chat = document.getElementById("input_chat").value;
             //html conversion
             if ((chat.includes("<")) || (chat.includes(">")) || (chat.includes("&"))) {
