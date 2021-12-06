@@ -95,12 +95,8 @@
         
         // establish socket.io connection
         const socket = io();
-<<<<<<< HEAD
-        //reset();
-=======
         socket.emit("joinmovieroom","Username");
         reset();
->>>>>>> 7e3a1eeb2e5396aebe0b70bdc5b7bc1893de2d9c
 
         socket.emit("join room", {roomName : room});
         socket.on('send data', (data) => {
