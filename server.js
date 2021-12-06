@@ -525,7 +525,6 @@ app.post('/remove_genre',(req, res) => {
 });
 
 app.post('/add_favorite',(req, res) => {
-    console.log('Hello?\n');
     addFavoriteToDB(req,res);
     //res.redirect("/profile");
 });
