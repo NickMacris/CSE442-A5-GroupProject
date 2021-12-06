@@ -311,10 +311,13 @@ io.on("connection", function(socket) {
     });
   
     socket.on("chat", function(msg){
-        console.log("Processing chat: " +[room_users.get(socket),msg]);
-        chat_history.push([room_users.get(socket),msg]);
-        io.emit('chat_history', JSON.stringify(chat_history,replacer));
-    });
+        console.log("Processing chat from User: " + msg);
+    
+        chat_history.push([socket.username,msg]);
+    
+        //io.sockets.in(thisRoom).emit('chat_history', JSON.stringify(chat_history,replacer));
+        io.sockets.emit('chat_history', JSON.stringify(chat_history,replacer));
+      });
     
     socket.on("join room", (data) => {
 
