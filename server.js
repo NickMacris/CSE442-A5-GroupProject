@@ -339,6 +339,9 @@ io.on("connection", function(socket) {
 
    socket.on("disconnect", () => {
      room_users.delete(socket);
+     if (room_users.size == 0 ) {
+         chat_history = [];
+     }
      const user = removeUser(socket.id);
      console.log(user);
      if(user) {
