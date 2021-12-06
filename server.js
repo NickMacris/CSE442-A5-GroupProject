@@ -11,8 +11,8 @@ const exphbs                = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
-const dbPass = process.env.USER_PASS ;
-//const dbPass = process.env.USER_PASS || "hello";
+//const dbPass = process.env.USER_PASS;
+const dbPass = process.env.USER_PASS || "hello";
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
 //session and MongoStore are both used for session variable implementation
@@ -544,10 +544,10 @@ async function addGenreToDB(req, res1) {
 
     global_users.updateOne(
         { username: req.session.user.userN },
-        { $push: { genres: req.body.addGenre } },
+        { $push: { genres: req.fields.addGenre } },
         (err,res) => {
             if (err) throw err;
-            console.log("Genre added: " + req.body.addGenre + " to " + req.session.user.userN);
+            console.log("Genre added: " + req.fields.addGenre + " to " + req.session.user.userN);
             res1.redirect("profile");
         });
 }
@@ -561,10 +561,10 @@ async function removeGenreFromDB(req, res1) {
 
     global_users.updateOne(
         { username: req.session.user.userN },
-        { $pull: { genres: req.body.removeGenre } },
+        { $pull: { genres: req.fields.removeGenre } },
         (err,res) => {
             if (err) throw err;
-            console.log("Genre removed: " + req.body.removeGenre + " from " + req.session.user.userN);
+            console.log("Genre removed: " + req.fields.removeGenre + " from " + req.session.user.userN);
             res1.redirect("profile");
         });
 }
@@ -577,10 +577,10 @@ async function addFavoriteToDB(req, res1) {
 
     global_users.updateOne(
         { username: req.session.user.userN },
-        { $push: { favorite: req.body.addFavorite } },
+        { $push: { favorite: req.fields.addFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite added: " + req.body.addFavorite + " to " + req.session.user.userN);
+            console.log("Favorite added: " + req.fields.addFavorite + " to " + req.session.user.userN);
             res1.redirect("profile");
         });
 }
@@ -592,10 +592,10 @@ async function removeFavoriteFromDB(req, res1) {
 
     global_users.updateOne(
         { username: req.session.user.userN },
-        { $pull: { favorite: req.body.removeFavorite } },
+        { $pull: { favorite: req.fields.removeFavorite } },
         (err,res) => {
             if (err) throw err;
-            console.log("Favorite removed: " + req.body.removeFavorite + " from " + req.session.user.userN);
+            console.log("Favorite removed: " + req.fields.removeFavorite + " from " + req.session.user.userN);
             res1.redirect("profile");
         });
 }
