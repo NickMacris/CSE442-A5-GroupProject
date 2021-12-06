@@ -155,7 +155,7 @@ app.get('/mainpage/creatingroom/index.html', (req, res) => {
 })
 
 app.get('/mainpage/creatingroom/createRoom.html', (req, res) => {
-    es.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
+    res.sendFile(path.join(__dirname, '/mainpage/creatingroom/createRoom.html'));
 })
 
 app.get('/mainpage/creatingroom/cssRoom/roomlook.css', (req, res) => {
