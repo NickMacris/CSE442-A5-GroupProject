@@ -23,7 +23,7 @@ var send_back="No Users Found";
 
 //Handlebars init.
 app.engine('hbs', exphbs({
-    defaultLayout: 'find_friends_page',
+    defaultLayout: false,
     extname: '.hbs'
     }));
 app.set('view engine', 'hbs');
@@ -34,6 +34,10 @@ app.get('/find_friends', (req, res) => {
               users:""
           }
       });
+});
+
+app.get('/movie_room.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '../movie.html'));
 });
 
 //run server on port

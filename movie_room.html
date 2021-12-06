@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+   <meta charset="UTF-8" />
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+   <title>Movie</title>
+   <link rel="stylesheet" type ="text/css" href="movie_room.css">
+ </head>
+
+    <body>
+  <!-- Voting Action-->
+  <div class="voting_booth" >
+    <p id = "Vote_Message">Vote here</p>
+    <pid id = "voting_booth"></pid>
+    <img id = "movie_img" src="#" alt="Movie Description">
+    <p id = "movie_name"></p>
+    <p id = "movie_description"></p>
+    <button id = "yes_button" onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
+    <button id = "no_button" onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+</div>
+
+<!-- Chatting Action-->
+<div class=chat>
+    <div class="chat_booth" >
+        <pid id = "chat_history"> </pid>
+        <p>Chat here</p>
+        
+    </div>
+
+    <div class="chat_box">
+        <input type = "text" id="input_chat" name="input_chat" placeholder="Send a message" >
+        <button id="send_chat" onclick = "send_chat()" class="btn btn-primary btn-md"> Send! </button> 
+    </div>
+</div>
+
+<!-- Buttons -->
+<div class = page_navigation>
+    <a  href="/logout">
+        <button class="sign_out"> SIGN OUT</button>
+    </a>
+    <a href="/Homepage">
+        <button class="home"> Home</button>
+    </a>
+    <a href="find_friends">
+        <button class="find_friend"> Find Friend</button>
+    </a>
+    <a href="/mainpage/creatingroom/createRoom.html">
+        <button class="create_room"> Create Room</button>
+
+    </a>
+    <a href="/join">
+        <button class="join_room"> Join Room</button>
+    </a>               
+    <a href="/profile">
+        <button class="profile"> Profile</button>
+    </a>     
+    <a href="">
+        <button class="help"> Help</button>    
+
+    </a>    
+</div>
+    <script>
+
+    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        
+        const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+        
+        // select relevant elements
+        var chat = document.getElementById("input_chat");
+        var chat_history = document.getElementById('chat_history');
+        var booth = document.getElementById('voting_booth');
+        var movie_img_url = document.getElementById("movie_img");
+        var movie_name = document.getElementById("movie_name");
+        var movie_description = document.getElementById("movie_description");
+        var vote_message = document.getElementById("Vote_Message");
+        //reset movie_page
+        function reset(){
+            //set vote table
+            movie_img_url.src = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Question_mark_%28black%29.svg/200px-Question_mark_%28black%29.svg.png";
+            // movie_year.innerHTML = "Coolest Year";
+            // movie_genre.innerHTML = "Coolest genre";
+            // Greet User
+            booth.innerHTML += '<p> Welcome !! Voting will begin when all users enter room.</p>';
+            chat_history.innerHTML += '<p> Chatting </p>';
+            vote_message.innerHTML = 'Vote here';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
+        }
+
+        //let room     = prompt("Room Id");
+        let room = 'room';
+        
+        // establish socket.io connection
+        const socket = io();
+        socket.emit("joinmovieroom","Username");
+        reset();
+
+        socket.emit("join room", {roomName : room});
+        socket.on('send data', (data) => {
+            ID = data.id;
+            console.log(" my ID:" + ID);
+        });
+
+        //button click events
+        function vote_yes(){
+            socket.emit("vote",1);
+            vote_message.innerHTML = 'Vote of [YES] has been Recorded!!';
+            console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
+        }
+
+        function vote_no(){
+            socket.emit("vote",0);
+            vote_message.innerHTML = 'Vote of [NO] has been Recorded!!';
+            console.log('Vote Sent');
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
+        }
+
+        function send_chat(){
+            console.log("hello");
+            chat = document.getElementById("input_chat").value;
+            //html conversion
+            if ((chat.includes("<")) || (chat.includes(">")) || (chat.includes("&"))) {
+                chat = chat.replace(/</g, " < ");
+                chat = chat.replace(/>/g, " > ");
+                chat = chat.replace(/ < /g, "&lt");
+                chat = chat.replace(/ > /g, "&gt");
+                chat = chat.replace(/&/g, " & ");
+                chat = chat.replace(/ & /g, "&amp");
+            }
+
+            console.log("chat:"+ chat );
+            if(chat != ''){
+                socket.emit("chat",chat);
+                console.log('Sending Message');
+            }
+            document.getElementById("input_chat").value = '';
+            
+        }
+        socket.on("vote",function(msg){
+            console.log("Sent message to myself");
+        })
+
+        // watch for socket to emit a 'movie'
+        socket.on("movie", function(msg){
+            msg = JSON.parse(msg, reviver);
+            booth.innerHTML = '';
+            displaymovie([msg]);
+            vote_message.innerHTML = 'Vote here:';
+            document.getElementById('yes_button').style.visibility = 'visible';
+            document.getElementById('no_button').style.visibility = 'visible';
+        });
+
+    async function displaymovie(favorite){
+    if(favorite.length !== 0) {
+        for (let movieTitle of favorite) {
+            let favUrl = "https://api.themoviedb.org/3/search/movie?api_key=3376f235922a4493f5e9e4e990beead6&query="
+            favUrl += movieTitle;
+            await fetch(favUrl).then(res => res.json()).then(data => {
+                if (data.results.length === 0) {
+                    console.log("nothing found");
+                } else {
+                    movie_img_url.src = IMG_URL + data.results[0].poster_path;
+                    movie_img_url.width = "350";
+                    movie_img_url.height = "430";
+                    console.log("Title: " +  data.results[0].title);
+                    console.log("Overview: " + data.results[0].overview);
+                    movie_name.innerHTML = data.results[0].title;
+                    movie_name.style.color = "black";
+                    movie_description.innerHTML = data.results[0].overview;
+                    movie_description.style.color = "black";
+                }
+
+            })
+
+        }
+    }
+    }
+
+        // watch for socket to emit a 'chat_history'
+        socket.on("chat_history", function(msg){
+            msg = JSON.parse(msg, reviver);
+            console.log("Chat history: "+msg);
+            chat_history.innerHTML = '';
+            for(chat in msg){
+                chat_history.innerHTML += msg[chat][0]+": "+ msg[chat][1]+'<br>';
+            }
+        });
+
+        // watch for socket to emit a 'vote_result'
+        socket.on("vote_result", function(msg){
+            console.log("Vote results " + msg);
+            vote_message.innerHTML = 'Most Popular Movie:';
+            document.getElementById('yes_button').style.visibility = 'hidden';
+            document.getElementById('no_button').style.visibility = 'hidden';
+        });
+
+        // watch for socket to emit a 'user connected' event
+        socket.on("user connected", function(msg){
+            console.log("User Connected" + msg);
+        });
+
+        //JSON wrapper & unwrapper functions
+        function replacer(key, value) {
+        if(value instanceof Map) {
+            return {
+            dataType: 'Map',
+            value: Array.from(value.entries()), // or with spread: value: [...value]
+            };
+        } else {
+            return value;
+        }
+        }
+        function reviver(key, value) {
+        if(typeof value === 'object' && value !== null) {
+            if (value.dataType === 'Map') {
+            return new Map(value.value);
+            }
+        }
+        return value;
+        }
+    </script>
+</body>
+</html>
