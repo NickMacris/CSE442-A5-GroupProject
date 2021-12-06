@@ -14,6 +14,7 @@ const port = process.env.PORT || 7000;
 const dbPass = process.env.USER_PASS;
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 
+
 //session and MongoStore are both used for session variable implementation
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
