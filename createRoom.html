@@ -1,4 +1,4 @@
-o<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@ o<!DOCTYPE html>
 <body>
     <link rel="stylesheet" href="cssRoom/roomlook.css">
     <div class = "logo-container"> 
-        <a class = "logo" href="/Homepage"> HighFive <span>Club</span></a> <!-- link for the logo-->
+        <a class = "logo" href="index.html"> HighFive <span>Club</span></a> <!-- link for the logo-->
     </div>
     <div class="uniqueID">
         <ul class="idnumber  "> Room ID :  </ul>
@@ -19,30 +19,5 @@ o<!DOCTYPE html>
             document.getElementById("roomID").innerHTML = roomID;
         </script>
     </div> 
-    
-    <div class="Add_People">    
-        <form action="/populate_room" method="post"></form>   
-        <input type = "text" id="user_in" placeholder="Username">
-        <p id="in_Room"></p>
-        <button id="friend_adder"onclick = "add_user()" class="btn btn-primary btn-md"> Add friend! </button> 
-        <button class="btn btn-primary btn-md"> Create! </button> 
-    </div>
-
-    <div class="submit_room">
-        
-            
-    </div>
-   <script>
-       var out = document.getElementById("in_Room");
-        let users = [];
-       function add_user(){
-        var inp = document.getElementById("user_in").value;
-            if( inp!=''){
-                out.innerHTML += inp+'<br>';
-            }
-            document.getElementById("user_in").value= '';
-       }
-
-   </script>
 </body>
 </html>

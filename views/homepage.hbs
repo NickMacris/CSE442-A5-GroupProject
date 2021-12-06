@@ -14,14 +14,14 @@
                         <a class = "logo" href="#">HighFive <span>Club</span></a> <!-- link for the logo-->
                         <nav>
                             <div class="primary-navigation">
-                                <ul class="username"><div id="userN"></div></ul>
+                                <ul class="username">Username</ul>
                                 <ul class="current">Home</ul>
                                 <ul class="friends-list"><a href="https://cse442.herokuapp.com/find_friends">FriendList</a></ul> <!-- link to the Friends Page-->
                                 <ul class="create-room"><a href="../mainpage/creatingroom/createRoom.html">CreateRoom</a></ul> <!-- link to the create room -->
 
                                 <ul class="profile"><a href="/profile">Profile</a></ul>
-                                 <ul class="join"><a href="/join">JoinRoom</a></ul>
-                                <ul class="sign out"><a href="/logout">SIGN OUT</a></ul>
+                                 <ul class="join"><a href="#">JoinRoom</a></ul>
+                                <ul class="sign out"><a href="../logIn/index.html">SIGN OUT</a></ul>
                             </div>
                         </nav>
                     </div>
@@ -152,7 +152,6 @@
             </body>
 
             <script>
-            document.getElementById("userN").innerHTML = "Welcome " + JSON.parse('{{{userSession}}}');
             favoriteMovies(JSON.parse(`{{{userFavorites}}}`)).then(data1 => showFavoriteMovies(data1))
             </script>
 </html>
