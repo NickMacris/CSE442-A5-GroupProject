@@ -11,14 +11,12 @@ const exphbs = require('express-handlebars');
 const { resourceLimits } = require('worker_threads');
 const { getSystemErrorMap } = require('util');
 const port = process.env.PORT || 7000;
-//const dbPass = process.env.USER_PASS;
-const dbPass = process.env.USER_PASS || "hello";
+const dbPass = process.env.USER_PASS;
 const url    = 'mongodb+srv://createaccount:'+ dbPass + '@cluster0.k7tia.mongodb.net/test';
 //require('./simpleWebpage/database');
 
 //let MongoClient = require('mongodb').MongoClient;
-//let dbPassNick = process.env.DB_PASS_442;
-let dbPassNick = process.env.DB_PASS_442 || "CSE442cse";
+let dbPassNick = process.env.DB_PASS_442;
 let urlNick = 'mongodb+srv://CSE442:' + dbPassNick + '@cluster0.k7tia.mongodb.net/test';
 
 //Imani Database init
