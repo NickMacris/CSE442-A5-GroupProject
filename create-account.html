@@ -14,7 +14,7 @@
 </style>
     <body>
         <form  action="/" method="GET">
-            <input class="signin" type="submit" name="Login" value="Sign In"/>
+            <input class="signin" type="submit" name="Login" value="SignIn"/>
         </form>
         <!-- <button class="signin"> Login </button> -->
         <div class=box>
@@ -23,21 +23,22 @@
             </div>
             <form onsubmit=" imsg()" method="POST" action="/register" enctype="multipart/form-data">
                 <label class="main enterUsername" for="uname">Username:</label><br>
-                <input class="unameField" type="text" id="uname" name="uname" required><br>
+                <input class="unameField" type="text" id="uname" name="uname"><br>
                 <label class="main enterPassword" for="pass">Password:</label><br>
                 <input class="passField" type="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" id="pass" name="pass" title="Must Contain atleast one uppercase letter and number and lowercase letter, and atleast 8 or more characters" required>
                 <div id="imsg"></div> 
-                <input class="signup" type="submit" value="Sign Up"/>
+                <input class="signup" type="submit" value="SignUp"/>
             </form>
         </div>
 
         <div id="suBmessage">
             <h3> Password Submitted </h3>
         </div>
+        
 
         <div class="ellipse">
             <div class="logoText">
-                <a class = "logo" href="/">HighFive <span>Club</span></a>
+                <h2> LOGO </h2>
             </div>
         </div>
     </body>

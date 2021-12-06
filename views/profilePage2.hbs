@@ -10,7 +10,7 @@
 <h1>Profile Page</h1>
 
 <div class="update_profile_box">
-<h1><div id="userN"></div></h1>
+<h1>Welcome, Username</h1>
 <h2>Add/Remove Genre.</h2>
 <form method="post">
     <input type="text" name="addGenre" placeholder="Type genre to add here">
@@ -45,12 +45,12 @@
 </div>
 
 
-<button class="sign_out" onclick="location.href='/logout';"> SIGN OUT</button>
+<button class="sign_out"> SIGN OUT</button>
 <button class="home" onclick="location.href='/homepage';"> Home</button>
 <button class="find_friend"> Find Friend</button>
 <button class="create_room"> Create Room</button>
 <button class="join_room"> Join Room</button>
-<button class="profile" > Profile</button>
+<button class="profile"> Profile</button>
 <button class="help"> Help</button>
 
 <div class="your_lists">
@@ -65,7 +65,6 @@
 </body>
 <script>
     //let data = ['Ram', 'Shyam', 'Sita', 'Gita' ];
-    document.getElementById("userN").innerHTML = "Welcome " + JSON.parse('{{{userSession}}}');
     let genres1 = JSON.parse(`{{{responseObject}}}`);
 
     let genrelist = document.getElementById("genreList");
