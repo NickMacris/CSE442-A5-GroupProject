@@ -18,6 +18,7 @@
     <p id = "movie_description"></p>
     <button id = "yes_button" onclick = "vote_yes()"class="voting_buttons vote_yes">Yes</button>
     <button id = "no_button" onclick = "vote_no()"class="voting_buttons vote_no">No</button>
+    <p id = "Vote_Num" style="background-color:black;">Voters: 1</p>
 </div>
 
 <!-- Chatting Action-->
@@ -69,6 +70,7 @@
         const IMG_URL = 'https://image.tmdb.org/t/p/w500';
         
         // select relevant elements
+        var voter_num = document.getElementById("Vote_Num");
         var chat = document.getElementById("input_chat");
         var chat_history = document.getElementById('chat_history');
         var booth = document.getElementById('voting_booth');
@@ -201,20 +203,22 @@
         });
 
         // watch for socket to emit a 'user connected' event
-        socket.on("user connected", function(msg){
-            console.log("User Connected" + msg);
+        socket.on("user connected", function(msg){    
+            console.log("Users in vote: " + msg);
+            voter_num.innerHTML = "Active Voters: "+msg;
         });
 
         //JSON wrapper & unwrapper functions
         function replacer(key, value) {
-        if(value instanceof Map) {
-            return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-            };
-        } else {
-            return value;
-        }
+            if(value instanceof Map) {
+                return {
+                dataType: 'Map',
+                value: Array.from(value.entries()), // or with spread: value: [...value]
+                };
+            } 
+            else {
+                return value;
+            }
         }
         function reviver(key, value) {
         if(typeof value === 'object' && value !== null) {

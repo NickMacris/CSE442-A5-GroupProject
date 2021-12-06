@@ -32,24 +32,20 @@ const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 //movie_room**********
 //Session variable dependent
 var room_name = "test_room"
-var room_size = 2; // Get amount of people in room from db*********************
-
 //Global variables
-var clients = 0;
 var voted = -1;
 var current_movie = new Map();
 var favorite_movie = new Map();
 favorite_movie.set('vote',0);
-var movie_cntr = 0;
+var movie_cntr = -1;
 
 //retrieve database info
-var room_users = [];
+var last_entered = "hello";
+var room_users = new Map();
 var movie_list = [];
 //var chat_history = [];
 var chat_history = [];
 
-var movie_cntr = 0;
-//retrieve database info
 if(get_room_info()){
     console.log("Got room data");
 }
@@ -83,7 +79,16 @@ app.use(formidable());
 
 app.set('views', path.join(__dirname, 'views'));
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
-app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"));
+app.get("/movie_room", (req, res) => {
+    if(req.session.user !== undefined && req.session.user !== null) {
+        last_entered = req.session.user.userN;
+        res.sendFile(__dirname + "/movie_room.html");
+        console.log(last_entered+" has been added");
+    }else{
+        console.log("Someone who wasn't logged in tried going in a movie room")
+        res.render('notLoggedIn');
+    }
+});
 
 //Handlebars initialization
 app.engine('hbs', exphbs({
@@ -279,31 +284,38 @@ const {joinUser, removeUser, findUser } = require('./joinRoom/users');
 
 
 io.on("connection", function(socket) {
-    io.emit("user connected",JSON.stringify("Hello via Json",replacer));
-    //get username from session variable?
-    //loop through room_users and add client
-    //if user shouldnt be there, direct to exit
+  room_users.set(socket,last_entered);
+  io.emit("user connected",room_users.size);
+  console.log('User ' + last_entered+' has been added');
+  //If voting needs to be started
+  if(movie_cntr < 0){
+    console.log("Begin Voting");
+    movie_cntr = 0;
+    vote();
+  }
+  else{
+    io.emit("movie",
+      JSON.stringify(current_movie.get('movie_name'),replacer));
+  }
+  //send info
+  io.emit('chat_history', JSON.stringify(chat_history,replacer));
 
-    clients += 1;
-    console.log('User #' + clients+' has been added');
-
-    //send chat history
-    io.emit('chat_history', JSON.stringify(chat_history,replacer));
-
-    //start voting once everyone joins
-    if(clients >= room_size){
-      if(voted === -1){
-        console.log("Begin Voting");
-        vote();
-      }
-      else
-        console.log("Add user on to vote");
-        current_movie.set('vote',0);
-        io.emit("movie",
-        JSON.stringify(current_movie.get('movie_name'),replacer));
-      }
+    socket.on("client", function(msg) {
+      console.log("hello from client"+msg);    
+    });
+  
+    socket.on("vote", function(msg){
+      console.log("Processing vote from User: " + msg);
+      voted += 1;
+      process_vote(msg);
+    });
+  
+    socket.on("chat", function(msg){
+        console.log("Processing chat: " +[room_users.get(socket),msg]);
+        chat_history.push([room_users.get(socket),msg]);
+        io.emit('chat_history', JSON.stringify(chat_history,replacer));
+    });
     
-
     socket.on("join room", (data) => {
 
      let Newuser = joinUser(socket.id, curuser, data.roomName)
@@ -324,34 +336,8 @@ io.on("connection", function(socket) {
 
    });
 
-
-   socket.on("client", function(msg) {
-    console.log("hello from client"+msg);    
-  });
-
-  socket.on("vote", function(msg){
-    console.log("Processing vote from User: " + msg);
-    voted += 1;
-    process_vote(msg);
-  });
-
-/*
-  socket.on("chat", function(msg){
-    console.log("Processing chat from User: " + msg);
-    chat_history.push(["User x",msg]);
-    io.emit('chat_history', JSON.stringify(chat_history,replacer));
-  });
-*/
-  socket.on("chat", function(msg){
-    console.log("Processing chat from User: " + msg);
-
-    chat_history.push([socket.username,msg]);
-
-    //io.sockets.in(thisRoom).emit('chat_history', JSON.stringify(chat_history,replacer));
-    io.sockets.emit('chat_history', JSON.stringify(chat_history,replacer));
-  });
-
    socket.on("disconnect", () => {
+     room_users.delete(socket);
      const user = removeUser(socket.id);
      console.log(user);
      if(user) {
@@ -620,7 +606,6 @@ async function getPageData(req,res,pageName){
 }
 
 //movie_room
-
 /**
  * Vote() should restart vote count, select movie to send to clients
  */
@@ -654,11 +639,11 @@ function process_vote(v){
         console.log("New Favorite movie is: "+ favorite_movie.get('movie_name'));
     }
     //Check for unanimous vote
-    if (current_movie.get('vote') === room_size){
+    if (current_movie.get('vote') === room_users.size){
         end_vote();
     }
     // Check if everyone voted
-    if(voted >= room_size){
+    if(voted >= room_users.size){
         vote();
     }
 
@@ -669,7 +654,7 @@ function process_vote(v){
 //Emit vote results
 function end_vote(){
     voted = 0;
-    movie_cntr = 0;
+    movie_cntr = -1;
     io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
     console.log("Ending Vote");
 }
@@ -682,32 +667,30 @@ function end_vote(){
  */
 async function get_room_info() {
     //Movie Data stored as
-    /* movie_name: "moviename"
-      genre:""
-      yeae:""
-      img_url:""
-    */
-    await imani_client.connect();
-    console.log("MongoDB connected");
-    const db = imani_client.db("Movies");
-    const movies = db.collection('MovieData');
-    //get a  list of movies instead ***********************
-    //make a list of names of movies in the mongo db, output it to front end*****************
-    //send info to front end, where omar will make it pretty********
-    movies.findOne({room_info:room_name},{}, function(err, result) {
-        if (err) throw err;
-        var movie_map = new Map();
-        movie_list = result['movie_list'];
-        room_users = result['user_list'];
-        chat_history = result['chat_history'];
-        console.log("Movie list: " +movie_list +"\nRoom users: " + room_users+"\nChat history: " +chat_history);
-        return  (1);
-    });
-    return 0;
-}
-
-//JSON wrapper & unwrapper functions
-function replacer(key, value) {
+  /* movie_name: "moviename"
+    genre:""
+    yeae:""
+    img_url:""
+  */ 
+  await imani_client.connect();
+  console.log("MongoDB connected");
+  const db = imani_client.db("Movies");
+  const movies = db.collection('MovieData');
+  //get a  list of movies instead ***********************
+  //make a list of names of movies in the mongo db, output it to front end*****************
+  //send info to front end, where omar will make it pretty********
+  movies.findOne({room_info:room_name},{}, function(err, result) {
+    if (err) throw err;
+    movie_list = result['movie_list'];
+    chat_history = result['chat_history'];
+    console.log("Movie list: " +movie_list+"\nChat history: " +chat_history);
+    return  (1);
+  }); 
+  return 0;
+  }
+  
+  //JSON wrapper & unwrapper functions
+  function replacer(key, value) {
     if(value instanceof Map) {
         return {
             dataType: 'Map',

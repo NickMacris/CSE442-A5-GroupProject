@@ -15,18 +15,18 @@ const imani_client = new MongoClient(imani_uri,{keepAlive: 1});
 
 //Session variable dependent
 var room_name = "test_room"
-var room_size = 2; // Get amount of people in room from db*********************
+var room_size = 0; //Live
 
 //Global variables
-var clients = 0;
 var voted = -1;
 var current_movie = new Map();
 var favorite_movie = new Map();
 favorite_movie.set('vote',0);
-var movie_cntr = 0;
+var movie_cntr = -1;
 
 //retrieve database info
-var room_users = [];
+var last_entered = "hello";
+var room_users = {};
 var movie_list = [];
 var chat_history = [];
 
@@ -35,33 +35,31 @@ if(get_room_info()){
 }
 
 app.use('/movie_room.css', express.static(__dirname + '/movie_room.css'));
-app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"));
+app.get("/movie_room", (req, res) => {
+  res.sendFile(__dirname + "/movie_room.html");
+  //last_entered = req.username...
+  console.log("Random"+room_users.length+" has been added");
+});
 
  io.on("connection", function(socket) {
-  io.emit("user connected",JSON.stringify("Hello via Json",replacer));
-  //get username from session variable?
-  //loop through room_users and add client
-  //if user shouldnt be there, direct to exit
-
-  clients += 1;
-  console.log('User #' + clients+' has been added');
-
-  //send chat history
-  io.emit('chat_history', JSON.stringify(chat_history,replacer));
-  
-  //start voting once everyone joins
-  if(clients >= room_size){
-    if(voted === -1){
-      console.log("Begin Voting");
-      vote();
-    }
-    else{
-      console.log("Add user on to vote");
-      current_movie.set('vote',0);
-      io.emit("movie",
-      JSON.stringify(current_movie.get('movie_name'),replacer));
-    }
+  room_size += 1;
+  room_users[socket] = last_entered;
+  io.emit("user connected",room_size);
+  console.log('User ' + last_entered+' has been added');
+  //If voting needs to be started
+  if(movie_cntr < 0){
+    console.log("Begin Voting");
+    movie_cntr = 0;
+    vote();
   }
+  else{
+    io.emit("movie",
+      JSON.stringify(current_movie.get('movie_name'),replacer));
+  }
+  //send info
+  io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  //io.emit("movie",    JSON.stringify(current_movie.get('movie_name'),replacer));    
+
     
   socket.on("client", function(msg) {
     console.log("hello from client"+msg);    
@@ -74,9 +72,15 @@ app.get("/movie_room", (req, res) => res.sendFile(__dirname + "/movie_room.html"
   });
 
   socket.on("chat", function(msg){
-    console.log("Processing chat from User: " + msg);
-    chat_history.push(["User x",msg]);
+    console.log("Processing chat: " +[room_users[socket],msg]);
+    chat_history.push([room_users[socket],msg]);
     io.emit('chat_history', JSON.stringify(chat_history,replacer));
+  });
+
+  socket.on("disconnect",function(){
+    console.log("User disconnected");
+    room_size -= 1;
+    room_users.remove[socket];
   });
 
  });
@@ -121,7 +125,7 @@ function process_vote(v){
         end_vote();
     }
     // Check if everyone voted
-    if(voted >= room_size){
+    if(voted >= room_users.length){
         vote();
     }
   
@@ -132,7 +136,7 @@ function process_vote(v){
 //Emit vote results
 function end_vote(){
   voted = 0;
-  movie_cntr = 0;
+  movie_cntr = -1;
   io.emit('vote_result',JSON.stringify(favorite_movie.get('movie_name')+" with "+favorite_movie.get('vote')+" votes",replacer));
   console.log("Ending Vote");
 }
